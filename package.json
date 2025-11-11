@@ -4,7 +4,13 @@
   "description": "This collection package integrates the server and client for deployment.",
   "main": "server/app.js",
   "scripts": {
+    "dev": "npm-run-all --parallel dev:server dev:client",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
     "postinstall": "npm install --prefix server && npm install --prefix client && npm run build --prefix client"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
   },
   "engines" : {
     "npm" : "11.x",
