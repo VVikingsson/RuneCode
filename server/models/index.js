@@ -2,7 +2,7 @@
 
 const Example = require("./Example.js");
 
-module.exports = [
+module.exports = {
     Example //,
     // other Models goes here
-]
+}

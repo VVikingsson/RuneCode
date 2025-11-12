@@ -37,5 +37,9 @@ ExampleSchema.statics.findHighestScorer = function () {
   return this.findOne().sort({ points: -1 }).exec(); // -1 indicates decreasing order. findOne picks the first document
 };
 
+ExampleSchema.statics.findAll = function () {
+  return this.find();
+}
+
 // (5) Export: when another file uses require(example), it will get the compiled model of the schema.
 module.exports = mongoose.model("Example", ExampleSchema);
