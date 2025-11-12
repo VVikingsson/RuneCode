@@ -1,9 +1,11 @@
-var express = require('express');
-var mongoose = require('mongoose');
-var morgan = require('morgan');
-var path = require('path');
-var cors = require('cors');
-var history = require('connect-history-api-fallback');
+const express = require('express');
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const path = require('path');
+const cors = require('cors');
+const history = require('connect-history-api-fallback');
+const routes = require("./routes");
+
 
 function connectToDB(mongoURI) {
     mongoose.connect(mongoURI).catch(function(err) {
@@ -32,9 +34,10 @@ function createExpressApp() {
 function setupRoutes(app) {
     // Import routes
     app.get('/api', (req, res) => {
-        res.json({'message': 'Welcome to your DIT342 backend ExpressJS project!'});
+        res.json({'message': 'Welcome to our API. Try getting the top scorer at /api/example/topScorer'});
     });
-
+    // These are all of our custom endpoints. They must all be prefixed with /api.
+    app.use("/api", routes)
     // Catch all non-error handler for api (i.e., 404 Not Found)
     app.use('/api/*', (req, res) => {
         res.status(404).json({ 'message': 'Not Found' });
@@ -82,7 +85,7 @@ function startServer(app, port) {
 
 function main() {
     // Variables
-    var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/animalDevelopmentDB';
+    var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/exampleDB';
     var port = process.env.PORT || 3000;
     
     connectToDB(mongoURI);
