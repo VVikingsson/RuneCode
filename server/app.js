@@ -33,13 +33,13 @@ function createExpressApp() {
 
 function setupRoutes(app) {
     // Import routes
-    app.get('/api', (req, res) => {
-        res.json({'message': 'Welcome to our API. Try getting the top scorer at /api/example/topScorer'});
+    app.get('/api/v1', (req, res) => {
+        res.json({'message': 'Welcome to our API. Try getting the top scorer at /api/v1/example/topScorer'});
     });
     // These are all of our custom endpoints. They must all be prefixed with /api.
-    app.use("/api", routes)
+    app.use("/api/v1", routes)
     // Catch all non-error handler for api (i.e., 404 Not Found)
-    app.use('/api/*', (req, res) => {
+    app.use('/api/v1/*', (req, res) => {
         res.status(404).json({ 'message': 'Not Found' });
     });
 }
