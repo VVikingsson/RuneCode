@@ -28,7 +28,8 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "mongoose": "^8.5.4",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "bcryptjs": "^3.0.3"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

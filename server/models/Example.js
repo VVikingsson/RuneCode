@@ -28,11 +28,11 @@ ExampleSchema.methods.printState = function () {
     console.log("ID:", this._id);
     console.log("Name:", this.name);
     console.log("Points:", this.points);
-    console.log("Date:", this.date)
+    console.log("Date:", this.date);
 };
 
 // (4) Static methods
-// On class level (this = reference to model)
+// On collection level (this = reference to collection)
 ExampleSchema.statics.findHighestScorer = function () {
   return this.findOne().sort({ points: -1 }).exec(); // -1 indicates decreasing order. findOne picks the first document
 };

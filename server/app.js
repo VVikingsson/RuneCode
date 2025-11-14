@@ -84,7 +84,6 @@ function startServer(app, port) {
 }
 
 function main() {
-    // Variables
     var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/exampleDB';
     var port = process.env.PORT || 3000;
     

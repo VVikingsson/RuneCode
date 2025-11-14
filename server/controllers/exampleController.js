@@ -15,7 +15,7 @@ async function getTopScorer(req, res, next) {
 async function getAllExamples(req, res, next) {
   try {
     const examples = await Example.findAll();
-    res.json(examples);
+    res.status(200).json(examples);
   } catch (err) {
     next(err);
   }
