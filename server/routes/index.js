@@ -7,6 +7,6 @@ const router = express.Router();
 
 // Any endpoint we want to access from exampleRouter has to be prefixed with /example.
 router.use('/example', exampleRouter);
-router.use('/user', userRouter);
+router.use('/users', userRouter);
 
 module.exports = router;
