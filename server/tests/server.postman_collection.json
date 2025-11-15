@@ -317,9 +317,9 @@
 					}
 				],
 				"url": {
-					"raw": "{{host}}/api",
+					"raw": "{{baseURL}}/api",
 					"host": [
-						"{{host}}"
+						"{{baseURL}}"
 					],
 					"path": [
 						"api"
