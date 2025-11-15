@@ -22,7 +22,7 @@
 									"});\r",
 									"\r",
 									"const response = pm.response.json();\r",
-									"pm.globals.set(\"userID\", response.id);"
+									"pm.environment.set(\"userID\", response.id);"
 								],
 								"type": "text/javascript",
 								"packages": {},
