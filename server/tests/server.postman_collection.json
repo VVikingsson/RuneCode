@@ -293,40 +293,6 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "GET /api",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{baseURL}}/api",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api"
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"event": [
