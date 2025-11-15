@@ -17,9 +17,9 @@ async function createNewUser(req, res, next) {
             email: newUser.email
         });
     } catch (err) {
-        if (err.status === 11000 && err.keyValue) {
-            const field = Object.keys(err.keyValue)[0];
-            return res.status(409).json({message: `$field already exists`, field})
+        if (err.code === 11000 && err.keyValue) { // Mongoose error for field already existing
+            const field = Object.keys(err.keyValue)[0]; // will be either username or email
+            return res.status(409).json({message: `A user with ${field} already exists`})
         }
         next(err);
     }
@@ -45,12 +45,32 @@ async function loginUser(req, res, next) {
     }
 }
 
+async function getUser(req, res, next) {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            res.status(404).json({message: "No user found with given id"});
+        }
+    res.status(200).json(user);
+    } catch (err) {
+        if (err.name === 'CastError') {
+            return res.status(400).json({message: 'Invalid id format'});
+        }
+        next(err);
+    }
+}
+
 async function removeUser(req, res, next) {
     try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
-        const name = deletedUser.username;
-        res.status(200).json({message: `Successfully deleted user ${name}`});
+        if (!deletedUser) {
+            res.status(404).json({message: "No user found with given id"});
+        }
+        res.status(200).json({message: `Successfully deleted user ${deletedUser.username}`});
     } catch (err) {
+        if (err.name === 'CastError') {
+            return res.status(400).json({message: 'Invalid id format'});
+        }
         next(err);
     }
 }
@@ -64,9 +84,28 @@ async function getAllUsers(req, res, next) {
     }
 }
 
+async function updateUser(req, res, next) {
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true } // new makes sure the updated user is returned
+        );                                     // runValidators makes sure our Schema constraints (unique) are applied
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({ message: 'User updated', user: updatedUser });
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     createNewUser,
     loginUser,
     removeUser,
-    getAllUsers
+    getAllUsers,
+    getUser,
+    updateUser
 }
