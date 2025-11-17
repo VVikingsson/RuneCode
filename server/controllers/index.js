@@ -1,7 +1,10 @@
 const exampleController = require('./exampleController');
 const userController = require('./userController');
+const testCaseController = require('./testCaseController');
 
 module.exports = {
     exampleController,
-    userController
+    userController,
+    challengeController,
+    testCaseController
 }
