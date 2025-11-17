@@ -57,7 +57,7 @@ async function removeChallenge(req, res, next) {
 async function getAllChallenges(req, res, next) {
     try {
         const challenges = await Challenge.find();
-        res.status(200).json(testCases);
+        res.status(200).json(challenges);
     } catch (err) {
         next(err);
     }
