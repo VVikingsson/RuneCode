@@ -42,7 +42,7 @@ async function getChallenge(req, res, next) {
 async function removeChallenge(req, res, next) {
     try {
         const deletedChallenge = await Challenge.findByIdAndDelete(req.params.id);
-        if (!deletedTestCase) {
+        if (!deletedChallenge) {
             res.status(404).json({message: "No challenge found with this id"});
         }
         res.status(200).json({message: `Successfully deleted challenge ${deletedChallenge.name}`});
