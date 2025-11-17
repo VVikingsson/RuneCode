@@ -3,6 +3,7 @@ const express = require('express');
 const exampleRouter = require('./exampleRoutes');
 const userRouter = require('./userRoutes');
 const testCaseRouter = require('./testCaseRoutes');
+const challengeRouter = require('./challengeRoutes');
 
 const router = express.Router();
 
@@ -10,5 +11,6 @@ const router = express.Router();
 router.use('/example', exampleRouter);
 router.use('/users', userRouter);
 router.use('/testCases', testCaseRouter);
+router.use('/challenges', challengeRouter);
 
 module.exports = router;
