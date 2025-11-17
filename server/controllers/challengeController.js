@@ -17,7 +17,7 @@ async function createNewChallenge(req, res, next) {
         });
     } catch (err) {
         if (err.code === 11000 && err.keyValue) { // Mongoose error for field already existing
-            const field = Object.keys(err.keyValue)[0]; // will be either username or email
+            const field = Object.keys(err.keyValue)[0];
             return res.status(409).json({message: `A challenge with ${field} already exists`})
         }
         next(err);
@@ -26,7 +26,7 @@ async function createNewChallenge(req, res, next) {
 
 async function getChallenge(req, res, next) {
     try {
-        const challenge = await Challenge.findById(req.paramas.id);
+        const challenge = await Challenge.findById(req.params.id);
         if (!challenge) {
             res.status(404).json({message: "No challenge found with this ID"})
         }

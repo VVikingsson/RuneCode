@@ -17,7 +17,7 @@ async function createNewTestCase(req, res, next) {
         });
     } catch (err) {
         if (err.code === 11000 && err.keyValue) { // Mongoose error for field already existing
-            const field = Object.keys(err.keyValue)[0]; // will be either username or email
+            const field = Object.keys(err.keyValue)[0];
             return res.status(409).json({message: `A TestCase with ${field} already exists`})
         }
         next(err);
@@ -27,7 +27,7 @@ async function createNewTestCase(req, res, next) {
 
 async function getTestCase(req, res, next) {
     try {
-        const testCase = await TestCase.findById(req.paramas.id);
+        const testCase = await TestCase.findById(req.params.id);
         if (!testCase) {
             res.status(404).json({message: "No testCase found with this ID"})
         }
