@@ -4,7 +4,7 @@ async function createNewTestCase(req, res, next) {
     try {
         const {input, expectedOutput, language} = req.body
         if (!input || !expectedOutput || !language) {
-            return res.status(400).json({message: 'Username or email or password is missing'});
+            return res.status(400).json({message: 'Input or eexpectedOutput or language is missing'});
         }
         const newTestCase = await TestCase.create({input, expectedOutput, language});
 

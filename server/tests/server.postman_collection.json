@@ -3,8 +3,8 @@
 		"_postman_id": "4b94d52d-c9f8-4231-926b-de46326d6f77",
 		"name": "server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "49945255",
-		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=49945255"
+		"_exporter_id": "50169489",
+		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=50169489"
 	},
 	"item": [
 		{
@@ -293,6 +293,497 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "testCase",
+			"item": [
+				{
+					"name": "POST testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Only process response if status is successful\r",
+									"if (pm.response.code === 201) {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.test(\"Response has an _id\", function () {\r",
+									"        pm.expect(response).to.have.property('_id');\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Response has required fields\", function () {\r",
+									"        pm.expect(response).to.have.property('input');\r",
+									"        pm.expect(response).to.have.property('expectedOutput');\r",
+									"        pm.expect(response).to.have.property('language');\r",
+									"    });\r",
+									"\r",
+									"    // Optional: log created resource\r",
+									"    console.log(\"Created TestCase:\", response);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"1, 6\",\r\n    \"expectedOutput\": \"7\",\r\n    \"language\": \"javascript\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST bad testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Only process response if status is successful\r",
+									"if (pm.response.code === 201) {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.test(\"Response has an _id\", function () {\r",
+									"        pm.expect(response).to.have.property('_id');\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Response has required fields\", function () {\r",
+									"        pm.expect(response).to.have.property('input');\r",
+									"        pm.expect(response).to.have.property('expectedOutput');\r",
+									"        pm.expect(response).to.have.property('language');\r",
+									"    });\r",
+									"\r",
+									"    // Optional: log created resource\r",
+									"    console.log(\"Created TestCase:\", response);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"1, 5, 7\",\r\n    \"expectedOutput\": \"\",\r\n    \"language\": \"\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Only process response if status is successful\r",
+									"if (pm.response.code === 200) {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.test(\"Response has an _id\", function () {\r",
+									"        pm.expect(response).to.have.property('_id');\r",
+									"    });\r",
+									"\r",
+									"    // No saving — just validation\r",
+									"    console.log(\"Fetched TestCase with ID:\", response._id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all testCases",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Only process response if status is successful",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"",
+									"    pm.test(\"Response contains updated fields\", function () {",
+									"        pm.expect(response).to.have.property('_id');",
+									"        pm.expect(response).to.have.property('input');",
+									"        pm.expect(response).to.have.property('expectedOutput');",
+									"        pm.expect(response).to.have.property('language');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"1, 7\",\r\n    \"expectedOutput\": \"8\",\r\n    \"language\": \"javascript\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Only process response if status is successful\r",
+									"if (pm.response.code === 200) {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Check that the response has a message field\r",
+									"    pm.test(\"Response contains a message\", function () {\r",
+									"        pm.expect(response).to.have.property('message');\r",
+									"    });\r",
+									"\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "challenge",
+			"item": [
+				{
+					"name": "POST challenge",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"find-min-value\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\",\r\n        \"691b7e88238485fead065d21\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Only process response if status is successful\r",
+									"if (pm.response.code === 200) {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Validate required fields\r",
+									"    pm.test(\"Response has required fields\", function () {\r",
+									"        pm.expect(response).to.have.property('_id');\r",
+									"        pm.expect(response).to.have.property('name');\r",
+									"        pm.expect(response).to.have.property('codeTemplate');\r",
+									"        pm.expect(response).to.have.property('description');\r",
+									"        pm.expect(response).to.have.property('testCases');\r",
+									"        pm.expect(response.testCases).to.be.an('array');\r",
+									"    });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Only process response if status is successful\r",
+									"if (pm.response.code === 200) {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Validate required fields\r",
+									"    pm.test(\"Response has required fields\", function () {\r",
+									"        pm.expect(response).to.have.property('_id');\r",
+									"        pm.expect(response).to.have.property('name');\r",
+									"        pm.expect(response).to.have.property('codeTemplate');\r",
+									"        pm.expect(response).to.have.property('description');\r",
+									"        pm.expect(response).to.have.property('testCases');\r",
+									"        pm.expect(response.testCases).to.be.an('array');\r",
+									"    });\r",
+									"    console.log(\"Updated Challenge:\", response);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"find-min-value\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/691cdf54a5e7fadd665177e8",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"691cdf54a5e7fadd665177e8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Only process response if status is successful\r",
+									"if (pm.response.code === 200) {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Check that the response has a message field\r",
+									"    pm.test(\"Response contains a message\", function () {\r",
+									"        pm.expect(response).to.have.property('message');\r",
+									"    });\r",
+									"    console.log(\"Delete response:\", response.message);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -320,6 +811,21 @@
 			"key": "host",
 			"value": "http://localhost:3000",
 			"type": "string"
+		},
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "testCaseID",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "challengeID",
+			"value": "",
+			"type": "default"
 		}
 	]
 }
