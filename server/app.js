@@ -6,6 +6,8 @@ const cors = require('cors');
 const history = require('connect-history-api-fallback');
 const routes = require("./routes");
 
+require('dotenv').config(); //for accessing environment variables
+
 
 function connectToDB(mongoURI) {
     mongoose.connect(mongoURI).catch(function(err) {
@@ -89,6 +91,7 @@ function main() {
     
     connectToDB(mongoURI);
     var app = createExpressApp();
+    app.use('/api/v1/users/:id/image', express.static(process.env.UPLOADS)); //will generate get endpoint for returning users' images
     setupRoutes(app);
     setupFrontend(app);
     setupErrorHandler(app);

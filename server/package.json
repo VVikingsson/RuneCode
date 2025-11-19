@@ -28,9 +28,11 @@
     "ci": "^2.3.0",
     "connect-history-api-fallback": "^2.0.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^4.19.2",
     "mongoose": "^8.5.4",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
