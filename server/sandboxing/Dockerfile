@@ -12,4 +12,4 @@ ARG language=python
 
 # Use a new user without privileges (remember distributed systems, principle of least privilege)
 RUN useradd sandbox
-# USER sandbox
+USER sandbox
