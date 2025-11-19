@@ -1,5 +1,6 @@
 const { User } = require('../models');
 const bcrypt = require('bcryptjs'); // library for hashing passwords
+const path = require("path");
 
 async function createNewUser(req, res, next) {
     try {
@@ -101,11 +102,30 @@ async function updateUser(req, res, next) {
     }
 }
 
+//update a profile picture of a user with specific id(no saving to database is involved)
+function uploadImage(req, res, next) {
+    try {
+        if (!req.file) {
+            return res.status(400).send('No file uploaded.');
+        }
+        res.status(200).json({
+            message: 'File uploaded successfully',
+            url: `http://localhost:3000/api/v1/users/${req.params.id}/image/`
+                + req.params.id
+                + path.extname(req.file.originalname) //url passed to frontend for calling get request to get a picture
+        });
+    } catch (err) {
+        next(err);
+    }
+
+}
+
 module.exports = {
     createNewUser,
     loginUser,
     removeUser,
     getAllUsers,
     getUser,
-    updateUser
+    updateUser,
+    uploadImage,
 }
