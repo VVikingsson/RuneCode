@@ -29,11 +29,13 @@ test:
       alias: mongo
   variables:
     MONGODB_URI: "mongodb://mongo:27017/serverTestDB"
+    DOCKER_TLS_CERTDIR: "" # Disable Docker TLS. Needed so docker CLI can talk to daemon
   script:
     - apk add --no-cache docker-cli
     - cd server
     - npm run build-docker
     - npm run ci-test
+
 
 deploy:
   stage: deploy
