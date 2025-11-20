@@ -10,7 +10,6 @@ async function devTest() {
     let testCases = [{input: "add(3,5)", expectedOutput: "8", language: "python" }, {input: "add(15,4)", expectedOutput: "19", language: "python"}, {input: "add(-9,-9)", expectedOutput: "-18", language: "python"}]
 
     
-
     const {result, passed} = await containerizeAndTestCode(userCode, testCases, language);
     console.log("RESULT: " + result);
 }
@@ -145,7 +144,5 @@ function composeJavascriptCode(userCode) {
 
     return jsWrapperTop + userCode + jsWrapperBot;
 }
-
-devTest();
 
 module.exports = {containerizeAndTestCode}

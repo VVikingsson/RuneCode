@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 // Running and testing code
 async function executeCode(req, res, next) {
     try {
-        const {id, code, language} = req.body;
+        const id = req.params.id;
+        const {code, language} = req.body;
         // Error handling
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({message: 'Bad request: invalid id.'});
@@ -13,17 +14,13 @@ async function executeCode(req, res, next) {
         if (!code || !language) {
             return res.status(400).json({message: 'Bad request: code and/or language not provided.'});
         }
-        const challenge = await Challenge.findOne({_id: id}).populate('testCases');
+        const challenge = await Challenge.findOne({_id: id}).populate('testCases'); // populate replaces ids with actual testCase objects
         if (!challenge) {
             return res.status(404).json({message: 'Not found: challenge with id not in database'});
         }
 
-        const {results, passed} = codeRunner.containerizeAndTestCode(code, challenge.testCases, language);
-        if (passed) {
-            return res.status(200).json(results);
-        }
-        // Potential bug if passed is null?
-        return res.status(200).json(results);
+        const {result, passed} = await codeRunner.containerizeAndTestCode(code, challenge.testCases, language);
+        return res.status(200).json({message: result});
     } catch (err) {
         next(err);
     }
