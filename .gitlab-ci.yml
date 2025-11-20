@@ -13,25 +13,26 @@ stages:
 
 build:
   stage: build
-  image: docker:27
   tags:
     - docker
   script:
     - cd server
     - npm install
-    - npm run build-docker
 
 test:
   stage: test
   tags:
     - docker
   services:
+    - docker:dind
     - name: mongo:latest
       alias: mongo
   variables:
     MONGODB_URI: "mongodb://mongo:27017/serverTestDB"
   script:
+    - apk add --no-cache docker-cli
     - cd server
+    - npm run build-docker
     - npm run ci-test
 
 deploy:
