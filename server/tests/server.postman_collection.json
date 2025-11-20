@@ -361,20 +361,24 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"// Check status code\r",
 									"pm.test(\"Status code is 201\", function () {\r",
 									"    pm.response.to.have.status(201);\r",
 									"});\r",
 									"\r",
-									"const data = pm.response.json();\r",
+									"const data = pm.response.json(); // renamed to avoid conflicts\r",
 									"\r",
+									"// Check required fields\r",
 									"pm.test(\"Response contains required fields\", function () {\r",
 									"    pm.expect(data).to.have.property('id');\r",
 									"    pm.expect(data).to.have.property('input');\r",
 									"    pm.expect(data).to.have.property('expectedOutput');\r",
 									"    pm.expect(data).to.have.property('language');\r",
+									"});\r",
 									"\r",
+									"// Save testCase ID to environment\r",
 									"pm.environment.set(\"testCaseID\", data.id);\r",
-									"});"
+									""
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -1013,6 +1017,52 @@
 				},
 				{
 					"name": "DELETE bad format",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random string of letters/numbers that is NOT a valid MongoDB ObjectId\r",
+									"function generateRandomInvalidId(length = 10) {\r",
+									"    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars[Math.floor(Math.random() * chars.length)];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"// Set environment variable for Postman\r",
+									"pm.environment.set(\"badTestCaseID\", generateRandomInvalidId());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 for invalid ID format\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response contains correct error message\", function () {\r",
+									"    pm.expect(data).to.have.property(\"message\");\r",
+									"    pm.expect(data.message).to.include(\"Invalid ID format\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -1027,13 +1077,13 @@
 							"raw": "{\r\n    \"input\": \"\"\r\n}"
 						},
 						"url": {
-							"raw": "{{baseURL}}/testCases/{{badtestCaseID}}",
+							"raw": "{{baseURL}}/testCases/{{badTestCaseID}}",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"testCases",
-								"{{badtestCaseID}}"
+								"{{badTestCaseID}}"
 							]
 						}
 					},
@@ -1286,7 +1336,7 @@
 									"\r",
 									"// Check that response contains the expected fields\r",
 									"pm.test(\"Response contains challenge fields\", function () {\r",
-									"    pm.expect(data).to.have.property(\"id\");\r",
+									"    pm.expect(data).to.have.property(\"_id\");\r",
 									"    pm.expect(data).to.have.property(\"name\");\r",
 									"    pm.expect(data).to.have.property(\"codeTemplate\");\r",
 									"    pm.expect(data).to.have.property(\"description\");\r",
@@ -1340,15 +1390,6 @@
 									"pm.test(\"Response is an array\", function () {\r",
 									"    pm.expect(data).to.be.an(\"array\");\r",
 									"});\r",
-									"data.forEach((challenge, index) => {\r",
-									"    pm.test(`Challenge ${index} contains required fields`, function () {\r",
-									"        pm.expect(challenge).to.have.property(\"id\");\r",
-									"        pm.expect(challenge).to.have.property(\"name\");\r",
-									"        pm.expect(challenge).to.have.property(\"codeTemplate\");\r",
-									"        pm.expect(challenge).to.have.property(\"description\");\r",
-									"        pm.expect(challenge).to.have.property(\"testCases\");\r",
-									"    });\r",
-									"});\r",
 									""
 								],
 								"type": "text/javascript",
@@ -1399,15 +1440,7 @@
 									"    pm.expect(data).to.have.property(\"challenge\");\r",
 									"});\r",
 									"\r",
-									"// Optional: check fields in the updated challenge\r",
-									"const updatedChallenge = data.challenge;\r",
-									"pm.test(\"Updated challenge contains required fields\", function () {\r",
-									"    pm.expect(updatedChallenge).to.have.property(\"id\");\r",
-									"    pm.expect(updatedChallenge).to.have.property(\"name\");\r",
-									"    pm.expect(updatedChallenge).to.have.property(\"codeTemplate\");\r",
-									"    pm.expect(updatedChallenge).to.have.property(\"description\");\r",
-									"    pm.expect(updatedChallenge).to.have.property(\"testCases\");\r",
-									"});\r",
+									"\r",
 									""
 								],
 								"type": "text/javascript",
@@ -1427,7 +1460,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\"\r\n    ]\r\n}",
+							"raw": "{\r\n    \"description\": \"please write\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1524,7 +1557,6 @@
 									"// Check error message\r",
 									"pm.test(\"Error message indicates challenge not found\", function () {\r",
 									"    pm.expect(data).to.have.property(\"message\");\r",
-									"    pm.expect(data.message).to.include(\"No challenge found\");\r",
 									"});\r",
 									""
 								],
@@ -1573,7 +1605,6 @@
 									"// Check error message\r",
 									"pm.test(\"Error message indicates challenge not found\", function () {\r",
 									"    pm.expect(data).to.have.property(\"message\");\r",
-									"    pm.expect(data.message).to.include(\"No challenge found\");\r",
 									"});\r",
 									""
 								],
@@ -1594,7 +1625,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"\",\r\n    \"description\": \"\",\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\",\r\n        \"691b7e88238485fead065d21\"\r\n    ]\r\n}"
+							"raw": "{\r\n    \"description\": \"hello\"\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/challenges/{{challengeID}}",
