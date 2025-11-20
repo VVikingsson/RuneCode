@@ -23,6 +23,7 @@ test:
   stage: test
   tags:
     - docker
+  privileged: true # allow DinD container to start a Docker daemon
   services:
     - docker:dind
     - name: mongo:latest
