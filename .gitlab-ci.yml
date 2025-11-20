@@ -13,11 +13,13 @@ stages:
 
 build:
   stage: build
+  image: docker:27
   tags:
     - docker
   script:
     - cd server
     - npm install
+    - npm run build-docker
 
 test:
   stage: test
@@ -30,7 +32,6 @@ test:
     MONGODB_URI: "mongodb://mongo:27017/serverTestDB"
   script:
     - cd server
-    - npm run build-docker
     - npm run ci-test
 
 deploy:
