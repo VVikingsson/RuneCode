@@ -12,12 +12,16 @@ async function createNewChallenge(req, res, next) {
         }
 
         let testCaseIds = [];
-        for (testCase of req.body.testCases) {
-            const test = TestCase.create(testCase);
+        for (const testCase of testCases) {
+            const test = await TestCase.create(testCase);
             testCaseIds.push(test._id);
         }
         
-        const newChallenge = await Challenge.create({name, codeTemplate, description, testCaseIds});
+        const newChallenge = await Challenge.create({
+            name: name, 
+            codeTemplate: codeTemplate, 
+            description: description, 
+            testCases: testCaseIds});
 
         return res.status(201).json({
             id: newChallenge._id,

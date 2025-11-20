@@ -3,8 +3,8 @@
 		"_postman_id": "4b94d52d-c9f8-4231-926b-de46326d6f77",
 		"name": "server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "50169489",
-		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=50169489"
+		"_exporter_id": "49945255",
+		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=49945255"
 	},
 	"item": [
 		{
@@ -1122,7 +1122,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\",\r\n        \"691b7e88238485fead065d21\"\r\n    ]\r\n}"
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal([1,2,3,4])\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([1,2,3,4,-7])\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([200,400,201])\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/challenges",
@@ -1167,7 +1167,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\",\r\n        \"691b7e88238485fead065d21\"\r\n    ]\r\n}",
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal([1,2,3,4])\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([1,2,3,4,-7])\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([200,400,201])\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1279,7 +1279,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\",\r\n        \"691b7e88238485fead065d21\"\r\n    ]\r\n}"
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal([1,2,3,4])\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([1,2,3,4,-7])\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([200,400,201])\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/challenges",
