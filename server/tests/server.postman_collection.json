@@ -291,6 +291,1581 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "POST profile image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "profileImage",
+									"type": "file",
+									"src": "postman-cloud:///1f0c521e-db6f-4af0-83da-ee12f48d7621"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/123/image",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"123",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET profile picture",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/123/image/123.jpg",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"123",
+								"image",
+								"123.jpg"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "testCase",
+			"item": [
+				{
+					"name": "POST testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check status code\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const data1 = pm.response.json(); // renamed to avoid conflicts\r",
+									"\r",
+									"// Check required fields\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(data1).to.have.property('id');\r",
+									"    pm.expect(data1).to.have.property('input');\r",
+									"    pm.expect(data1).to.have.property('expectedOutput');\r",
+									"    pm.expect(data1).to.have.property('language');\r",
+									"});\r",
+									"\r",
+									"// Save testCase ID to environment\r",
+									"pm.environment.set(\"testCaseID\", data1.id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"1, 9\",\r\n    \"expectedOutput\": \"11\",\r\n    \"language\": \"javascript\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST bad testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 for missing field\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data2 = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Error message correctly reports missing input/output/language\", function () {\r",
+									"    pm.expect(data2).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"1, 5, 7\",\r\n    \"expectedOutput\": \"\",\r\n    \"language\": \"\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const data3 = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response contains required TestCase fields\", function () {\r",
+									"    pm.expect(data3).to.have.property(\"_id\");\r",
+									"    pm.expect(data3).to.have.property(\"input\");\r",
+									"    pm.expect(data3).to.have.property(\"expectedOutput\");\r",
+									"    pm.expect(data3).to.have.property(\"language\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all testCases",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const data4 = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response is an array\", function () {\r",
+									"    pm.expect(data4).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"if (data4.length > 0) {\r",
+									"    pm.test(\"Each item contains required TestCase fields\", function () {\r",
+									"        data4.forEach(tc => {\r",
+									"            pm.expect(tc).to.have.property(\"_id\");\r",
+									"            pm.expect(tc).to.have.property(\"input\");\r",
+									"            pm.expect(tc).to.have.property(\"expectedOutput\");\r",
+									"            pm.expect(tc).to.have.property(\"language\");\r",
+									"        });\r",
+									"    });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/testCases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH missing field",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 400\r",
+									"pm.test(\"Status code is 400 for missing required field\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data5 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains an error message about missing field\r",
+									"pm.test(\"Error message indicates missing field\", function () {\r",
+									"    pm.expect(data5).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const data6 = pm.response.json();",
+									"",
+									"// Check that response contains confirmation message",
+									"pm.test(\"Response contains success message\", function () {",
+									"    pm.expect(data6).to.have.property(\"message\");",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"expectedOutput\": \"10\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const data7 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains a success message\r",
+									"pm.test(\"Response contains success message\", function () {\r",
+									"    pm.expect(data7).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET bad testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 for non-existent TestCase\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data8 = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Error message indicates TestCase was not found\", function () {\r",
+									"    pm.expect(data8).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH bad update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 404\r",
+									"pm.test(\"Status code is 404 for non-existent TestCase\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data9 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains proper error message\r",
+									"pm.test(\"Error message indicates TestCase not found\", function () {\r",
+									"    pm.expect(data9).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"expectedOutput\": \"11\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE bad delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 404\r",
+									"pm.test(\"Status code is 404 for non-existent TestCase\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data10 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains proper error message\r",
+									"pm.test(\"Error message indicates TestCase not found\", function () {\r",
+									"    pm.expect(data10).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET bad format",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random string of letters/numbers that is NOT a valid MongoDB ObjectId\r",
+									"function generateRandomInvalidId(length = 10) {\r",
+									"    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars[Math.floor(Math.random() * chars.length)];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"// Set environment variable for Postman\r",
+									"pm.environment.set(\"badTestCaseID\", generateRandomInvalidId());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 400\r",
+									"pm.test(\"Status code is 400 for invalid ID format\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data11 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains proper error message\r",
+									"pm.test(\"Error message indicates invalid ID format\", function () {\r",
+									"    pm.expect(data11).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{badTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{badTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH bad format",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random string of letters/numbers that is NOT a valid MongoDB ObjectId\r",
+									"function generateRandomInvalidId(length = 10) {\r",
+									"    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars[Math.floor(Math.random() * chars.length)];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"// Set environment variable for Postman\r",
+									"pm.environment.set(\"badTestCaseID\", generateRandomInvalidId());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 400\r",
+									"pm.test(\"Status code is 400 for invalid ID format\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data12 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains proper error message\r",
+									"pm.test(\"Error message indicates invalid ID format\", function () {\r",
+									"    pm.expect(data12).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"10, 3\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{badTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{badTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE bad format",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random string of letters/numbers that is NOT a valid MongoDB ObjectId\r",
+									"function generateRandomInvalidId(length = 10) {\r",
+									"    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars[Math.floor(Math.random() * chars.length)];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"// Set environment variable for Postman\r",
+									"pm.environment.set(\"badTestCaseID\", generateRandomInvalidId());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 for invalid ID format\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data13 = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response contains correct error message\", function () {\r",
+									"    pm.expect(data13).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{badTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{badTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "challenge",
+			"item": [
+				{
+					"name": "POST challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 201\r",
+									"pm.test(\"Status code is 201 for successful Challenge creation\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const data14 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains the new challenge ID\r",
+									"pm.test(\"Response contains challenge ID\", function () {\r",
+									"    pm.expect(data14).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Save the challenge ID in Postman environment\r",
+									"if (data14.id) {\r",
+									"    pm.environment.set(\"challengeID\", data14.id);\r",
+									"}\r",
+									"\r",
+									"// Optional: check other fields are present\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(data14).to.have.property(\"name\");\r",
+									"    pm.expect(data14).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(data14).to.have.property(\"description\");\r",
+									"    pm.expect(data14).to.have.property(\"testCases\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal([1,2,3,4])\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([1,2,3,4,-7])\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([200,400,201])\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST duplicate post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 409\r",
+									"pm.test(\"Status code is 409 for duplicate challenge\", function () {\r",
+									"    pm.response.to.have.status(409);\r",
+									"});\r",
+									"\r",
+									"const data15 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains proper duplicate field message\r",
+									"pm.test(\"Error message indicates duplicate field\", function () {\r",
+									"    pm.expect(data15).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal([1,2,3,4])\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([1,2,3,4,-7])\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([200,400,201])\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST array test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 400\r",
+									"pm.test(\"Status code is 400 for invalid testCases field\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data16 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains proper error message\r",
+									"pm.test(\"Error message indicates invalid testCases\", function () {\r",
+									"    pm.expect(data16).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"find-val\",\r\n    \"codeTemplate\": \"function Val(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": \"691b7ddd238485fead065d1b\"\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST bad challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 400\r",
+									"pm.test(\"Status code is 400 for missing required field\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data17 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains an error message about missing field\r",
+									"pm.test(\"Error message indicates missing field\", function () {\r",
+									"    pm.expect(data17).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal([1,2,3,4])\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([1,2,3,4,-7])\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([200,400,201])\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 200 for fetching challenge by ID\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const data18 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains the expected fields\r",
+									"pm.test(\"Response contains challenge fields\", function () {\r",
+									"    pm.expect(data18).to.have.property(\"_id\");\r",
+									"    pm.expect(data18).to.have.property(\"name\");\r",
+									"    pm.expect(data18).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(data18).to.have.property(\"description\");\r",
+									"    pm.expect(data18).to.have.property(\"testCases\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all challenges",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 200 for fetching all challenges\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const data19 = pm.response.json();\r",
+									"\r",
+									"// Check that the response is an array\r",
+									"pm.test(\"Response is an array\", function () {\r",
+									"    pm.expect(data19).to.be.an(\"array\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 200 for successful challenge update\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const data20 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains the updated challenge\r",
+									"pm.test(\"Response contains updated challenge\", function () {\r",
+									"    pm.expect(data20).to.have.property(\"message\");\r",
+									"    pm.expect(data20).to.have.property(\"challenge\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"please write\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 200 for successful challenge deletion\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const data21 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains a success message\r",
+									"pm.test(\"Response contains success message\", function () {\r",
+									"    pm.expect(data21).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET bad challenge",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 404\r",
+									"pm.test(\"Status code is 404 for GET non-existent challenge\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data22 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates challenge not found\", function () {\r",
+									"    pm.expect(data22).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH bad update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 404\r",
+									"pm.test(\"Status code is 404 for GET non-existent challenge\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data23 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates challenge not found\", function () {\r",
+									"    pm.expect(data23).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"hello\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE bad delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 404\r",
+									"pm.test(\"Status code is 404 for DELETE non-existent challenge\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data24 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates challenge not found\", function () {\r",
+									"    pm.expect(data24).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET bad format",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random string of letters/numbers that is NOT a valid MongoDB ObjectId\r",
+									"function generateRandomInvalidId(length = 10) {\r",
+									"    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars[Math.floor(Math.random() * chars.length)];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"// Set environment variable for Postman\r",
+									"pm.environment.set(\"badChallengeID\", generateRandomInvalidId());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 400\r",
+									"pm.test(\"Status code is 400 for GET challenge with invalid ID format\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data25 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates invalid ID format\", function () {\r",
+									"    pm.expect(data25).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{badChallengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{badChallengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH bad format",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random string of letters/numbers that is NOT a valid MongoDB ObjectId\r",
+									"function generateRandomInvalidId(length = 10) {\r",
+									"    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars[Math.floor(Math.random() * chars.length)];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"// Set environment variable for Postman\r",
+									"pm.environment.set(\"badChallengeID\", generateRandomInvalidId());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 400\r",
+									"pm.test(\"Status code is 400 for PATCH challenge with invalid ID format\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data26 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates invalid ID format\", function () {\r",
+									"    pm.expect(data26).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{badChallengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{badChallengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE bad format",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random string of letters/numbers that is NOT a valid MongoDB ObjectId\r",
+									"function generateRandomInvalidId(length = 10) {\r",
+									"    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars[Math.floor(Math.random() * chars.length)];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"// Set environment variable for Postman\r",
+									"pm.environment.set(\"badChallengeID\", generateRandomInvalidId());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 400\r",
+									"pm.test(\"Status code is 400 for DELETE challenge with invalid ID format\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data27 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates invalid ID format\", function () {\r",
+									"    pm.expect(data27).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{badChallengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{badChallengeID}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
@@ -320,6 +1895,21 @@
 			"key": "host",
 			"value": "http://localhost:3000",
 			"type": "string"
+		},
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "testCaseID",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "challengeID",
+			"value": "",
+			"type": "default"
 		}
 	]
 }
