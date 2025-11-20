@@ -10,6 +10,9 @@ router.get('', userController.getAllUsers);
 router.delete('/:id', userController.removeUser);
 router.get('/:id', userController.getUser);
 router.patch('/:id', userController.updateUser);
+// upload is a Multer instance that acts as a central middleware processor for handling file uploads
+// upload.single('profileImage') tells upload middleware to upload the picture with the 'profileImage' name field value
+// from html <input> tag
 router.post('/:id/image', upload.single('profileImage'), userController.uploadImage);
 
 module.exports = router;
