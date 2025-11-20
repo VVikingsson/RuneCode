@@ -31,9 +31,8 @@ test:
     MONGODB_URI: "mongodb://mongo:27017/serverTestDB"
   script:
     - apk add --no-cache docker-cli
-    - cd server/sandboxing
+    - cd server
     - npm run build-docker
-    - cd ..
     - npm run ci-test
 
 deploy:
