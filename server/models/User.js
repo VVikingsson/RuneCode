@@ -4,7 +4,8 @@ const UserSchema = mongoose.Schema({
     username: {type: String, required: true, unique: true, trim: true},
     email: {type: String, required: true, unique: true, trim: true},
     hashedPassword: {type: String, required: true, select: false},
-    points: {type: Number, default: 0}                            // Password will by default not be selected in queries.
+    points: {type: Number, default: 0},
+    bio: {type: String, trim: true}                                           // Password will by default not be selected in queries.
 })                                                                // Can be selected by adding .select(+hashedPassword);
                                                                   // to the query.
 UserSchema.statics.findByUsername = async function(username) {
