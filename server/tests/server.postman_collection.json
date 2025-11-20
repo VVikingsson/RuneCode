@@ -308,15 +308,11 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/users/123/image",
-							"protocol": "http",
+							"raw": "{{baseURL}}/users/123/image",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"users",
 								"123",
 								"image"
@@ -331,15 +327,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/users/123/image/123.jpg",
-							"protocol": "http",
+							"raw": "{{baseURL}}/users/123/image/123.jpg",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"users",
 								"123",
 								"image",
