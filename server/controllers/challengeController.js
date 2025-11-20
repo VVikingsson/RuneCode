@@ -1,4 +1,4 @@
-const { Challenge } = require('../models')
+const { Challenge, TestCase } = require('../models')
 
 async function createNewChallenge(req, res, next) {
     try {
@@ -10,8 +10,14 @@ async function createNewChallenge(req, res, next) {
         if (!Array.isArray(testCases) || testCases.length === 0) {
             return res.status(400).json({ message: 'testCases must be a non-empty array of IDs.' });
         }
+
+        let testCaseIds = [];
+        for (testCase of req.body.testCases) {
+            const test = TestCase.create(testCase);
+            testCaseIds.push(test._id);
+        }
         
-        const newChallenge = await Challenge.create({name, codeTemplate, description, testCases});
+        const newChallenge = await Challenge.create({name, codeTemplate, description, testCaseIds});
 
         return res.status(201).json({
             id: newChallenge._id,
