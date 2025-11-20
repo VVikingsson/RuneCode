@@ -6,6 +6,11 @@ async function createNewChallenge(req, res, next) {
         if (!name || !codeTemplate || !description || !testCases) {
             return res.status(400).json({message: 'Name or code template or description or test cases are missing.'});
         }
+
+        if (!Array.isArray(testCases) || testCases.length === 0) {
+            return res.status(400).json({ message: 'testCases must be a non-empty array of IDs.' });
+        }
+        
         const newChallenge = await Challenge.create({name, codeTemplate, description, testCases});
 
         return res.status(201).json({
@@ -65,10 +70,23 @@ async function getAllChallenges(req, res, next) {
 
 async function updateChallenge(req, res, next) {
     try {
+        const allowedFields = ['name', 'codeTemplate', 'description', 'testCases'];
+        const updates = {};
+        allowedFields.forEach(field => {
+            if(req.body[field] !== undefined) {
+                if(typeof req.body[field] !== "string" || req.body[field].trim().length === 0) {
+                    throw { status: 400, message: `${field} cannot be empty`};
+                }
+                updates[field] = req.body[field];
+            }
+        }
+    );
+
+    
         const updatedChallenge = await Challenge.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true } // new makes sure the updated testCase is returned
+            { new: true } // new makes sure the updated challenge is returned
         );                                     
         if (!updatedChallenge) {
             return res.status(404).json({ message: 'Challenge not found' });
