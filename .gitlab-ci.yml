@@ -30,11 +30,7 @@ test:
     MONGODB_URI: "mongodb://mongo:27017/serverTestDB"
   script:
     - cd server
-    - npm install
-
-    - npm start &
-    - sleep 5
-    - npx newman run server.postman_collection.json
+    - npm run ci-test
 
 deploy:
   stage: deploy
