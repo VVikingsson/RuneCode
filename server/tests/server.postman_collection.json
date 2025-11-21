@@ -1122,7 +1122,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal([1,2,3,4])\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([1,2,3,4,-7])\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([200,400,201])\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}"
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"def min_val(numbers)\\n\\t#numbers is a comma-separated string\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"min_val('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"python\"}\r\n    ]\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/challenges",
@@ -1167,7 +1167,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal([1,2,3,4])\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([1,2,3,4,-7])\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal([200,400,201])\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}",
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1339,6 +1339,118 @@
 							],
 							"path": [
 								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST execute correct code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 200 for executing code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Check that response contains the expected fields\r",
+									"pm.test(\"Response contains correct message\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"All 3 tests pass.\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\tnums = numbers.split(',')\\n\\treturn min(nums)\",\r\n    \"language\": \"python\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/execute/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"execute",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST execute incorrect code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 200 for executing code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Check that response contains the expected fields\r",
+									"pm.test(\"Response contains correct message\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"Failed: 1 tests passed before min_val('1,2,3,4,-7') returned 1, expected -7.\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\treturn 1\",\r\n    \"language\": \"python\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/execute/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"execute",
 								"{{challengeID}}"
 							]
 						}

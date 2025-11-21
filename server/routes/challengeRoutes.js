@@ -8,5 +8,6 @@ router.get('/:id', challengeController.getChallenge);
 router.get('', challengeController.getAllChallenges);
 router.delete('/:id', challengeController.removeChallenge);
 router.patch('/:id', challengeController.updateChallenge);
+router.post('/execute/:id', challengeController.executeCode);
 
 module.exports = router;

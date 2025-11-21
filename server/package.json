@@ -16,7 +16,8 @@
     "newman-server": "cross-env-shell PORT=3001 \"npm run dropdb && run-p --race start newman-wait\"",
     "newman-wait": "wait-on http://localhost:3001/api/v1 && npm run newman",
     "newman": "newman run ./tests/server.postman_collection.json -e ./tests/vars.postman_environment.json --env-var baseURL=http://localhost:3001/api/v1",
-    "dropdb": "node ./tests/dropdb.js"
+    "dropdb": "node ./tests/dropdb.js",
+    "build-docker": "docker build -t group05_sandbox:latest -f sandboxing/Dockerfile ."
   },
   "repository": {
     "type": "git",
@@ -32,7 +33,8 @@
     "express": "^4.19.2",
     "mongoose": "^8.5.4",
     "morgan": "^1.10.0",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "python-shell": "^5.0.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

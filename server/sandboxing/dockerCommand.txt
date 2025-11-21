@@ -1,0 +1,8 @@
+docker run \
+  --network=none \
+  --read-only \
+  --security-opt no-new-privileges \
+  --cap-drop=ALL \
+  -v "$PWD:/server/sandbox" \
+  your_image_name \
+  python3 script.py
