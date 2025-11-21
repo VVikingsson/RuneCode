@@ -117,7 +117,15 @@ function uploadImage(req, res, next) {
     } catch (err) {
         next(err);
     }
+}
 
+async function getTop100Users(req, res, next) {
+    try {
+        const users = await User.find().sort({points: -1}).limit(100);
+        return res.status(200).json({length: users.length, leaderboard: users})
+    } catch (err) {
+        next(err);
+    }
 }
 
 module.exports = {
@@ -128,4 +136,5 @@ module.exports = {
     getUser,
     updateUser,
     uploadImage,
+    getTop100Users
 }
