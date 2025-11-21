@@ -1,4 +1,30 @@
-const { Challenge, TestCase } = require('../models')
+const { Challenge, TestCase } = require('../models');
+const codeRunner = require('../sandboxing/codeRunner.js');
+const mongoose = require('mongoose');
+
+// Running and testing code
+async function executeCode(req, res, next) {
+    try {
+        const id = req.params.id;
+        const {code, language} = req.body;
+        // Error handling
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({message: 'Bad request: invalid id.'});
+        }
+        if (!code || !language) {
+            return res.status(400).json({message: 'Bad request: code and/or language not provided.'});
+        }
+        const challenge = await Challenge.findOne({_id: id}).populate('testCases'); // populate replaces ids with actual testCase objects
+        if (!challenge) {
+            return res.status(404).json({message: 'Not found: challenge with id not in database'});
+        }
+
+        const {result, passed} = await codeRunner.containerizeAndTestCode(code, challenge.testCases, language);
+        return res.status(200).json({message: result});
+    } catch (err) {
+        next(err);
+    }
+}
 
 async function createNewChallenge(req, res, next) {
     try {
@@ -108,6 +134,7 @@ async function updateChallenge(req, res, next) {
 }
 
 module.exports = {
+    executeCode,
     createNewChallenge,
     getChallenge,
     removeChallenge,
