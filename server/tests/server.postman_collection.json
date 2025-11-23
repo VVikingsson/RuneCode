@@ -1449,7 +1449,7 @@
 					"response": []
 				},
 				{
-					"name": "POST relation test case",
+					"name": "POST related test case",
 					"event": [
 						{
 							"listen": "test",
@@ -1470,7 +1470,9 @@
 									"\r",
 									"pm.test(\"testCase field to not be empty\", function () {\r",
 									"    pm.expect(pm.response.json().testCase).to.not.be.empty;\r",
-									"});"
+									"});\r",
+									"\r",
+									"pm.environment.set(\"relatedTestCaseID\", pm.response.json().testCase);"
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -1511,7 +1513,7 @@
 					"response": []
 				},
 				{
-					"name": "POST bad relation test case",
+					"name": "POST bad related test case",
 					"event": [
 						{
 							"listen": "test",
@@ -1627,6 +1629,60 @@
 					"response": []
 				},
 				{
+					"name": "DELETE related test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"_id\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"name\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"description\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"testCases\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"testCaseId is not present in testCases array\", function () {\r",
+									"    const testCaseId = pm.environment.get(\"relatedTestCaseID\");\r",
+									"    pm.expect(pm.response.json().testCases).to.not.include(testCaseId);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/{{relatedTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases",
+								"{{relatedTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST execute correct code",
 					"event": [
 						{
@@ -1640,7 +1696,7 @@
 									"\r",
 									"// Check that response contains the expected fields\r",
 									"pm.test(\"Response contains correct message\", function () {\r",
-									"    pm.expect(pm.response.json().message).to.include(\"All 4 tests pass.\");\r",
+									"    pm.expect(pm.response.json().message).to.include(\"All 3 tests pass.\");\r",
 									"});\r",
 									""
 								],
@@ -1888,6 +1944,55 @@
 							"path": [
 								"challenges",
 								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE related test case bad ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response message contains 'Bad request'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"Not found:\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/{{relatedTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases",
+								"{{relatedTestCaseID}}"
 							]
 						}
 					},
