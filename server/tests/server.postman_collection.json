@@ -193,6 +193,11 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains leaderboard data\" , function () {\r",
+									"    pm.response.to.have.jsonBody('length');\r",
+									"    pm.response.to.have.jsonBody('leaderboard');\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -211,12 +216,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseURL}}/users",
+							"raw": "{{baseURL}}/leaderboard",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"users"
+								"leaderboard"
 							]
 						}
 					},
@@ -680,6 +685,66 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"expectedOutput\": \"10\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{testCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT testCase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Check correct fields",
+									"pm.test(\"Response contains correct fields\", function () {",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");",
+									"    pm.expect(pm.response.json()).to.have.property(\"input\");",
+									"    pm.expect(pm.response.json()).to.have.property(\"expectedOutput\");",
+									"    pm.expect(pm.response.json()).to.have.property(\"language\");",
+									"});",
+									"// Check that response contains confirmation message",
+									"pm.test(\"Response contains correct message\", function () {",
+									"    pm.expect(pm.response.json().message).to.include(\"Successfully replaced test case.\");",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"chicken_jockey('The Nether')\",\r\n    \"expectedOutput\": \"10\",\r\n    \"language\": \"python\"\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
