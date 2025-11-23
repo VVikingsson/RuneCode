@@ -1449,6 +1449,126 @@
 					"response": []
 				},
 				{
+					"name": "POST relation test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 201 for creating a new test case (relationship)\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// Check that response contains the expected fields\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"challenge\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"testCase\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"testCase field to not be empty\", function () {\r",
+									"    pm.expect(pm.response.json().testCase).to.not.be.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"min_val('56,58,32')\",\r\n    \"expectedOutput\": \"32\",\r\n    \"language\": \"python\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST bad relation test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 for missing fields\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"message field to contain 'Bad request''\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"Bad request\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"flintAndSteel('As a child I yearned for the mines')\",\r\n    \"expectedOutput\": \"Malgosha\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST execute correct code",
 					"event": [
 						{
@@ -1462,7 +1582,7 @@
 									"\r",
 									"// Check that response contains the expected fields\r",
 									"pm.test(\"Response contains correct message\", function () {\r",
-									"    pm.expect(pm.response.json().message).to.include(\"All 3 tests pass.\");\r",
+									"    pm.expect(pm.response.json().message).to.include(\"All 4 tests pass.\");\r",
 									"});\r",
 									""
 								],

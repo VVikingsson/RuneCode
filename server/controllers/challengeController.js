@@ -133,11 +133,45 @@ async function updateChallenge(req, res, next) {
     }
 }
 
+async function addTestCase(req, res, next) {
+    try {
+        const {input, expectedOutput, language} = req.body;
+        if (!input || !expectedOutput || !language) {
+            res.status(400).json({message: 'Bad request: Must provide input, expectedOutput, and language fields.'});
+        }
+        // Create testcase
+        const tc = await TestCase.create({
+            input: input,
+            expectedOutput: expectedOutput,
+            language: language
+        });
+        // Add testcase to challenge and save updates
+        const chall = await Challenge.findById(req.params.id);
+        if (Array.isArray(chall.testCases)) {
+            chall.testCases.push(tc._id);
+        } else {
+            chall.testCases = [tc._id];
+        }
+        chall.save();
+        res.status(201).json({
+            message: 'Successfully added new test case to challenge',
+            challenge: chall.name,
+            testCase: chall.testCases[chall.testCases.length - 1]
+        });
+    } catch (err) {
+        if (err.name === 'CastError') {
+            res.status(400).json({message: 'Bad request: Not a valid MongoDB object ID.'});
+        }
+        next(err);
+    }
+}
+
 module.exports = {
     executeCode,
     createNewChallenge,
     getChallenge,
     removeChallenge,
     getAllChallenges,
-    updateChallenge
+    updateChallenge,
+    addTestCase
 }

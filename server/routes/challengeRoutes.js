@@ -9,5 +9,6 @@ router.get('', challengeController.getAllChallenges);
 router.delete('/:id', challengeController.removeChallenge);
 router.patch('/:id', challengeController.updateChallenge);
 router.post('/execute/:id', challengeController.executeCode);
+router.post('/:id/test-cases', challengeController.addTestCase);
 
 module.exports = router;
