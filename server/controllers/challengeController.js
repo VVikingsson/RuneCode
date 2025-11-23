@@ -161,8 +161,28 @@ async function addTestCase(req, res, next) {
     } catch (err) {
         if (err.name === 'CastError') {
             res.status(400).json({message: 'Bad request: Not a valid MongoDB object ID.'});
+            next(err);
         }
-        next(err);
+    }
+}
+
+async function getRelatedTestCases (req, res, next) {
+    try {
+        const chall = await Challenge.findById(req.params.id).populate('testCases');
+        if (!chall) {
+            res.status(404).json({message: `Not found: no challenge found with id ${req.params.id}`});
+        }
+        const testCases = chall.testCases;
+        console.log(testCases);
+        if (!Array.isArray(testCases) || testCases.length < 1) {
+            res.status(500).json({message: 'No test cases found for this challenge.'}); // Internal server error, because this  
+        }                                                                               // should not be possible.
+        res.status(200).json({testCases: testCases});
+    } catch (err) {
+        if (err.name == 'CastError') {
+            res.status(400).json({message: 'Bad request: Not a valid MongoDB object ID.'});
+            next(err);
+        }
     }
 }
 
@@ -173,5 +193,6 @@ module.exports = {
     removeChallenge,
     getAllChallenges,
     updateChallenge,
-    addTestCase
+    addTestCase,
+    getRelatedTestCases
 }

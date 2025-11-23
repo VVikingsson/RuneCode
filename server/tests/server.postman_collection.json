@@ -1569,6 +1569,64 @@
 					"response": []
 				},
 				{
+					"name": "GET related test cases",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"testCases\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"testCases is an array\", function () {\r",
+									"    pm.expect(Array.isArray(pm.response.json().testCases)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"each testCase has expected fields\", function () {\r",
+									"    pm.response.json().testCases.forEach(tc => {\r",
+									"        pm.expect(tc).to.be.an(\"object\");\r",
+									"        pm.expect(tc).to.have.property(\"input\");\r",
+									"        pm.expect(tc).to.have.property(\"expectedOutput\");\r",
+									"        pm.expect(tc).to.have.property(\"language\");\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST execute correct code",
 					"event": [
 						{
