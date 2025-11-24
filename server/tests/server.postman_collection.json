@@ -3,8 +3,8 @@
 		"_postman_id": "4b94d52d-c9f8-4231-926b-de46326d6f77",
 		"name": "server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "50025142",
-		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=50025142"
+		"_exporter_id": "49945255",
+		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=49945255"
 	},
 	"item": [
 		{
@@ -61,6 +61,107 @@
 							],
 							"path": [
 								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST new admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('id');\r",
+									"    pm.expect(pm.response.json()).to.have.property('name');\r",
+									"    pm.expect(pm.response.json()).to.have.property('email');\r",
+									"    pm.expect(pm.response.json()).to.have.property('isAdmin');\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"adminID\", pm.response.json().id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Sparkles\",\r\n    \"email\": \"sparkles@gmail.com\",\r\n    \"password\": \"testingSparkles\",\r\n    \"isAdmin\": true\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST log in admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains JWT token\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('token');\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identifier\": \"Sparkles\",\r\n    \"password\": \"testingSparkles\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"login"
 							]
 						}
 					},
@@ -501,107 +602,6 @@
 								"123",
 								"image",
 								"123.jpg"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "POST new admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Response contains required fields\", function () {\r",
-									"    pm.expect(pm.response.json()).to.have.property('id');\r",
-									"    pm.expect(pm.response.json()).to.have.property('name');\r",
-									"    pm.expect(pm.response.json()).to.have.property('email');\r",
-									"    pm.expect(pm.response.json()).to.have.property('isAdmin');\r",
-									"});\r",
-									"\r",
-									"pm.environment.set(\"adminID\", pm.response.json().id);\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"Sparkles\",\r\n    \"email\": \"sparkles@gmail.com\",\r\n    \"password\": \"testingSparkles\",\r\n    \"isAdmin\": true\r\n}"
-						},
-						"url": {
-							"raw": "{{baseURL}}/users",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "POST log in admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Response contains JWT token\", function () {\r",
-									"    pm.expect(pm.response.json()).to.have.property('token');\r",
-									"});\r",
-									"\r",
-									"pm.environment.set(\"jwt\", pm.response.json().token);"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"identifier\": \"Sparkles\",\r\n    \"password\": \"testingSparkles\"\r\n}"
-						},
-						"url": {
-							"raw": "{{baseURL}}/users/login",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"users",
-								"login"
 							]
 						}
 					},
@@ -1750,7 +1750,7 @@
 					"response": []
 				},
 				{
-					"name": "GET bad challenge's submissions Copy",
+					"name": "GET bad challenge's submissions",
 					"event": [
 						{
 							"listen": "test",
