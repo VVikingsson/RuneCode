@@ -1,21 +1,23 @@
 const { User } = require('../models');
 const bcrypt = require('bcryptjs'); // library for hashing passwords
+const jwt = require("jsonwebtoken");
 const path = require("path");
 
 async function createNewUser(req, res, next) {
     try {
-        const {username, email, password} = req.body
+        const {username, email, password, isAdmin} = req.body
         if (!username || !email || !password) {
             return res.status(400).json({message: 'Username or email or password is missing'});
         }
         const salt = await bcrypt.genSalt(10);                    // salting is the process of adding a random value to 
         const hashedPassword = await bcrypt.hash(password, salt); // the password before hashing it, making it more secure.
-        const newUser = await User.create({username, email, hashedPassword});
+        const newUser = await User.create({username, email, hashedPassword, isAdmin});
 
         return res.status(201).json({
             id: newUser._id,
             name: newUser.username,
-            email: newUser.email
+            email: newUser.email,
+            isAdmin: newUser.isAdmin
         });
     } catch (err) {
         if (err.code === 11000 && err.keyValue) { // Mongoose error for field already existing
@@ -33,14 +35,31 @@ async function loginUser(req, res, next) {
             return res.status(400).json({message: 'Missing credentials'});
         }
         
-        const user = await identifier.includes('@') ? await User.findByEmail(identifier) : await User.findByUsername(identifier);
+        const user = await identifier.includes('@')
+        ? await User.findOne({email: identifier}).select("+hashedPassword") 
+        : await User.findOne({username: identifier}).select("+hashedPassword");
         const passwordValid = await bcrypt.compare(password, user.hashedPassword);
-        
-        if (passwordValid) {
-            res.status(200).json({message: 'Successfully logged in', user: user});
-        } else {
-            res.status(401).json({message: 'Password is incorrect'});
+
+        if (!user) {
+            res.status(404).json({message: "User not found"});
         }
+        
+        if(!passwordValid) {
+            return res.status(401).json({ message: "Password is incorrect" });
+        }
+
+        const payload = {
+            id: user._id,
+            isAdmin: user.isAdmin 
+        };
+
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2h" });
+
+        return res.status(200).json({
+            message: "Successfully logged in",
+            token: token
+        });
+
     } catch (err) {
         next(err);
     }

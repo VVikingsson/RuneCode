@@ -21,8 +21,14 @@
 									"    pm.response.to.have.status(201);\r",
 									"});\r",
 									"\r",
-									"const response = pm.response.json();\r",
-									"pm.environment.set(\"userID\", response.id);"
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('id');\r",
+									"    pm.expect(pm.response.json()).to.have.property('name');\r",
+									"    pm.expect(pm.response.json()).to.have.property('email');\r",
+									"    pm.expect(pm.response.json()).to.have.property('isAdmin');\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"userID\", pm.response.json().id);"
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -41,7 +47,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"TestUser\",\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"TestingInMyHeart!\"\r\n}",
+							"raw": "{\r\n    \"username\": \"TestUser\",\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"TestingInMyHeart!\",\r\n    \"isAdmin\": false\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -193,6 +199,11 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains leaderboard data\" , function () {\r",
+									"    pm.response.to.have.jsonBody('length');\r",
+									"    pm.response.to.have.jsonBody('leaderboard');\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -211,12 +222,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseURL}}/users",
+							"raw": "{{baseURL}}/leaderboard",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"users"
+								"leaderboard"
 							]
 						}
 					},
@@ -374,6 +385,140 @@
 								"123",
 								"image",
 								"123.jpg"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST new admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('id');\r",
+									"    pm.expect(pm.response.json()).to.have.property('name');\r",
+									"    pm.expect(pm.response.json()).to.have.property('email');\r",
+									"    pm.expect(pm.response.json()).to.have.property('isAdmin');\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"adminID\", pm.response.json().id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Sparkles\",\r\n    \"email\": \"sparkles@gmail.com\",\r\n    \"password\": \"testingSparkles\",\r\n    \"isAdmin\": true\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST log in admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains JWT token\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('token');\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identifier\": \"Sparkles\",\r\n    \"password\": \"testingSparkles\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{adminID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{adminID}}"
 							]
 						}
 					},
@@ -1156,6 +1301,11 @@
 								"key": "Content-Type",
 								"value": "application/json",
 								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -1202,7 +1352,13 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}",
@@ -1256,6 +1412,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1312,6 +1473,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1578,6 +1744,11 @@
 								"key": "Content-Type",
 								"value": "application/json",
 								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -1634,6 +1805,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1717,7 +1893,7 @@
 							"script": {
 								"exec": [
 									"// Check that status code is 404\r",
-									"pm.test(\"Status code is 404 for GET non-existent challenge\", function () {\r",
+									"pm.test(\"Status code is 404 for PATCH non-existent challenge\", function () {\r",
 									"    pm.response.to.have.status(404);\r",
 									"});\r",
 									"\r",
@@ -1741,6 +1917,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1793,6 +1974,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1925,7 +2111,13 @@
 					],
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\"\r\n    ]\r\n}",
@@ -1999,11 +2191,13 @@
 					],
 					"request": {
 						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\"\r\n    ]\r\n}"
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{baseURL}}/testCases/{{badChallengeID}}",
 							"host": [
