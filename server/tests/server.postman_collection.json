@@ -408,7 +408,7 @@
 									"    pm.expect(pm.response.json()).to.have.property('isAdmin');\r",
 									"});\r",
 									"\r",
-									"pm.environment.set(\"adminID\", data.id);\r",
+									"pm.environment.set(\"adminID\", pm.response.json().id);\r",
 									""
 								],
 								"type": "text/javascript",
