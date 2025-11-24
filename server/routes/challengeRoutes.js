@@ -4,11 +4,19 @@ const { verifyJWT, checkAdmin } = require('../middleware.js')
 
 const router = express.Router();
 
-router.post('', verifyJWT, checkAdmin, challengeController.createNewChallenge);
 router.get('/:id', challengeController.getChallenge);
 router.get('', challengeController.getAllChallenges);
+router.get('/:id/test-cases', challengeController.getRelatedTestCases);
+router.get('/:id/test-cases/:testCaseId', challengeController.getRelatedTestCase);
+
+router.delete('/:id/test-cases/:testCaseId', challengeController.removeRelatedTestCase)
 router.delete('/:id', verifyJWT, checkAdmin, challengeController.removeChallenge);
+
 router.patch('/:id', verifyJWT, checkAdmin, challengeController.updateChallenge);
+
+router.post('', verifyJWT, checkAdmin, challengeController.createNewChallenge);
 router.post('/execute/:id', challengeController.executeCode);
+router.post('/:id/test-cases', challengeController.addTestCase);
+
 
 module.exports = router;

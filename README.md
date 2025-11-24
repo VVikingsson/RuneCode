@@ -81,3 +81,17 @@ The system will provide an interactive platform where users can practice their c
 ## Teaser (MS3)
 
 ![Teaser](./images/teaser.png)
+
+## Advanced Feature Proposal
+### Running and evaluating arbitrary code.
+#### Context:
+We are building a coding website similar to codewars or leetcode that will let users hone their coding skills through solving challenges. In our minimum viable product, the user can write Javascript into a window, that then runs in the front-end. The window is a simple html \<input\> tag, without the look and feel of a classic IDE (i.e. line numbers and syntax highlighting). After running the code, the user is informed whether their code was correct or not.
+
+#### Feature
+In this advanced feature, the user will be able to choose between two programming languages, Python and Javascript. The app will automatically detect the language and provide syntax highlighting as well as line numbers. The code will not run in the browser anymore, but in a secure container in the back-end. In addition to knowing whether the code ran successfully or not, the user will know how many tests the code passed, as well as what test the code failed at, in case it did.
+
+#### Front-end extension:
+The coding window will provide syntax highlighting, line numbers, and automatic indentation, giving an authentic coding experience to the user.
+
+#### Back-end extension:
+This feature requires that we use docker to containerize the execution of the arbitrary code, as well as communicate with the container through stdout and stdin. Algorithmic thinking is needed to solve issues such as “what if the user adds a load of print commands, messing with the stdout stream” or “what if the user writes while True: continue, and sends the code for execution?”.

@@ -69,9 +69,9 @@ async function getChallenge(req, res, next) {
     try {
         const challenge = await Challenge.findById(req.params.id);
         if (!challenge) {
-            res.status(404).json({message: "No challenge found with this ID"})
+            return res.status(404).json({message: "No challenge found with this ID"})
         }
-    res.status(200).json(challenge);
+    return res.status(200).json(challenge);
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Invalid ID format'});
@@ -84,9 +84,9 @@ async function removeChallenge(req, res, next) {
     try {
         const deletedChallenge = await Challenge.findByIdAndDelete(req.params.id);
         if (!deletedChallenge) {
-            res.status(404).json({message: "No challenge found with this id"});
+            return res.status(404).json({message: "No challenge found with this id"});
         }
-        res.status(200).json({message: `Successfully deleted challenge ${deletedChallenge.name}`});
+        return res.status(200).json({message: `Successfully deleted challenge ${deletedChallenge.name}`});
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Invalid ID format'});
@@ -98,7 +98,7 @@ async function removeChallenge(req, res, next) {
 async function getAllChallenges(req, res, next) {
     try {
         const challenges = await Challenge.find();
-        res.status(200).json(challenges);
+        return res.status(200).json(challenges);
     } catch (err) {
         next(err);
     }
@@ -127,7 +127,116 @@ async function updateChallenge(req, res, next) {
         if (!updatedChallenge) {
             return res.status(404).json({ message: 'Challenge not found' });
         }
-        res.status(200).json({ message: 'Challenge updated', challenge: updatedChallenge });
+        return res.status(200).json({ message: 'Challenge updated', challenge: updatedChallenge });
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function addTestCase(req, res, next) {
+    try {
+        const {input, expectedOutput, language} = req.body;
+        if (!input || !expectedOutput || !language) {
+            return res.status(400).json({message: 'Bad request: Must provide input, expectedOutput, and language fields.'});
+        }
+        // Create testcase
+        const tc = await TestCase.create({
+            input: input,
+            expectedOutput: expectedOutput,
+            language: language
+        });
+        // Add testcase to challenge and save updates
+        const chall = await Challenge.findById(req.params.id);
+        if (Array.isArray(chall.testCases)) {
+            chall.testCases.push(tc._id);
+        } else {
+            chall.testCases = [tc._id];
+        }
+        chall.save();
+        return res.status(201).json({
+            message: 'Successfully added new test case to challenge',
+            challenge: chall.name,
+            testCase: chall.testCases[chall.testCases.length - 1]
+        });
+    } catch (err) {
+        if (err.name === 'CastError') {
+            return res.status(400).json({message: 'Bad request: Not a valid MongoDB object ID.'});
+            next(err);
+        }
+    }
+}
+
+async function getRelatedTestCases (req, res, next) {
+    try {
+        const chall = await Challenge.findById(req.params.id).populate('testCases');
+        if (!chall) {
+            return res.status(404).json({message: `Not found: no challenge found with id ${req.params.id}`});
+        }
+        const testCases = chall.testCases;
+        if (!Array.isArray(testCases) || testCases.length < 1) {
+            return res.status(500).json({message: 'No test cases found for this challenge.'}); // Internal server error, because this  
+        }                                                                               // should not be possible.
+        return res.status(200).json({testCases: testCases});
+    } catch (err) {
+        if (err.name == 'CastError') {
+            return res.status(400).json({message: 'Bad request: Not a valid MongoDB object ID.'});
+            next(err);
+        }
+    }
+}
+
+async function removeRelatedTestCase (req, res, next) {
+    try {
+        const {id, testCaseId} = req.params;
+        for (const objectId of [id, testCaseId]) {
+            if (!mongoose.isValidObjectId(objectId)) {
+                return res.status(400).json({
+                    message: `Bad request: Not a valid MongoDB object ID: ${objectId}`
+                });
+            }
+        }
+        const updatedChall = await Challenge.findByIdAndUpdate(id, 
+            {$pull: {testCases: testCaseId}},
+            {new: true}
+        );
+        if (!updatedChall) {
+            return res.status(404).json({message: `Not found: no challenge found with id ${id}`});
+        }
+        return res.status(200).json(updatedChall);
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function getRelatedTestCase(req, res, next) {
+    try {
+        const {id, testCaseId} = req.params;
+        for (const objectId of [id, testCaseId]) {
+            if (!mongoose.isValidObjectId(objectId)) {
+                return res.status(400).json({
+                    message: `Bad request: Not a valid MongoDB object ID: ${objectId}`
+                });
+            }
+        }
+        const chall = await Challenge.findById(id).populate('testCases');
+        if (!chall) {
+            return res.status(404).json({
+                message: `Not found: no challenge found with id ${id}`
+            });
+        }
+        let testCase;
+        chall.testCases.forEach(tc => {
+            if (tc._id.toString() === testCaseId) {
+                console.log('found');
+                return testCase = tc;
+            }
+        })
+        if (!testCase) {
+            return res.status(404).json({
+                message: `Not found: no related test case found with id ${testCaseId}`
+            });
+        }
+        res.status(200).json(testCase);
     } catch (err) {
         next(err);
     }
@@ -139,5 +248,9 @@ module.exports = {
     getChallenge,
     removeChallenge,
     getAllChallenges,
-    updateChallenge
+    updateChallenge,
+    addTestCase,
+    getRelatedTestCases,
+    removeRelatedTestCase,
+    getRelatedTestCase
 }
