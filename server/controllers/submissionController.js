@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 async function createSubmission(req, res, next) {
     try {
         const {title, authorNote, challengeId, authorId} = req.body;
+        if (!challengeId || !authorId ) {
+            return res.status(400).json({message: 'Bad request: challenge ID or author ID not provided.'});
+        }
         for (const objectId of [challengeId, authorId]) {
             if (!mongoose.isValidObjectId(objectId)) {
                 return res.status(400).json({
@@ -21,10 +24,10 @@ async function createSubmission(req, res, next) {
             title: title,
             authorNote: authorNote,
             author: authorId,
-            challengeId: challengeId
+            challenge: challengeId
         });
 
-        res.status(200).json(newSubmission);
+        res.status(201).json(newSubmission);
     } catch(err) {
         next(err);
     }

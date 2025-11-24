@@ -6,7 +6,7 @@ const Challenge = require("./Challenge.js");
 const TestCase = require("./TestCase.js");
 const Submission = require("./Submission.js");
 const Workspace = require('./Workspace.js')
-
+const DraftSubmission = require("./DraftSubmission");
 
 module.exports = {
     Example,
@@ -14,5 +14,6 @@ module.exports = {
     Challenge,
     TestCase,
     Submission,
-    Workspace
+    Workspace,
+    DraftSubmission,
 }
