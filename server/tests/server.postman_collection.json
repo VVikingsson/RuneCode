@@ -28,7 +28,7 @@
 									"    pm.expect(pm.response.json()).to.have.property('isAdmin');\r",
 									"});\r",
 									"\r",
-									"pm.environment.set(\"userID\", data.id);"
+									"pm.environment.set(\"userID\", pm.response.json().id);"
 								],
 								"type": "text/javascript",
 								"packages": {},
