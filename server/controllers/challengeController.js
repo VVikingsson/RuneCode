@@ -89,7 +89,26 @@ async function getChallenge(req, res, next) {
         if (!challenge) {
             return res.status(404).json({message: "No challenge found with this ID"})
         }
-    return res.status(200).json(challenge);
+    return res.status(200).json({
+        challenge: challenge,
+        links: [
+            {   // Follows RFC 5988 standard (something I found online)
+                rel: "execute",     // "relation": how is this resource linked to the current context  
+                href: "/api/v1/challenges/execute/:id", // link
+                title: "Execute code for this challenge"
+            },
+            {
+                rel: "submissions",     
+                href: "/api/v1/challenges/:id/submissions",
+                title: "List submissions related to this challenge"
+            },
+            {
+                rel: "home",   
+                href: "/api/v1/",
+                title: "API root"
+            }
+        ]
+    });
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Invalid ID format'});
