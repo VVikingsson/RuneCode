@@ -155,7 +155,7 @@ async function getSubmissions(req, res, next) {
             .sort({createdAt: -1}) // date of creation
             .populate('challenge', 'name')
             .exec();
-        //form the json where the key is the challenge id and the value is an array of related submissions
+        //form the list of jsons with the submission details
         const finalObject = submissions.map((submission) => {
             return {
                 submissionId: submission._id,
