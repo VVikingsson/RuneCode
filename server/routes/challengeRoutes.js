@@ -5,7 +5,7 @@ const { verifyJWT, checkAdmin } = require('../middleware.js')
 const router = express.Router();
 
 router.get('/:id', challengeController.getChallenge);
-router.get('/:id/submissions', challengeController.getRelatedSubmissions); //TEST
+router.get('/:id/submissions', challengeController.getRelatedSubmissions);
 router.get('', challengeController.getAllChallenges);
 router.get('/:id/test-cases', challengeController.getRelatedTestCases);
 router.get('/:id/test-cases/:testCaseId', challengeController.getRelatedTestCase);
