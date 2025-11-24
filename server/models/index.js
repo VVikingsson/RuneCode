@@ -5,12 +5,14 @@ const User = require("./User.js");
 const Challenge = require("./Challenge.js");
 const TestCase = require("./TestCase.js");
 const Submission = require("./Submission.js");
+const Workspace = require('./Workspace.js')
 
 
 module.exports = {
     Example,
-    User ,
+    User,
     Challenge,
     TestCase,
-    Submission
+    Submission,
+    Workspace
 }
