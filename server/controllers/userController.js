@@ -147,6 +147,37 @@ async function getTop100Users(req, res, next) {
     }
 }
 
+async function getUserRank(req, res, next) {
+    try {
+        const userId = req.params.id;
+
+        const user = await User.findById(userId).select("+points");
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const higherRanks = await User.countDocuments({
+            points: { $gt: user.points }
+        });
+
+        const rank = higherRanks + 1;
+
+        return res.status(200).json({
+            id: user._id,
+            username: user.username,
+            points: user.points,
+            rank: rank
+        });
+
+    } catch (err) {
+        if (err.name === 'CastError') {
+            return res.status(400).json({ message: 'Invalid id format' });
+        }
+        next(err);
+    }
+}
+
+
 module.exports = {
     createNewUser,
     loginUser,
@@ -155,5 +186,6 @@ module.exports = {
     getUser,
     updateUser,
     uploadImage,
-    getTop100Users
+    getTop100Users,
+    getUserRank
 }
