@@ -16,6 +16,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"exec": [
 									"// Check status code\r",
 									"pm.test(\"Status code is 201\", function () {\r",
 									"    pm.response.to.have.status(201);\r",
@@ -2218,73 +2219,6 @@
 								"type": "text"
 							}
 						],
-[
-								"{{baseURL}}"
-							],
-							"path": [
-								"testCases",
-								"{{badChallengeID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE bad format",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"// Generate a random string of letters/numbers that is NOT a valid MongoDB ObjectId\r",
-									"function generateRandomInvalidId(length = 10) {\r",
-									"    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
-									"    let result = '';\r",
-									"    for (let i = 0; i < length; i++) {\r",
-									"        result += chars[Math.floor(Math.random() * chars.length)];\r",
-									"    }\r",
-									"    return result;\r",
-									"}\r",
-									"\r",
-									"// Set environment variable for Postman\r",
-									"pm.environment.set(\"badChallengeID\", generateRandomInvalidId());\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 400\r",
-									"pm.test(\"Status code is 400 for DELETE challenge with invalid ID format\", function () {\r",
-									"    pm.response.to.have.status(400);\r",
-									"});\r",
-									"\r",
-									"const data27 = pm.response.json();\r",
-									"\r",
-									"// Check error message\r",
-									"pm.test(\"Error message indicates invalid ID format\", function () {\r",
-									"    pm.expect(data27).to.have.property(\"message\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\"\r\n    ]\r\n}"
-						},
 						"url": {
 							"raw": "{{baseURL}}/testCases/{{badChallengeID}}",
 							"host": [
