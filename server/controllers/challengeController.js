@@ -1,4 +1,4 @@
-const { Challenge, TestCase } = require('../models');
+const { Challenge, TestCase, DraftSubmission, Submission} = require('../models');
 const codeRunner = require('../sandboxing/codeRunner.js');
 const mongoose = require('mongoose');
 
@@ -6,13 +6,19 @@ const mongoose = require('mongoose');
 async function executeCode(req, res, next) {
     try {
         const id = req.params.id;
-        const {code, language} = req.body;
+        //later add code hash check so that a user cannot submit two identical submissions
+        // Submission.findBy(authorID).where(hash(code) == hash_code)
+        const {code, language, authorId} = req.body;
         // Error handling
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({message: 'Bad request: invalid id.'});
+        for (const objectId of [id, authorId]) {
+            if (!mongoose.isValidObjectId(objectId)) {
+                return res.status(400).json({
+                    message: `Bad request: Not a valid MongoDB object ID: ${objectId}`
+                });
+            }
         }
-        if (!code || !language) {
-            return res.status(400).json({message: 'Bad request: code and/or language not provided.'});
+        if (!code || !language || !authorId ) {
+            return res.status(400).json({message: 'Bad request: code and/or language and/or author ID not provided.'});
         }
         const challenge = await Challenge.findOne({_id: id}).populate('testCases'); // populate replaces ids with actual testCase objects
         if (!challenge) {
@@ -20,7 +26,19 @@ async function executeCode(req, res, next) {
         }
 
         const {result, passed} = await codeRunner.containerizeAndTestCode(code, challenge.testCases, language);
-        return res.status(200).json({message: result});
+        if (passed){
+            //create a submission draft
+            const draftSubmission = await DraftSubmission.findOneAndReplace(
+                {author: authorId, challenge: id},
+                {code : code,
+                author : authorId,
+                challenge : id},
+                {upsert: true, new: true},
+            )
+            return res.status(201).json({message: result, newSubmission: draftSubmission});
+        } else{
+            return res.status(200).json({message: result, passed: passed});
+        }
     } catch (err) {
         next(err);
     }
@@ -109,26 +127,40 @@ async function updateChallenge(req, res, next) {
         const allowedFields = ['name', 'codeTemplate', 'description', 'testCases'];
         const updates = {};
         allowedFields.forEach(field => {
-            if(req.body[field] !== undefined) {
-                if(typeof req.body[field] !== "string" || req.body[field].trim().length === 0) {
-                    throw { status: 400, message: `${field} cannot be empty`};
+                if (req.body[field] !== undefined) {
+                    if (typeof req.body[field] !== "string" || req.body[field].trim().length === 0) {
+                        throw {status: 400, message: `${field} cannot be empty`};
+                    }
+                    updates[field] = req.body[field];
                 }
-                updates[field] = req.body[field];
             }
-        }
-    );
+        );
 
-    
+
         const updatedChallenge = await Challenge.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true } // new makes sure the updated challenge is returned
-        );                                     
+            {new: true} // new makes sure the updated challenge is returned
+        );
         if (!updatedChallenge) {
-            return res.status(404).json({ message: 'Challenge not found' });
+            return res.status(404).json({message: 'Challenge not found'});
         }
-        res.status(200).json({ message: 'Challenge updated', challenge: updatedChallenge });
+        res.status(200).json({message: 'Challenge updated', challenge: updatedChallenge});
     } catch (err) {
+        next(err);
+    }
+}
+
+async function getRelatedSubmissions(req, res, next) {
+    try {
+        const challengeId = req.params.id;
+        if (!mongoose.isValidObjectId(challengeId)) {
+            return res.status(400).json({
+                message: `Bad request: Not a valid MongoDB object ID: ${challengeId}`})
+        }
+        const submissions = await Submission.find({challenge: challengeId});
+        res.status(200).json(submissions);
+    } catch(err) {
         next(err);
     }
 }
@@ -139,5 +171,6 @@ module.exports = {
     getChallenge,
     removeChallenge,
     getAllChallenges,
-    updateChallenge
+    updateChallenge,
+    getRelatedSubmissions,
 }
