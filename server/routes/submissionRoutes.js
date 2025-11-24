@@ -1,5 +1,5 @@
 const express = require('express');
-const { submissionController, challengeController} = require('../controllers');
+const { submissionController } = require('../controllers');
 
 const router = express.Router();
 router.post('/', submissionController.createSubmission);
