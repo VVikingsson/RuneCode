@@ -2,6 +2,7 @@ const { User, Submission } = require('../models');
 const bcrypt = require('bcryptjs'); // library for hashing passwords
 const jwt = require("jsonwebtoken");
 const path = require("path");
+const mongoose = require('mongoose');
 
 async function createNewUser(req, res, next) {
     try {
@@ -147,16 +148,22 @@ async function getTop100Users(req, res, next) {
     }
 }
 
-async function getSubmissions(req, res, next) {
+async function getRelatedSubmissions(req, res, next) {
     try{
         const userId = req.params.id;
+        if (!userId) {
+            return res.status(400).json({message: 'Bad request: must provide user ID'});
+        }
+        if (!mongoose.isValidObjectId(userId)) {
+            return res.status(400).json({message: `Bad request: not a valid MongoDB object ID: ${userId}`})
+        }
         const submissions = await Submission
             .find({author: userId}, 'title challenge') //selecting fields title and challenge
             .sort({createdAt: -1}) // date of creation
             .populate('challenge', 'name')
             .exec();
         //form the list of jsons with the submission details
-        const finalObject = submissions.map((submission) => {
+        const responseBody = submissions.map((submission) => {
             return {
                 submissionId: submission._id,
                 challengeId: submission.challenge._id,
@@ -164,7 +171,7 @@ async function getSubmissions(req, res, next) {
                 submissionTitle: submission.title,
             };
         })
-        return res.status(200).json(finalObject);
+        return res.status(200).json(responseBody);
     } catch(err){
         next(err);
     }
@@ -180,5 +187,5 @@ module.exports = {
     updateUser,
     uploadImage,
     getTop100Users,
-    getSubmissions,
+    getRelatedSubmissions,
 }

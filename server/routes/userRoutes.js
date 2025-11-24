@@ -15,6 +15,6 @@ router.patch('/:id', userController.updateUser);
 // from html <input> tag
 router.post('/:id/image', upload.single('profileImage'), userController.uploadImage);
 // get all submissions of a specific user with related challenges
-router.get(':id/submissions', userController.getSubmissions);
+router.get('/:id/submissions', userController.getRelatedSubmissions);
 
 module.exports = router;
