@@ -62,14 +62,14 @@ Open the `server` and `client` in separate VSCode workspaces or open the combine
 
 ### Purpose
 
-The system will provide an interactive platform where users can practice their coding skills directly in the browser and get instant feedback on their solutions. Users are motivated to keep practicing by comparing to others' solutions and climbing the leaderboard. The competetive user can queue up for a versus session against another user in real time.
+The system will provide an interactive platform where users can practice their coding skills directly in the browser and get instant feedback on their solutions. Users are motivated to keep practicing by comparing to others' solutions and climbing the leaderboard by gaining points.
 
 ### Pages
 
 * Home: The name of the app is clearly visible. The user can choose what activity to do: challenge (opens a list of challenges) or versus session (choose a difficulty). All other pages are navigable to.
 * Challenges: A list of clickable challenges.
-* Challenge: A title, instructions, and a coding input window is visible. The user can write their code and submit it for validation. 
-* Versus Session: This is a realtime duel between two players. A random challenge within the desired difficulty is chosen. The first player to complete the challenge wins, and the players are revealed to each other.
+* Challenge: A title, instructions, and a coding input window is visible. The user can write their code and submit it for validation. Can also navigate to challenge's submissions.
+* Challenge submissions: A list of all submissions for a given challenge, each clickable to navigate to the submissions page. Can also navigate back to challenge page.
 * Leaderboard: A leaderboard based on users points/score/rank is displayed. The top X users are shown, as well as your own position. Usernames are clickable and navigates to the profile.
 * User profile: Shows user stats and allows to navigate to their submissions and challenges that they completed.
 * Submission: Displays the code and the note of the author of the submission. It is also clear what challenge it was submitted for, and whether it passed or failed.
