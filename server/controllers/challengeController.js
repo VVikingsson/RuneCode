@@ -192,9 +192,9 @@ async function removeRelatedTestCase (req, res, next) {
             if (!mongoose.isValidObjectId(objectId)) {
                 return res.status(400).json({
                     message: `Bad request: Not a valid MongoDB object ID: ${objectId}`
-        });
-    }
-}
+                });
+            }
+        }
         const updatedChall = await Challenge.findByIdAndUpdate(id, 
             {$pull: {testCases: testCaseId}},
             {new: true}
@@ -203,6 +203,40 @@ async function removeRelatedTestCase (req, res, next) {
             return res.status(404).json({message: `Not found: no challenge found with id ${id}`});
         }
         return res.status(200).json(updatedChall);
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function getRelatedTestCase(req, res, next) {
+    try {
+        const {id, testCaseId} = req.params;
+        for (const objectId of [id, testCaseId]) {
+            if (!mongoose.isValidObjectId(objectId)) {
+                return res.status(400).json({
+                    message: `Bad request: Not a valid MongoDB object ID: ${objectId}`
+                });
+            }
+        }
+        const chall = await Challenge.findById(id).populate('testCases');
+        if (!chall) {
+            return res.status(404).json({
+                message: `Not found: no challenge found with id ${id}`
+            });
+        }
+        let testCase;
+        chall.testCases.forEach(tc => {
+            if (tc._id.toString() === testCaseId) {
+                console.log('found');
+                return testCase = tc;
+            }
+        })
+        if (!testCase) {
+            return res.status(404).json({
+                message: `Not found: no related test case found with id ${testCaseId}`
+            });
+        }
+        res.status(200).json(testCase);
     } catch (err) {
         next(err);
     }
@@ -217,5 +251,6 @@ module.exports = {
     updateChallenge,
     addTestCase,
     getRelatedTestCases,
-    removeRelatedTestCase
+    removeRelatedTestCase,
+    getRelatedTestCase
 }
