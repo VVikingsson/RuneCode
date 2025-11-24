@@ -3,8 +3,8 @@
 		"_postman_id": "4b94d52d-c9f8-4231-926b-de46326d6f77",
 		"name": "server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "50025142",
-		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=50025142"
+		"_exporter_id": "49945255",
+		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=49945255"
 	},
 	"item": [
 		{
@@ -1775,13 +1775,18 @@
 									"const data18 = pm.response.json();\r",
 									"\r",
 									"// Check that response contains the expected fields\r",
-									"pm.test(\"Response contains challenge fields\", function () {\r",
-									"    pm.expect(data18).to.have.property(\"_id\");\r",
-									"    pm.expect(data18).to.have.property(\"name\");\r",
-									"    pm.expect(data18).to.have.property(\"codeTemplate\");\r",
-									"    pm.expect(data18).to.have.property(\"description\");\r",
-									"    pm.expect(data18).to.have.property(\"testCases\");\r",
+									"pm.test(\"Response contains correct fields\", function () {\r",
+									"    pm.expect(data18).to.have.property(\"challenge\");\r",
+									"    pm.expect(data18).to.have.property(\"links\");\r",
 									"});\r",
+									"\r",
+									"pm.test(\"Challenge contains expected fields\", function () {\r",
+									"    pm.expect(data18.challenge).to.have.property(\"_id\");\r",
+									"    pm.expect(data18.challenge).to.have.property(\"name\");\r",
+									"    pm.expect(data18.challenge).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(data18.challenge).to.have.property(\"description\");\r",
+									"    pm.expect(data18.challenge).to.have.property(\"testCases\");    \r",
+									"})\r",
 									""
 								],
 								"type": "text/javascript",
@@ -2360,65 +2365,6 @@
 					"response": []
 				},
 				{
-					"name": "GET bad challenge",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 404\r",
-									"pm.test(\"Status code is 404 for GET non-existent challenge\", function () {\r",
-									"    pm.response.to.have.status(404);\r",
-									"});\r",
-									"\r",
-									"const data22 = pm.response.json();\r",
-									"\r",
-									"// Check error message\r",
-									"pm.test(\"Error message indicates challenge not found\", function () {\r",
-									"    pm.expect(data22).to.have.property(\"message\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseURL}}/testCases/{{challengeID}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"testCases",
-								"{{challengeID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "GET bad format",
 					"event": [
 						{
@@ -2471,12 +2417,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/testCases/{{badChallengeID}}",
+							"raw": "{{baseURL}}/challenges/{{badChallengeID}}",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"testCases",
+								"challenges",
 								"{{badChallengeID}}"
 							]
 						}
@@ -3062,6 +3008,65 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET missing challenge",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 404\r",
+									"pm.test(\"Status code is 404 for GET non-existent challenge\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data22 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates challenge not found\", function () {\r",
+									"    pm.expect(data22).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
 								"type": "text"
 							}
 						],
