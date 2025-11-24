@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-function authMiddleware(req, res, next) {
+function verifyJWT(req, res, next) {
     const authHeader = req.headers['authorization'];
     if (!authHeader) return res.status(401).json({ message: 'No token provided' });
 
@@ -16,7 +16,7 @@ function authMiddleware(req, res, next) {
     }
 }
 
-function adminMiddleware(req, res, next) {
+function checkAdmin(req, res, next) {
     if (!req.user || !req.user.isAdmin) {
         return res.status(403).json({ message: 'Admin access required' });
     }
@@ -24,6 +24,6 @@ function adminMiddleware(req, res, next) {
 }
 
 module.exports = { 
-    authMiddleware,
-    adminMiddleware 
+    verifyJWT,
+    checkAdmin 
     };
