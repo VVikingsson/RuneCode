@@ -179,8 +179,8 @@ async function addTestCase(req, res, next) {
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Bad request: Not a valid MongoDB object ID.'});
-            next(err);
         }
+        next(err);
     }
 }
 
