@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Submission } = require('../models');
 const bcrypt = require('bcryptjs'); // library for hashing passwords
 const jwt = require("jsonwebtoken");
 const path = require("path");
@@ -147,6 +147,30 @@ async function getTop100Users(req, res, next) {
     }
 }
 
+async function getSubmissions(req, res, next) {
+    try{
+        const userId = req.params.id;
+        const submissions = await Submission
+            .find({author: userId}, 'title challenge') //selecting fields title and challenge
+            .sort({createdAt: -1}) // date of creation
+            .populate('challenge', 'name')
+            .exec();
+        //form the json where the key is the challenge id and the value is an array of related submissions
+        const finalObject = submissions.map((submission) => {
+            return {
+                submissionId: submission._id,
+                challengeId: submission.challenge._id,
+                challengeName: submission.challenge.name,
+                submissionTitle: submission.title,
+            };
+        })
+        return res.status(200).json(finalObject);
+    } catch(err){
+        next(err);
+    }
+}
+
+
 module.exports = {
     createNewUser,
     loginUser,
@@ -155,5 +179,6 @@ module.exports = {
     getUser,
     updateUser,
     uploadImage,
-    getTop100Users
+    getTop100Users,
+    getSubmissions,
 }
