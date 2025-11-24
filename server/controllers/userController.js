@@ -35,7 +35,9 @@ async function loginUser(req, res, next) {
             return res.status(400).json({message: 'Missing credentials'});
         }
         
-        const user = await identifier.includes('@') ? await User.findOne({email: identifier}).select('+hashedPassword') : await User.findOne({username: identifier}).select('+hashedPassword');
+        const user = await identifier.includes('@')
+        ? await User.findOne({email: identifier}).select("+hashedPassword") 
+        : await User.findOne({username: identifier}).select("+hashedPassword");
         const passwordValid = await bcrypt.compare(password, user.hashedPassword);
 
         if (!user) {
