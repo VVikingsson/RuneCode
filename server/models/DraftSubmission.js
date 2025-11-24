@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {Schema} = require("mongoose");
 
-const PendingSubmissionSchema = new mongoose.Schema({
+const DraftSubmissionSchema = new mongoose.Schema({
     code: {type: String, required: true},
     author: {type: Schema.Types.ObjectId, ref: 'User', required: true},
     challenge: {type: Schema.Types.ObjectId, ref: 'Challenge', required: true},
@@ -9,4 +9,4 @@ const PendingSubmissionSchema = new mongoose.Schema({
 }, );
 
 
-module.exports = mongoose.model('pendingSubmission', PendingSubmissionSchema);
+module.exports = mongoose.model('DraftSubmission', DraftSubmissionSchema);
