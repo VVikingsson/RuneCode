@@ -16,13 +16,27 @@
 						{
 							"listen": "test",
 							"script": {
-								"exec": [
+									"// Check status code\r",
 									"pm.test(\"Status code is 201\", function () {\r",
 									"    pm.response.to.have.status(201);\r",
 									"});\r",
 									"\r",
-									"const response = pm.response.json();\r",
-									"pm.environment.set(\"userID\", response.id);"
+									"// Parse response\r",
+									"const data = pm.response.json();\r",
+									"\r",
+									"// Check required fields\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(data).to.have.property('id');\r",
+									"    pm.expect(data).to.have.property('name');\r",
+									"    pm.expect(data).to.have.property('email');\r",
+									"    pm.expect(data).to.have.property('isAdmin');\r",
+									"});\r",
+									"\r",
+									"// Save the user ID to environment variable\r",
+									"pm.environment.set(\"userID\", data.id);\r",
+									"\r",
+									"// Optional: save username for future use\r",
+									"pm.environment.set(\"username\", data.name);"
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -41,7 +55,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"TestUser\",\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"TestingInMyHeart!\"\r\n}",
+							"raw": "{\r\n    \"username\": \"TestUser\",\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"TestingInMyHeart!\",\r\n    \"isAdmin\": false\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -193,6 +207,11 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains leaderboard data\" , function () {\r",
+									"    pm.response.to.have.jsonBody('length');\r",
+									"    pm.response.to.have.jsonBody('leaderboard');\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -211,12 +230,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseURL}}/users",
+							"raw": "{{baseURL}}/leaderboard",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"users"
+								"leaderboard"
 							]
 						}
 					},
@@ -374,6 +393,152 @@
 								"123",
 								"image",
 								"123.jpg"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST new admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check status code\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Parse response\r",
+									"const data = pm.response.json();\r",
+									"\r",
+									"// Check required fields\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(data).to.have.property('id');\r",
+									"    pm.expect(data).to.have.property('name');\r",
+									"    pm.expect(data).to.have.property('email');\r",
+									"    pm.expect(data).to.have.property('isAdmin');\r",
+									"});\r",
+									"\r",
+									"// Save the user ID to environment variable\r",
+									"pm.environment.set(\"adminID\", data.id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Sparkles\",\r\n    \"email\": \"sparkles@gmail.com\",\r\n    \"password\": \"testingSparkles\",\r\n    \"isAdmin\": true\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST log in admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse response\r",
+									"const data = pm.response.json();\r",
+									"\r",
+									"// Check that token exists\r",
+									"pm.test(\"Response contains JWT token\", function () {\r",
+									"    pm.expect(data).to.have.property('token');\r",
+									"});\r",
+									"\r",
+									"// Save JWT token to environment\r",
+									"pm.environment.set(\"jwt\", data.token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identifier\": \"Sparkles\",\r\n    \"password\": \"testingSparkles\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{adminID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{adminID}}"
 							]
 						}
 					},
@@ -1156,6 +1321,11 @@
 								"key": "Content-Type",
 								"value": "application/json",
 								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -1202,7 +1372,13 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}",
@@ -1256,6 +1432,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1312,6 +1493,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1578,6 +1764,11 @@
 								"key": "Content-Type",
 								"value": "application/json",
 								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -1634,6 +1825,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1717,7 +1913,7 @@
 							"script": {
 								"exec": [
 									"// Check that status code is 404\r",
-									"pm.test(\"Status code is 404 for GET non-existent challenge\", function () {\r",
+									"pm.test(\"Status code is 404 for PATCH non-existent challenge\", function () {\r",
 									"    pm.response.to.have.status(404);\r",
 									"});\r",
 									"\r",
@@ -1741,6 +1937,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1793,6 +1994,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
 								"type": "text"
 							}
 						],
@@ -1925,7 +2131,13 @@
 					],
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"testCases\": [\r\n        \"691b7ddd238485fead065d1b\"\r\n    ]\r\n}",
@@ -1938,6 +2150,75 @@
 						"url": {
 							"raw": "{{baseURL}}/testCases/{{badChallengeID}}",
 							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"testCases",
+								"{{badChallengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE bad format",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random string of letters/numbers that is NOT a valid MongoDB ObjectId\r",
+									"function generateRandomInvalidId(length = 10) {\r",
+									"    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars[Math.floor(Math.random() * chars.length)];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"// Set environment variable for Postman\r",
+									"pm.environment.set(\"badChallengeID\", generateRandomInvalidId());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 400\r",
+									"pm.test(\"Status code is 400 for DELETE challenge with invalid ID format\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const data27 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates invalid ID format\", function () {\r",
+									"    pm.expect(data27).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+[
 								"{{baseURL}}"
 							],
 							"path": [
