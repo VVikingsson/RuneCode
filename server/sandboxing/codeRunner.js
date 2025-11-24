@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('path');
-const { spawn } = require("child_process");
-const { builtinModules } = require('node:module');
+const { spawn } = require("child_process"); // child_process is a module that allows us to run shell commands through js
+// nodejs.org/api/child_process.html
 
 async function devTest() {
     const userCode = `def add(x,y):
@@ -59,7 +59,8 @@ async function containerizeAndTestCode(userCode, testCases, language) {
 }
 
 async function runInContainer(tempDir, fileName, testCaseInput, runtime) {
-    // Return a promise that will eventually be resolved
+    // The return value of this function will be a 'pending promise' untill it gets resolved.
+    // Resolving the promise provides the result asynchronously, similar to returning a value in a synchronous function.
     return new Promise((resolve, reject) => {
 
         // Run the container
@@ -67,28 +68,32 @@ async function runInContainer(tempDir, fileName, testCaseInput, runtime) {
             "run",
             "--rm",
             "--network=none",
-            "-v", `${tempDir}:/sandbox`, // Mount the volume (add folder to container)
-            "-i", // For ensuring stdin stays open until end()
+            "-v", `${tempDir}:/sandbox`, // Make the folder at tempDir appear in the container at /sandbox.
+            "-i", // Keeps stdin open so we can write input to the container
             "group05_sandbox:latest",    // Choose image (this is our image resulting from docker build on our Dockerfile)
             runtime,
-            `/sandbox/${fileName}` // Execute the file
+            `/sandbox/${fileName}` // Execute the python/js file
         ]);
 
-        // Collect output
+        // Variables for collecting output
         let containerOutput = "";
         let containerError = "";
 
+        // On the event that something is printed to the standard output stream in this process, save it to our variables
         process.stdout.on("data", data => containerOutput += data.toString());
         process.stderr.on("data", data => containerError += data.toString());
 
-        // Feed test cases to the program
+        // Feed test cases to the program through the standard input stream
         for (const testCase of testCaseInput) {
             process.stdin.write(testCase + "\n");
         }
+
+        // Send EOF (end of file) to the process. This signals to the process not to wait for more input,
+        // so it indirectly ends the process.
         process.stdin.end();
 
+        // When the container exits, resolve the promise with the captured output
         process.on("close", () => {
-            // When the container finishes execution, resolve the promise
             resolve({ containerOutput, containerError});
         });
     });
@@ -122,7 +127,6 @@ async function createFilePath(suffix) {
 }
 
 function composePythonCode(userCode) {
-    // Code wrappers
     const pythonWrapper = `
 import sys
 # We have to make sure to grab only the returned values and ignore any other prints.
@@ -138,6 +142,7 @@ for val in to_print:
     return userCode + pythonWrapper;
 }
 
+// Not yet implemented
 function composeJavascriptCode(userCode) {
     const jsWrapperTop = 'To be defined';
     const jsWrapperBot = 'To be defined';

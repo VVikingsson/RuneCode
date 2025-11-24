@@ -166,7 +166,6 @@ async function getRelatedSubmissions(req, res, next) {
 }
 
 module.exports = {
-    executeCode,
     createNewChallenge,
     getChallenge,
     removeChallenge,

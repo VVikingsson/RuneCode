@@ -1,4 +1,4 @@
-image: node:22-alpine
+image: docker:20.10.24
 
 # Cache modules in between jobs per-branch
 cache:
@@ -16,27 +16,30 @@ build:
   tags:
     - docker
   script:
+    - apk add --no-cache nodejs npm
     - cd server
     - npm install
+
 
 test:
   stage: test
   tags:
-    - docker
-  privileged: true # allow DinD container to start a Docker daemon
+    - custom-docker-webdev-g5
   services:
-    - docker:dind
     - name: mongo:latest
       alias: mongo
+    - name: docker:20.10.24-dind
   variables:
-    MONGODB_URI: "mongodb://mongo:27017/serverTestDB"
+    DOCKER_HOST: tcp://docker:2375 # CI container needs to know location of child container
     DOCKER_TLS_CERTDIR: "" # Disable Docker TLS. Needed so docker CLI can talk to daemon
+    MONGODB_URI: "mongodb://mongo:27017/serverTestDB"
+
   script:
-    - apk add --no-cache docker-cli
+    - apk add nodejs npm
     - cd server
+    - npm install
     - npm run build-docker
     - npm run ci-test
-
 
 deploy:
   stage: deploy
