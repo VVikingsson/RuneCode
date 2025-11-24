@@ -3,12 +3,12 @@
 		"_postman_id": "4b94d52d-c9f8-4231-926b-de46326d6f77",
 		"name": "server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "49945255",
-		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=49945255"
+		"_exporter_id": "50025142",
+		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=50025142"
 	},
 	"item": [
 		{
-			"name": "user",
+			"name": "setup",
 			"item": [
 				{
 					"name": "POST new user",
@@ -67,6 +67,136 @@
 					"response": []
 				},
 				{
+					"name": "POST challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 201\r",
+									"pm.test(\"Status code is 201 for successful Challenge creation\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const data14 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains the new challenge ID\r",
+									"pm.test(\"Response contains challenge ID\", function () {\r",
+									"    pm.expect(data14).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Save the challenge ID in Postman environment\r",
+									"if (data14.id) {\r",
+									"    pm.environment.set(\"challengeID\", data14.id);\r",
+									"}\r",
+									"\r",
+									"// Optional: check other fields are present\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(data14).to.have.property(\"name\");\r",
+									"    pm.expect(data14).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(data14).to.have.property(\"description\");\r",
+									"    pm.expect(data14).to.have.property(\"testCases\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"def min_val(numbers)\\n\\t#numbers is a comma-separated string\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"min_val('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"python\"}\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST execute correct code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 201\r",
+									"pm.test(\"Status code is 201 for executing code\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Check that response contains the expected fields\r",
+									"pm.test(\"Response contains correct message\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"All 3 tests pass.\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\tnums = numbers.split(',')\\n\\treturn min(nums)\",\r\n    \"language\": \"python\",\r\n    \"authorId\": \"{{userID}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/execute/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"execute",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
 					"name": "POST duplicate user",
 					"event": [
 						{
@@ -75,6 +205,14 @@
 								"exec": [
 									"pm.test(\"Status code is 409\", function () {\r",
 									"    pm.response.to.have.status(409);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message field\", function () {\r",
+									"    pm.response.to.have.jsonBody('message');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Message contains 'Conflict'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include('already exists');\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -161,7 +299,18 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
-									"});"
+									"});\r",
+									"\r",
+									"pm.test(\"Response to be an array\", function () {\r",
+									"    pm.expect(pm.response.json()).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Every element is an object\", function () {\r",
+									"    pm.response.json().forEach(elem => {\r",
+									"        pm.expect(elem).to.be.an('object');\r",
+									"    });\r",
+									"});\r",
+									""
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -262,39 +411,6 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{baseURL}}/users/{{userID}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"users",
-								"{{userID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE user",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
 						"url": {
 							"raw": "{{baseURL}}/users/{{userID}}",
 							"host": [
@@ -1316,75 +1432,6 @@
 			"name": "challenge",
 			"item": [
 				{
-					"name": "POST challenge",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 201\r",
-									"pm.test(\"Status code is 201 for successful Challenge creation\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"});\r",
-									"\r",
-									"const data14 = pm.response.json();\r",
-									"\r",
-									"// Check that response contains the new challenge ID\r",
-									"pm.test(\"Response contains challenge ID\", function () {\r",
-									"    pm.expect(data14).to.have.property(\"id\");\r",
-									"});\r",
-									"\r",
-									"// Save the challenge ID in Postman environment\r",
-									"if (data14.id) {\r",
-									"    pm.environment.set(\"challengeID\", data14.id);\r",
-									"}\r",
-									"\r",
-									"// Optional: check other fields are present\r",
-									"pm.test(\"Response contains required fields\", function () {\r",
-									"    pm.expect(data14).to.have.property(\"name\");\r",
-									"    pm.expect(data14).to.have.property(\"codeTemplate\");\r",
-									"    pm.expect(data14).to.have.property(\"description\");\r",
-									"    pm.expect(data14).to.have.property(\"testCases\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"def min_val(numbers)\\n\\t#numbers is a comma-separated string\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"min_val('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"python\"}\r\n    ]\r\n}"
-						},
-						"url": {
-							"raw": "{{baseURL}}/challenges",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"challenges"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "POST duplicate post",
 					"event": [
 						{
@@ -1610,6 +1657,147 @@
 					"response": []
 				},
 				{
+					"name": "GET all challenges",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 200 for fetching all challenges\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const data19 = pm.response.json();\r",
+									"\r",
+									"// Check that the response is an array\r",
+									"pm.test(\"Response is an array\", function () {\r",
+									"    pm.expect(data19).to.be.an(\"array\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET challenge's submissions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// Check that response contains the expected fields\r",
+									"pm.test(\"Response to be an array\", function () {\r",
+									"    pm.expect(pm.response.json()).to.be.an('array');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/submissions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET bad challenge's submissions Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response to contain message field\", function () {\r",
+									"    pm.response.to.have.jsonBody('message');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Message to contain 'Bad request'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include('Bad request');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/123/submissions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"123",
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST related test case",
 					"event": [
 						{
@@ -1790,6 +1978,57 @@
 					"response": []
 				},
 				{
+					"name": "GET related test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"input\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"expectedOutput\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"language\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Fields contain expected values\", function () {\r",
+									"    pm.expect(pm.response.json().expectedOutput).to.include(\"32\")\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/{{relatedTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases",
+								"{{relatedTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE related test case",
 					"event": [
 						{
@@ -1844,62 +2083,6 @@
 					"response": []
 				},
 				{
-					"name": "POST execute correct code",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 200\r",
-									"pm.test(\"Status code is 200 for executing code\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"// Check that response contains the expected fields\r",
-									"pm.test(\"Response contains correct message\", function () {\r",
-									"    pm.expect(pm.response.json().message).to.include(\"All 3 tests pass.\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\tnums = numbers.split(',')\\n\\treturn min(nums)\",\r\n    \"language\": \"python\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseURL}}/challenges/execute/{{challengeID}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"challenges",
-								"execute",
-								"{{challengeID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "POST execute incorrect code",
 					"event": [
 						{
@@ -1934,7 +2117,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\treturn 1\",\r\n    \"language\": \"python\"\r\n}",
+							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\treturn 1\",\r\n    \"language\": \"python\",\r\n    \"authorId\": \"{{userID}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1950,53 +2133,6 @@
 								"challenges",
 								"execute",
 								"{{challengeID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET all challenges",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 200\r",
-									"pm.test(\"Status code is 200 for fetching all challenges\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"const data19 = pm.response.json();\r",
-									"\r",
-									"// Check that the response is an array\r",
-									"pm.test(\"Response is an array\", function () {\r",
-									"    pm.expect(data19).to.be.an(\"array\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseURL}}/challenges",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"challenges"
 							]
 						}
 					},
@@ -2068,108 +2204,6 @@
 					"response": []
 				},
 				{
-					"name": "DELETE challenge",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 200\r",
-									"pm.test(\"Status code is 200 for successful challenge deletion\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"const data21 = pm.response.json();\r",
-									"\r",
-									"// Check that response contains a success message\r",
-									"pm.test(\"Response contains success message\", function () {\r",
-									"    pm.expect(data21).to.have.property(\"message\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseURL}}/challenges/{{challengeID}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"challenges",
-								"{{challengeID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE related test case bad ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 404\", function () {\r",
-									"    pm.response.to.have.status(404);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Response contains expected fields\", function () {\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Response message contains 'Bad request'\", function () {\r",
-									"    pm.expect(pm.response.json().message).to.include(\"Not found:\");\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/{{relatedTestCaseID}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"challenges",
-								"{{challengeID}}",
-								"test-cases",
-								"{{relatedTestCaseID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "GET bad challenge",
 					"event": [
 						{
@@ -2222,116 +2256,6 @@
 							],
 							"path": [
 								"testCases",
-								"{{challengeID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "PATCH bad update",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 404\r",
-									"pm.test(\"Status code is 404 for PATCH non-existent challenge\", function () {\r",
-									"    pm.response.to.have.status(404);\r",
-									"});\r",
-									"\r",
-									"const data23 = pm.response.json();\r",
-									"\r",
-									"// Check error message\r",
-									"pm.test(\"Error message indicates challenge not found\", function () {\r",
-									"    pm.expect(data23).to.have.property(\"message\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"description\": \"hello\"\r\n}"
-						},
-						"url": {
-							"raw": "{{baseURL}}/challenges/{{challengeID}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"challenges",
-								"{{challengeID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE bad delete",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 404\r",
-									"pm.test(\"Status code is 404 for DELETE non-existent challenge\", function () {\r",
-									"    pm.response.to.have.status(404);\r",
-									"});\r",
-									"\r",
-									"const data24 = pm.response.json();\r",
-									"\r",
-									"// Check error message\r",
-									"pm.test(\"Error message indicates challenge not found\", function () {\r",
-									"    pm.expect(data24).to.have.property(\"message\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseURL}}/challenges/{{challengeID}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"challenges",
 								"{{challengeID}}"
 							]
 						}
@@ -2549,6 +2473,666 @@
 							"path": [
 								"testCases",
 								"{{badChallengeID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "submission",
+			"item": [
+				{
+					"name": "POST submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const newSubm = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(newSubm).to.have.property('_id');\r",
+									"    pm.expect(newSubm).to.have.property('code');\r",
+									"    pm.expect(newSubm).to.have.property('title');\r",
+									"    pm.expect(newSubm).to.have.property('authorNote');\r",
+									"    pm.expect(newSubm).to.have.property('author');\r",
+									"    pm.expect(newSubm).to.have.property('challenge');\r",
+									"});\r",
+									"\r",
+									"// Save submission ID to environment\r",
+									"pm.environment.set(\"submissionID\", newSubm._id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"challengeId\": \"{{challengeID}}\",\r\n    \"authorId\": \"{{userID}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/submissions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST bad submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('message');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Message contains 'Bad request'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include('Bad request');\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"challengeId\": \"{{challengeID}}\",\r\n    \"authorId\": \"I'm not a user ID\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/submissions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 for successful submission update\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const updatedSubm = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response contains updated submission\", function () {\r",
+									"    pm.expect(updatedSubm).to.have.property(\"message\");\r",
+									"    pm.expect(updatedSubm).to.have.property(\"updatedSubmission\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"yepee\",\r\n    \"authorNote\": \"so the complexity is hopefully O(n)\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/submissions/{{submissionID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"submissions",
+								"{{submissionID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const getResponse = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(getResponse).to.have.property('_id');\r",
+									"    pm.expect(getResponse).to.have.property('code');\r",
+									"    pm.expect(getResponse).to.have.property('title');\r",
+									"    pm.expect(getResponse).to.have.property('authorNote');\r",
+									"    pm.expect(getResponse).to.have.property('author');\r",
+									"    pm.expect(getResponse).to.have.property('challenge');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/submissions/{{submissionID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"submissions",
+								"{{submissionID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const deletionResponse = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response contains success message\", function () {\r",
+									"    pm.expect(deletionResponse).to.have.property(\"message\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/submissions/{{submissionID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"submissions",
+								"{{submissionID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE missing submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message field\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Message contains 'Not found'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"No submission found\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/submissions/{{submissionID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"submissions",
+								"{{submissionID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH non existing submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 for non existing submission\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"message field to contain 'Submission not found'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"Submission not found\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"yepee\",\r\n    \"authorNote\": \"so the complexity is hopefully O(n)\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/submissions/{{submissionID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"submissions",
+								"{{submissionID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET bad get",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"message field to contain the expected string\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"No submission found with given id\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/submissions/{{submissionID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"submissions",
+								"{{submissionID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cleanup",
+			"item": [
+				{
+					"name": "DELETE user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{userID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 200\r",
+									"pm.test(\"Status code is 200 for successful challenge deletion\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const data21 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains a success message\r",
+									"pm.test(\"Response contains success message\", function () {\r",
+									"    pm.expect(data21).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE bad delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 404\r",
+									"pm.test(\"Status code is 404 for DELETE non-existent challenge\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data24 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates challenge not found\", function () {\r",
+									"    pm.expect(data24).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH bad update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 404\r",
+									"pm.test(\"Status code is 404 for PATCH non-existent challenge\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data23 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Error message indicates challenge not found\", function () {\r",
+									"    pm.expect(data23).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"hello\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE related test case bad ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response message contains 'Bad request'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"Not found:\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/{{relatedTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases",
+								"{{relatedTestCaseID}}"
 							]
 						}
 					},
