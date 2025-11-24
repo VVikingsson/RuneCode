@@ -88,7 +88,7 @@ async function runInContainer(tempDir, fileName, testCaseInput, runtime) {
             process.stdin.write(testCase + "\n");
         }
 
-        // Send EOF (end of file) to the process. This signals to the process not to wait for more input, 
+        // Send EOF (end of file) to the process. This signals to the process not to wait for more input,
         // so it indirectly ends the process.
         process.stdin.end();
 

@@ -41,7 +41,6 @@ test:
     - npm run build-docker
     - npm run ci-test
 
-
 deploy:
   stage: deploy
   tags:
