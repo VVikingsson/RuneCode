@@ -11,7 +11,7 @@ async function createNewUser(req, res, next) {
         }
         const salt = await bcrypt.genSalt(10);                    // salting is the process of adding a random value to 
         const hashedPassword = await bcrypt.hash(password, salt); // the password before hashing it, making it more secure.
-        const newUser = await User.create({username, email, isAdmin, hashedPassword});
+        const newUser = await User.create({username, email, hashedPassword, isAdmin});
 
         return res.status(201).json({
             id: newUser._id,
@@ -35,8 +35,12 @@ async function loginUser(req, res, next) {
             return res.status(400).json({message: 'Missing credentials'});
         }
         
-        const user = await identifier.includes('@') ? await User.findByEmail(identifier) : await User.findByUsername(identifier);
+        const user = await identifier.includes('@') ? await User.findOne({email: identifier}).select('+hashedPassword') : await User.findOne({username: identifier}).select('+hashedPassword');
         const passwordValid = await bcrypt.compare(password, user.hashedPassword);
+
+        if (!user) {
+            res.status(404).json({message: "User not found"});
+        }
         
         if(!passwordValid) {
             return res.status(401).json({ message: "Password is incorrect" });
