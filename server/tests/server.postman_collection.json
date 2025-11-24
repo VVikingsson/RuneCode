@@ -3,8 +3,8 @@
 		"_postman_id": "4b94d52d-c9f8-4231-926b-de46326d6f77",
 		"name": "server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "49945255",
-		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=49945255"
+		"_exporter_id": "50025142",
+		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-4b94d52d-c9f8-4231-926b-de46326d6f77?action=share&source=collection_link&creator=50025142"
 	},
 	"item": [
 		{
@@ -287,6 +287,63 @@
 								"challenges",
 								"execute",
 								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const newSubm = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(newSubm).to.have.property('_id');\r",
+									"    pm.expect(newSubm).to.have.property('code');\r",
+									"    pm.expect(newSubm).to.have.property('title');\r",
+									"    pm.expect(newSubm).to.have.property('authorNote');\r",
+									"    pm.expect(newSubm).to.have.property('author');\r",
+									"    pm.expect(newSubm).to.have.property('challenge');\r",
+									"});\r",
+									"\r",
+									"// Save submission ID to environment\r",
+									"pm.environment.set(\"submissionID\", newSubm._id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"challengeId\": \"{{challengeID}}\",\r\n    \"authorId\": \"{{userID}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/submissions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"submissions"
 							]
 						}
 					},
@@ -635,6 +692,105 @@
 							"path": [
 								"users",
 								"{{adminID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET user's submissions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Each json with submission details has expected fields\", function () {\r",
+									"    pm.response.json().forEach(s => {\r",
+									"        pm.expect(s).to.be.an(\"object\");\r",
+									"        pm.expect(s).to.have.property(\"submissionId\");\r",
+									"        pm.expect(s).to.have.property(\"challengeId\");\r",
+									"        pm.expect(s).to.have.property(\"challengeName\");\r",
+									"        pm.expect(s).to.have.property(\"submissionTitle\");\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users/{{userID}}/submissions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userID}}",
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET bad id user's submissions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message field\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Message contains 'Bad request'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"Bad request\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users/123/submissions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"123",
+								"submissions"
 							]
 						}
 					},
@@ -2483,63 +2639,6 @@
 		{
 			"name": "submission",
 			"item": [
-				{
-					"name": "POST submission",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"});\r",
-									"\r",
-									"const newSubm = pm.response.json();\r",
-									"\r",
-									"pm.test(\"Response contains required fields\", function () {\r",
-									"    pm.expect(newSubm).to.have.property('_id');\r",
-									"    pm.expect(newSubm).to.have.property('code');\r",
-									"    pm.expect(newSubm).to.have.property('title');\r",
-									"    pm.expect(newSubm).to.have.property('authorNote');\r",
-									"    pm.expect(newSubm).to.have.property('author');\r",
-									"    pm.expect(newSubm).to.have.property('challenge');\r",
-									"});\r",
-									"\r",
-									"// Save submission ID to environment\r",
-									"pm.environment.set(\"submissionID\", newSubm._id);\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"challengeId\": \"{{challengeID}}\",\r\n    \"authorId\": \"{{userID}}\"\r\n}"
-						},
-						"url": {
-							"raw": "{{baseURL}}/submissions",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"submissions"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "POST bad submission",
 					"event": [
