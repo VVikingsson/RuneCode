@@ -10,28 +10,25 @@
   </div>
 </template>
 
-<script>
+<script setup>
 // @ is an alias to /src
 import { Api } from '@/Api'
+import { ref } from 'vue'
+const message = ref('none')
+function getMessage() {
+  Api.get('/')
+    .then(response => {
+      this.message = response.data.message
+    })
+    .catch(error => {
+      this.message = error
+    })
+}
+</script>
 
+<script>
 export default {
-  name: 'home',
-  data() {
-    return {
-      message: 'none'
-    }
-  },
-  methods: {
-    getMessage() {
-      Api.get('/')
-        .then(response => {
-          this.message = response.data.message
-        })
-        .catch(error => {
-          this.message = error
-        })
-    }
-  }
+  name: 'home'
 }
 </script>
 
