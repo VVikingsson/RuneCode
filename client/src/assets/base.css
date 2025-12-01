@@ -15,16 +15,19 @@
     --text-muted: #999999; 
     
     /* Neon runic glow colors */
-    --neon-cyan: #00FFFF;      
+    --neon-cyan: #00FFFF; 
+    --neon-cyan-glow: rgba(0, 255, 255, 0.8);     
     --neon-magenta: #FF00FF;     
-    --neon-green: #00FF00;   
+    --neon-green: #00FF00;  
+    --neon-orange: #FF9900; 
     
     
     --bs-body-color: red;
 }
 
 body {
-    color: red !important;
+    color: var(--primary-blue);
+    background-color: var(--dark-bg);
 }
 
 h1, h2, h3, h4, h5, h6 { color: var(--primary-blue); }

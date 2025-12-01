@@ -19,6 +19,5 @@ import NavBar from './components/NavBar.vue';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: var(--primary-blue);
 }
 </style>
