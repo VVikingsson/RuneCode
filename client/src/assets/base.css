@@ -1,0 +1,32 @@
+:root {
+    /* Core theme colors */ 
+    /* Background colors, dark blue, for different amounts of depth */
+    --dark-bg: #0D1622;        
+    --card-bg: #1A2635;         
+    --section-bg: #1D2F50;       
+
+    /* For primary UI */
+    --primary-blue: #4A78FF;     
+    --light-blue: #A5BFF8;    
+    --amber-primary: #F49A32;    
+    --amber-accent: #E7A038;   
+
+    --text-light: #F2F2F2;    
+    --text-muted: #999999; 
+    
+    /* Neon runic glow colors */
+    --neon-cyan: #00FFFF;      
+    --neon-magenta: #FF00FF;     
+    --neon-green: #00FF00;   
+    
+    
+    --bs-body-color: red;
+}
+
+body {
+    color: red !important;
+}
+
+h1, h2, h3, h4, h5, h6 { color: var(--primary-blue); }
+a { color: var(--primary-blue); }
+.text-muted { color: var(--text-muted) !important; }

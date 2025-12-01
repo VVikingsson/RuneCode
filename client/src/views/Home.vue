@@ -3,7 +3,7 @@
     <b-container fluid>
       <h1 class="display-5 fw-bold">DIT342 Frontend</h1>
       <p class="fs-4">Welcome to your DIT342 Frontend Vue.js App</p>
-      <b-button class="btn_message" variant="primary" v-on:click="getMessage()" >Get Message from Server</b-button>
+      <b-button class="btn_message" v-on:click="getMessage()" >Get Message from Server</b-button>
       <p class="col-xl-9">Message from the server:<br/>
       {{ message }}</p>
     </b-container>
@@ -18,10 +18,10 @@ const message = ref('none')
 function getMessage() {
   Api.get('/')
     .then(response => {
-      this.message = response.data.message
+      message.value = response.data.message
     })
     .catch(error => {
-      this.message = error
+      message.value = error
     })
 }
 </script>
@@ -32,8 +32,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .btn_message {
   margin-bottom: 1em;
+  background-color: orange;
+  height: 500px;
 }
 </style>

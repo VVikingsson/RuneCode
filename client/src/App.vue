@@ -1,12 +1,17 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link>
+      <NavBar></NavBar>
     </div>
+
     <!-- Render the content of the current page view -->
     <router-view/>
   </div>
 </template>
+
+<script setup>
+import NavBar from './components/NavBar.vue';
+</script>
 
 <style>
 #app {
@@ -14,6 +19,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: var(--primary-blue);
 }
 </style>
