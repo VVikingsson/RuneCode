@@ -418,7 +418,17 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
-									"});"
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains correct fields\", function() {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"_id\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"username\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"email\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"isAdmin\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"points\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"completed\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"bio\");\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -616,9 +626,9 @@
 					"response": []
 				},
 				{
-					"name": "POST profile image",
+					"name": "PATCH profile image",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "formdata",
