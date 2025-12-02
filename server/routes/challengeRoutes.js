@@ -16,7 +16,6 @@ router.delete('/:id', verifyJWT, checkAdmin, challengeController.removeChallenge
 router.patch('/:id', verifyJWT, checkAdmin, challengeController.updateChallenge);
 
 router.post('', verifyJWT, checkAdmin, challengeController.createNewChallenge);
-router.post('/execute/:id', challengeController.executeCode);
 router.post('/:id/test-cases', challengeController.addTestCase);
 
 
