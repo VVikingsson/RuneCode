@@ -155,13 +155,13 @@
 							"raw": "{\r\n    \"identifier\": \"Sparkles\",\r\n    \"password\": \"testingSparkles\"\r\n}"
 						},
 						"url": {
-							"raw": "{{baseURL}}/users/login",
+							"raw": "{{baseURL}}/users/sessions",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"users",
-								"login"
+								"sessions"
 							]
 						}
 					},
@@ -197,6 +197,8 @@
 									"    pm.expect(data14).to.have.property(\"codeTemplate\");\r",
 									"    pm.expect(data14).to.have.property(\"description\");\r",
 									"    pm.expect(data14).to.have.property(\"testCases\");\r",
+									"    pm.expect(data14).to.have.property(\"difficulty\");\r",
+									"    pm.expect(data14).to.have.property(\"tags\");\r",
 									"});\r",
 									""
 								],
@@ -222,7 +224,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"def min_val(numbers)\\n\\t#numbers is a comma-separated string\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"min_val('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"python\"}\r\n    ]\r\n}"
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"def min_val(numbers)\\n\\t#numbers is a comma-separated string\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"min_val('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"python\"}\r\n    ],\r\n    \"difficulty\": \"easy\",\r\n    \"tags\": [\"strings\"]\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/challenges",
@@ -271,7 +273,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\tnums = numbers.split(',')\\n\\treturn min(nums)\",\r\n    \"language\": \"python\",\r\n    \"authorId\": \"{{userID}}\"\r\n}",
+							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\tnums = numbers.split(',')\\n\\treturn min(nums)\",\r\n    \"language\": \"python\",\r\n    \"authorId\": \"{{userID}}\",\r\n    \"id\": \"{{challengeID}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -279,14 +281,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/challenges/execute/{{challengeID}}",
+							"raw": "{{baseURL}}/drafts",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"challenges",
-								"execute",
-								"{{challengeID}}"
+								"drafts"
 							]
 						}
 					},
@@ -1624,7 +1624,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ]\r\n}",
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ],\r\n    \"difficulty\": \"easy\",\r\n    \"tags\": [\"String\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2278,7 +2278,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\treturn 1\",\r\n    \"language\": \"python\",\r\n    \"authorId\": \"{{userID}}\"\r\n}",
+							"raw": "{\r\n    \"code\": \"def min_val(numbers):\\n\\treturn 1\",\r\n    \"language\": \"python\",\r\n    \"authorId\": \"{{userID}}\",\r\n    \"id\": \"{{challengeID}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2286,14 +2286,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/challenges/execute/{{challengeID}}",
+							"raw": "{{baseURL}}/drafts",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"challenges",
-								"execute",
-								"{{challengeID}}"
+								"drafts"
 							]
 						}
 					},

@@ -5,10 +5,9 @@ const mongoose = require('mongoose');
 // Running and testing code
 async function executeCode(req, res, next) {
     try {
-        const id = req.params.id;
         //later add code hash check so that a user cannot submit two identical submissions
         // Submission.findBy(authorID).where(hash(code) == hash_code)
-        const {code, language, authorId} = req.body;
+        const {code, language, authorId, id} = req.body;
         // Error handling
         for (const objectId of [id, authorId]) {
             if (!mongoose.isValidObjectId(objectId)) {
@@ -46,9 +45,9 @@ async function executeCode(req, res, next) {
 
 async function createNewChallenge(req, res, next) {
     try {
-        const {name, codeTemplate, description, testCases} = req.body
-        if (!name || !codeTemplate || !description || !testCases) {
-            return res.status(400).json({message: 'Name or code template or description or test cases are missing.'});
+        const {name, codeTemplate, description, testCases, difficulty, tags} = req.body
+        if (!name || !codeTemplate || !description || !testCases || !difficulty) {
+            return res.status(400).json({message: 'Name or code template or description or test cases or difficulty is missing.'});
         }
 
         if (!Array.isArray(testCases) || testCases.length === 0) {
@@ -65,14 +64,18 @@ async function createNewChallenge(req, res, next) {
             name: name, 
             codeTemplate: codeTemplate, 
             description: description, 
-            testCases: testCaseIds});
+            testCases: testCaseIds,
+            difficulty: difficulty,
+            tags: tags});
 
         return res.status(201).json({
             id: newChallenge._id,
             name: newChallenge.name,
             codeTemplate: newChallenge.codeTemplate,
             description: newChallenge.description,
-            testCases: newChallenge.testCases
+            testCases: newChallenge.testCases,
+            difficulty: newChallenge.difficulty,
+            tags: newChallenge.tags
         });
     } catch (err) {
         if (err.code === 11000 && err.keyValue) { // Mongoose error for field already existing
