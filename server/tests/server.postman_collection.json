@@ -805,6 +805,54 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GET user recommended challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains challenge\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recommendedChallenge\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Challenge contains correct fields\", function () {\r",
+									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"_id\");\r",
+									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"name\");\r",
+									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"description\");\r",
+									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"testCases\"); \r",
+									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"difficulty\"); \r",
+									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"tags\"); \r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{userID}}/recommendedChallenge",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userID}}",
+								"recommendedChallenge"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

@@ -9,6 +9,7 @@ router.post('/sessions', userController.loginUser); // Standard is to use post f
 router.get('', userController.getAllUsers);
 router.delete('/:id', userController.removeUser);
 router.get('/:id', userController.getUser);
+router.get('/:id/recommendedChallenge', userController.getRecommendedChallenge);
 router.patch('/:id', userController.updateUser);
 // upload is a Multer instance that acts as a central middleware processor for handling file uploads
 // upload.single('profileImage') tells upload middleware to upload the picture with the 'profileImage' name field value
