@@ -5,7 +5,7 @@ import Challenges from './views/Challenges.vue'
 
 const routes = [
   { path: '/', name: 'home', component: Home },
-  { path: '/', name: 'challenges', component: Challenges}
+  { path: '/challenges', name: 'challenges', component: Challenges}
 ]
 
 const router = createRouter({
