@@ -3,12 +3,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from './views/Home.vue'
 import Leaderboard from '@/components/Leaderboard.vue'
 import Challenge from './views/Challenge.vue'
+import User from './views/User.vue'
 
 const routes = [
   { path: '/', name: 'home', component: Home },
-  { path: '/leaderboard', component: Leaderboard }
+  { path: '/leaderboard', component: Leaderboard },
   { path: '/', name: 'home', component: Home },
-  { path: '/challenges/:id', name: 'Challenge', component: Challenge}
+  { path: '/challenges/:id', name: 'Challenge', component: Challenge },
+  { path: '/users/:id', name: 'User', component: User, props: true } // redirects you to a page of a specific user
 ]
 
 const router = createRouter({
