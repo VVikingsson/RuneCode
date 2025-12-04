@@ -1,0 +1,9 @@
+<template>
+    <BContainer>
+        <BRow>
+            <BCol>
+                Runes
+            </BCol>
+        </BRow>
+    </BContainer>
+</template>

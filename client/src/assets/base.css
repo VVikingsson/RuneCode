@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Kedebideri:wght@400;500;600;700;800;900&display=swap');
+
 :root {
     /* Core theme colors */ 
     /* Background colors, dark blue, for different amounts of depth */
     --dark-bg: #0D1622;        
     --card-bg: #1A2635;         
-    --section-bg: #1D2F50;       
+    --section-bg: #323d53;  
+    --navbar-bg: #242d3e;     
 
     /* For primary UI */
     --primary-blue: #4A78FF;     
@@ -21,15 +24,19 @@
     --neon-green: #00FF00;  
     --neon-orange: #FF9900; 
     
-    
-    --bs-body-color: red;
 }
 
+
 body {
-    color: var(--primary-blue);
+    font-family: 'Kedebideri', sans-serif !important;
+    color: var(--text-light);
     background-color: var(--dark-bg);
 }
 
-h1, h2, h3, h4, h5, h6 { color: var(--primary-blue); }
-a { color: var(--primary-blue); }
-.text-muted { color: var(--text-muted) !important; }
+h1 h2 h3 h4 h5 h6 p a {
+    font-family: 'Kedebideri';
+}
+
+
+
+
