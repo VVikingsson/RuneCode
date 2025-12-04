@@ -8,7 +8,7 @@ import Challenges from './views/Challenges.vue'
 const routes = [
   { path: '/', name: 'home', component: Home },
   { path: '/challenges', name: 'challenges', component: Challenges},
-  { path: '/leaderboard', component: Leaderboard }
+  { path: '/leaderboard', component: Leaderboard },
   { path: '/', name: 'home', component: Home },
   { path: '/challenges/:id', name: 'Challenge', component: Challenge}
 ]
