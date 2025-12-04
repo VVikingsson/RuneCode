@@ -1,11 +1,14 @@
 <template>
+    <RuneCode id="rune-code"/>
     <BContainer class="main-container">
         <BRow class="top-row">
         <BCol class="left-col">
             <h1 id="welcome-message">Master the Ancient Art of <span id="last-word"><br/>Code</span></h1>
             <BButton class="begin-button" @click="goToRecommendedChallenge()">Begin your Journey →</BButton>
         </BCol>
-        <BCol></BCol>
+        <BCol>
+            <Runes/>
+        </BCol>
         </BRow>
     </BContainer>
 </template>
@@ -14,6 +17,7 @@
 import Runes from '../components/Runes.vue';
 import MiniLeaderboard from '../components/MiniLeaderboard.vue';
 import FeaturedChallenge from '../components/FeaturedChallenge.vue';
+import RuneCode from '../components/RuneCode.vue'
 import { ref } from 'vue';
 import { Api } from '@/Api'
 import { useRouter } from 'vue-router';
@@ -23,7 +27,7 @@ const router = useRouter();
 async function goToRecommendedChallenge() {
     console.log("Pressed button");
     const userId = '692f00f6a7a3649d16624682';
-    const response = await Api.get(`/users/${userId}/recommendedChallenge`);
+    const response = await Api.get(`/challenges?recommendedChallengeFor=${userId}`);
     const challenge = response.data.recommendedChallenge;
     router.push({name: 'Challenge', params: { id: challenge._id }});
 }
@@ -41,6 +45,11 @@ async function goToRecommendedChallenge() {
     .main-container {
         min-width: 100% !important;
         /* border: 2px, solid, var(--light-blue); */
+    }
+    #rune-code {
+        margin-top: 2rem;
+        margin-bottom: -2rem;
+        box-shadow: 0 0 10px 2px rgba(0, 191, 255, 0.4); /* Faint blue glow */
     }
     .top-row {
         padding-top: 5rem;

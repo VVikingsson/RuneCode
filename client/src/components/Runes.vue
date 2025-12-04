@@ -1,3 +1,9 @@
 <template>
-    Runes go here
+    <BContainer>
+        <BRow>
+            <BCol>
+                Runes
+            </BCol>
+        </BRow>
+    </BContainer>
 </template>
