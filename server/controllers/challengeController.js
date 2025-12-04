@@ -1,4 +1,4 @@
-const { Challenge, TestCase, DraftSubmission, Submission} = require('../models');
+const { Challenge, TestCase, DraftSubmission, Submission, User} = require('../models');
 const codeRunner = require('../sandboxing/codeRunner.js');
 const mongoose = require('mongoose');
 
@@ -297,6 +297,25 @@ async function getRelatedSubmissions(req, res, next) {
     }
 }
 
+async function getRecommendedChallenge(req, res, next) {
+    try {
+        const user = await User.findById(req.query.recommendedChallengeFor);
+        if (!user) {
+            return res.status(404).json({message: 'Not found: No user found with provided id'});
+        }
+        let submitted = await Submission.distinct('challenge', { author: user._id });
+        const recommendedChallenge = await Challenge.findOne({_id: {$nin: submitted}});
+        
+        return res.status(200).json({recommendedChallenge});
+
+    } catch (err) {
+        if (err.name === 'CastError') {
+            return res.status(400).json({message: 'Invalid id format'});
+        }
+        next(err);
+    }
+}
+
 module.exports = {
     executeCode,
     createNewChallenge,
@@ -309,4 +328,5 @@ module.exports = {
     removeRelatedTestCase,
     getRelatedTestCase,
     getRelatedSubmissions,
+    getRecommendedChallenge
 }

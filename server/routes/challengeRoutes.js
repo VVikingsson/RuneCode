@@ -6,7 +6,12 @@ const router = express.Router();
 
 router.get('/:id', challengeController.getChallenge);
 router.get('/:id/submissions', challengeController.getRelatedSubmissions);
-router.get('', challengeController.getAllChallenges);
+router.get('', (req, res) => { 
+    return req.query.recommendedChallengeFor
+    ? challengeController.getRecommendedChallenge(req, res)
+    : challengeController.getAllChallenges(req, res)
+
+});
 router.get('/:id/test-cases', challengeController.getRelatedTestCases);
 router.get('/:id/test-cases/:testCaseId', challengeController.getRelatedTestCase);
 
