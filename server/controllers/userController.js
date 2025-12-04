@@ -1,4 +1,4 @@
-const { User, Submission } = require('../models');
+const { User, Submission, Challenge } = require('../models');
 const bcrypt = require('bcryptjs'); // library for hashing passwords
 const jwt = require("jsonwebtoken");
 const path = require("path");
@@ -176,7 +176,6 @@ async function getRelatedSubmissions(req, res, next) {
         next(err);
     }
 }
-
 
 module.exports = {
     createNewUser,
