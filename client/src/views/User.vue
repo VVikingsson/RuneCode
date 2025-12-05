@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { Api } from '@/Api'
-import {BContainer} from "bootstrap-vue-next";
+import { useRouter } from 'vue-router'
+import { BContainer } from 'bootstrap-vue-next'
 // defining props we got from routes
 const props = defineProps({
   id: { type: String, required: true }
@@ -91,6 +92,23 @@ function getSubmissions() {
       isSubmissionsLoading.value = false
     })
 }
+const router = useRouter()
+
+function deleteUser() {
+  if (!confirm(`Are you sure you want to permanently delete the profile for ${userData.value.username}? This action cannot be undone.`)) {
+    return // Stop if the user cancels
+  }
+  router.push('/')
+  /* Api.delete(`/users/${props.id}`)
+    .then(response => {
+      alert(`Profile for ${userData.value.username} has been successfully deleted.`)
+      router.push('/')
+    })
+    .catch(error => {
+      console.log(error)
+      alert('Failed to delete profile. Please try again later.')
+    }) */
+}
 
 onMounted(() => {
   getUser(props.id)
@@ -109,7 +127,18 @@ watch(
     {{ userData }}
   </div>-->
   <BContainer class="my-5">
-    <BCard class="user-profile-card">
+    <div class="d-flex justify-content-center align-items-start position-relative">
+
+      <BButton
+        v-if="userData && props.id === '6931a62f14361ed6b82806fb'"
+        variant="danger"
+        class="delete-btn-position"
+        @click="deleteUser"
+      >
+        Delete User
+      </BButton>
+
+      <BCard class="user-profile-card">
 
       <div v-if="isLoading" class="text-center text-white">
         <BSpinner label="Loading..." variant="primary" />
@@ -171,6 +200,7 @@ watch(
               {{ userData.bio || 'You have no bio yet.' }}
             </p>
             <BButton
+              v-if="props.id === '6931a62f14361ed6b82806fb'"
               variant="outline-secondary"
               size="sm"
               @click="startEdit"
@@ -187,6 +217,7 @@ watch(
       </BAlert>
 
     </BCard>
+    </div>
 
     <br>
     <!-- submissions table -->
@@ -233,8 +264,8 @@ watch(
   background-color: darkblue;
   color: white;
   padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   border: none;
+  width: 100%;
 }
 
 .divider {
@@ -245,4 +276,11 @@ watch(
   line-height: 1.6;
 }
 
+.delete-btn-position {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: -160px; /* Adjust this value to set the distance from the card */
+  margin-top: 20px;
+}
 </style>
