@@ -98,8 +98,7 @@ function deleteUser() {
   if (!confirm(`Are you sure you want to permanently delete the profile for ${userData.value.username}? This action cannot be undone.`)) {
     return // Stop if the user cancels
   }
-  router.push('/')
-  /* Api.delete(`/users/${props.id}`)
+  Api.delete(`/users/${props.id}`)
     .then(response => {
       alert(`Profile for ${userData.value.username} has been successfully deleted.`)
       router.push('/')
@@ -107,7 +106,7 @@ function deleteUser() {
     .catch(error => {
       console.log(error)
       alert('Failed to delete profile. Please try again later.')
-    }) */
+    })
 }
 
 onMounted(() => {
