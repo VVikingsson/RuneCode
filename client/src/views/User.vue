@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { Api } from '@/Api'
+import {BContainer} from "bootstrap-vue-next";
 // defining props we got from routes
 const props = defineProps({
   id: { type: String, required: true }
@@ -63,6 +64,31 @@ function patchUser() {
     })
     .finally(() => {
       isSubmitting.value = false
+    })
+}
+
+const userSubmissions = ref(null)
+const isSubmissionsLoading = ref(false)
+const submissionsError = ref(null)
+
+const submissionsFields = [
+  { key: 'submissionTitle', label: 'Title' },
+  { key: 'challengeName', label: 'Challenge' }
+]
+
+function getSubmissions() {
+  isSubmissionsLoading.value = true
+  submissionsError.value = null
+  Api.get(`/users/${props.id}/submissions`)
+    .then(response => {
+      userSubmissions.value = response.data
+    })
+    .catch(error => {
+      submissionsError.value = error
+      console.error('Failed to fetch submissions:', error)
+    })
+    .finally(() => {
+      isSubmissionsLoading.value = false
     })
 }
 
@@ -161,6 +187,43 @@ watch(
       </BAlert>
 
     </BCard>
+
+    <br>
+    <!-- submissions table -->
+    <div class="mt-4">
+      <BButton
+        v-if="userData && !userSubmissions"
+        variant="info"
+        :disabled="isSubmissionsLoading"
+        @click="getSubmissions(props.id)"
+      >
+        <BSpinner v-if="isSubmissionsLoading" small></BSpinner>
+        <span v-else>Show All Submissions</span>
+      </BButton>
+
+      <div v-else-if="isSubmissionsLoading" class="text-center text-white">
+        <BSpinner variant="info" /> Fetching submissions...
+      </div>
+
+      <BAlert v-else-if="submissionsError" show variant="danger" class="mt-3">
+        Failed to load submissions.
+      </BAlert>
+
+      <BCard v-else-if="userSubmissions" bg-variant="primary">
+        <h4 class="text-black mb-3">Submissions ({{ userSubmissions.length }})</h4>
+
+        <BTable
+          v-if="userSubmissions.length > 0"
+          hover
+          dark
+          :items="userSubmissions"
+          :fields="submissionsFields"
+          class="submissions-table text-start"
+        >
+        </BTable>
+        <p v-else class="text-black-50">This user has no recorded submissions yet.</p>
+      </BCard>
+    </div>
   </BContainer>
 </template>
 
