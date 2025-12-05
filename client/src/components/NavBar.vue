@@ -35,7 +35,7 @@
 </script>
 
 
-<style>
+<style scoped>
     .icon {
       height: 3rem;
       margin-right: 0.2rem;
@@ -59,7 +59,6 @@
     .rune-navbar{
         background-color: var(--navbar-bg);
         display: block;
-        border-bottom: 1px solid var(--light-blue);
     }
 
     .rune-navbar *{

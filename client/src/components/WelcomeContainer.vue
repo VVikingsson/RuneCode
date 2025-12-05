@@ -2,13 +2,13 @@
     <RuneCode id="rune-code"/>
     <BContainer class="main-container">
         <BRow class="top-row">
-        <BCol class="left-col">
-            <h1 id="welcome-message">Master the Ancient Art of <span id="last-word"><br/>Code</span></h1>
-            <BButton class="begin-button" @click="goToRecommendedChallenge()">Begin your Journey →</BButton>
-        </BCol>
-        <BCol>
-            <Runes/>
-        </BCol>
+            <BCol class="left-col">
+                <h1 id="welcome-message">Master the Ancient Art of <span id="last-word"><br/>Code</span></h1>
+                <BButton class="begin-button" @click="goToRecommendedChallenge()">Begin your Journey →</BButton>
+            </BCol>
+            <BCol>
+                <Runes/>
+            </BCol>
         </BRow>
     </BContainer>
 </template>
@@ -21,24 +21,20 @@ import RuneCode from '../components/RuneCode.vue'
 import { ref } from 'vue';
 import { Api } from '@/Api'
 import { useRouter } from 'vue-router';
+
 const router = useRouter();
 
-// 🛠️ Define the method as a standard JavaScript function
 async function goToRecommendedChallenge() {
     console.log("Pressed button");
-    const userId = '692f00f6a7a3649d16624682';
+    const userId = import.meta.env.VITE_TEMP_USER_ID;
     const response = await Api.get(`/challenges?recommendedChallengeFor=${userId}`);
     const challenge = response.data.recommendedChallenge;
     router.push({name: 'Challenge', params: { id: challenge._id }});
 }
-
-// Functions are automatically exposed to the template, no explicit return needed.
 </script>
 
-<script>
 
-</script>
-<style>
+<style scoped>
     .main-container * {
         font-family: 'Kedebideri'
     }
@@ -47,9 +43,9 @@ async function goToRecommendedChallenge() {
         /* border: 2px, solid, var(--light-blue); */
     }
     #rune-code {
-        margin-top: 2rem;
-        margin-bottom: -2rem;
-        box-shadow: 0 0 10px 2px rgba(0, 191, 255, 0.4); /* Faint blue glow */
+        padding: 1rem 0;
+        max-width: 100% !important;
+        box-shadow: 0 10px 70px 0px rgba(0, 191, 255, 0.4); /* Faint blue glow */
     }
     .top-row {
         padding-top: 5rem;
@@ -70,6 +66,6 @@ async function goToRecommendedChallenge() {
         margin-left: -8rem;
         font-weight: 500 !important;
         background-color: var(--primary-blue) !important;
-        border-width: 5px;
+        border: unset;
     }
 </style>

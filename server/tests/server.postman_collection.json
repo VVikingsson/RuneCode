@@ -2312,12 +2312,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"// Check that status code is 200\r",
 									"pm.test(\"Status code is 200 for executing code\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",
-									"// Check that response contains the expected fields\r",
 									"pm.test(\"Response contains correct message\", function () {\r",
 									"    pm.expect(pm.response.json().message).to.include(\"Failed: 1 tests passed before min_val('1,2,3,4,-7') returned 1, expected -7.\");\r",
 									"});\r",
