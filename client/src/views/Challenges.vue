@@ -49,7 +49,7 @@ async function fetchChallenges() {
 
 function goToChallengePage(_id) {
     if (!_id) return;
-    router.push(`/challenge/${_id}`); 
+    router.push({name: 'Challenge', params: { id: _id }}); 
 }
 
 onMounted(fetchChallenges)

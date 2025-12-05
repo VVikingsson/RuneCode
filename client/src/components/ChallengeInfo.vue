@@ -1,0 +1,32 @@
+<template>
+    <BTabs content-class="mt-3">
+        <BTab title="Description" active>
+            <BContainer class="challenge-description-container">
+            <h3 id="the-challenge">The Challenge:</h3>
+            <p>{{ description }}</p>
+        </BContainer>
+        </BTab>
+        <BTab title="Submissions"><p>Submissions go here</p>
+        </BTab>
+    </BTabs>
+    
+</template>
+
+
+<script setup>
+    import { defineProps } from 'vue';
+
+    const props = defineProps({
+        description: {type: String, required: true},
+    })
+</script>
+
+<style scoped>
+    .challenge-description-container {
+        text-align: left;
+        font-family: 'Kedebideri';
+        width: 100%;
+    }
+    #the-challenge {
+    }
+</style>

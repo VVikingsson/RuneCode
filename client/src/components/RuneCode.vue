@@ -1,7 +1,5 @@
 <template>
     <BContainer class="container">
-        <BRow>
-            <BCol>
         <img src="../assets/icons/R.svg" class="capital-letter"></img>
         <img src="../assets/icons/lowerN.svg" id="u" class="letter"></img>
         <img src="../assets/icons/N.svg" class="letter"></img>
@@ -12,14 +10,12 @@
         <img src="../assets/icons/I.svg" class="letter"></img>
         <img src="../assets/icons/C.svg" id="d" class="letter"></img>
         <img src="../assets/icons/E.svg" class="letter"></img>
-            </BCol>
-        </BRow>
     </BContainer>
 </template>
 
-<style>
+<style scoped>
     .container {
-        width: 30rem !important;
+        width: 100% !important;
     }
     .capital-letter {
         height: 5rem;

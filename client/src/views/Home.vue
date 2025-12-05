@@ -1,7 +1,5 @@
 <template>
   <WelcomeContainer></WelcomeContainer>
-  <div>
-  </div>
 </template>
 
 <script setup>
