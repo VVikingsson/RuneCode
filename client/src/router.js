@@ -4,9 +4,12 @@ import Home from './views/Home.vue'
 import Leaderboard from '@/components/Leaderboard.vue'
 import Challenge from './views/Challenge.vue'
 import User from './views/User.vue'
+import Challenges from './views/Challenges.vue'
 
 const routes = [
   { path: '/', name: 'home', component: Home },
+  { path: '/leaderboard', component: Leaderboard },
+  { path: '/challenges', name: 'challenges', component: Challenges},
   { path: '/leaderboard', component: Leaderboard },
   { path: '/', name: 'home', component: Home },
   { path: '/challenges/:id', name: 'Challenge', component: Challenge },

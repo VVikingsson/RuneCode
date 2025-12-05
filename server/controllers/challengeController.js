@@ -34,7 +34,7 @@ async function executeCode(req, res, next) {
                 challenge : id},
                 {upsert: true, new: true},
             )
-            return res.status(201).json({message: result, newSubmission: draftSubmission});
+            return res.status(201).json({message: result, passed: passed, newSubmission: draftSubmission});
         } else{
             return res.status(200).json({message: result, passed: passed});
         }
