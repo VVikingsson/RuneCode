@@ -129,7 +129,7 @@ watch(
     <div class="d-flex justify-content-center align-items-start position-relative">
 
       <BButton
-        v-if="userData && props.id === '6931a62f14361ed6b82806fb'"
+        v-if="userData && props.id === '6932c310f4b96df1e658d9c1'"
         variant="danger"
         class="delete-btn-position"
         @click="deleteUser"
@@ -199,7 +199,7 @@ watch(
               {{ userData.bio || 'You have no bio yet.' }}
             </p>
             <BButton
-              v-if="props.id === '6931a62f14361ed6b82806fb'"
+              v-if="props.id === '6932c310f4b96df1e658d9c1'"
               variant="outline-secondary"
               size="sm"
               @click="startEdit"
