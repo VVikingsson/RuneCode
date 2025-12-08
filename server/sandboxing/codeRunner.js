@@ -4,10 +4,11 @@ const { spawn } = require("child_process"); // child_process is a module that al
 // nodejs.org/api/child_process.html
 
 async function devTest() {
-    const userCode = `def add(x,y):
-    return x+y`;
-    const language = 'python';
-    let testCases = [{input: "add(3,5)", expectedOutput: "8", language: "python" }, {input: "add(15,4)", expectedOutput: "19", language: "python"}, {input: "add(-9,-9)", expectedOutput: "-18", language: "python"}]
+    console.log("Code runner Dev Test enabled. This might kill the system.");
+    const userCode = `function add(x,y){
+    return x+y;}`
+    const language = 'javascript';
+    let testCases = [{input: "add(3,5)", expectedOutput: "8", language: "javascript" }, {input: "add(15,4)", expectedOutput: "19", language: "javascript"}, {input: "add(-9,-9)", expectedOutput: "-18", language: "javascript"}]
 
     
     const {result, passed} = await containerizeAndTestCode(userCode, testCases, language);
@@ -144,10 +145,28 @@ for val in to_print:
 
 // Not yet implemented
 function composeJavascriptCode(userCode) {
-    const jsWrapperTop = 'To be defined';
-    const jsWrapperBot = 'To be defined';
+    const jsWrapperBot = `process.stdin.setEncoding("utf8");
 
-    return jsWrapperTop + userCode + jsWrapperBot;
+let input = "";
+let toPrint = [];
+
+process.stdin.on("data", chunk => {
+  input += chunk;
+});
+
+process.stdin.on("end", () => {
+  const lines = input.trim().split("\\n");
+
+  for (const line of lines) {
+    toPrint.push(eval(line));
+  }
+
+  for (const val of toPrint) {
+    console.log(val);
+  }
+});`;
+
+    return userCode + jsWrapperBot;
 }
 
 module.exports = {containerizeAndTestCode}
