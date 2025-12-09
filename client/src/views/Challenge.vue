@@ -4,7 +4,7 @@
     </BContainer>
     <BContainer class="challenge-info-flex-container">
         <ChallengeInfo :description="challDescription" class="challenge-info"/>
-        <CodingWindow class="coding-window" :pythonCodeTemplate="challPythonTemplate"/>
+        <CodingWindow class="coding-window" :pythonCodeTemplate="challPythonTemplate" :javascriptCodeTemplate="challJavascriptTemplate"/>
     </BContainer>    
 </template>
 
@@ -45,9 +45,10 @@ onMounted(async () => {
         challDifficulty.value = challenge.value.difficulty;
         challTags.value = challenge.value.tags;
         challDescription.value = challenge.value.description;
-        challPythonTemplate.value = challenge.value.codeTemplate;
+        challPythonTemplate.value = challenge.value.codeTemplatePython;
+        challJavascriptTemplate.value = challenge.value.codeTemplateJavascript;
     }
-})
+});
 </script>
 
 <style scoped>

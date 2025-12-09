@@ -26,17 +26,21 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 
 const props = defineProps({
-    pythonCodeTemplate: {type: String, required: true}
+    pythonCodeTemplate: {type: String, required: true},
+    javascriptCodeTemplate: {type: String, required: true}
 });
 
 const pythonCode = ref(props.pythonCodeTemplate);
-const javascriptCode = ref('Replace with JS template prop when added'); 
+const javascriptCode = ref(props.javascriptCodeTemplate); 
 const activeTabIndex = ref(0); 
 
 
 watch(() => props.pythonCodeTemplate, (newTemplate) => {
     pythonCode.value = newTemplate;
+});
 
+watch(() => props.javascriptCodeTemplate, (newTemplate) => {
+    javascriptCode.value = newTemplate;
 });
 
 async function runCode() {

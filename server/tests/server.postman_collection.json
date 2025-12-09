@@ -194,7 +194,8 @@
 									"// Optional: check other fields are present\r",
 									"pm.test(\"Response contains required fields\", function () {\r",
 									"    pm.expect(data14).to.have.property(\"name\");\r",
-									"    pm.expect(data14).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(data14).to.have.property(\"codeTemplatePython\");\r",
+									"    pm.expect(data14).to.have.property(\"codeTemplateJavascript\");\r",
 									"    pm.expect(data14).to.have.property(\"description\");\r",
 									"    pm.expect(data14).to.have.property(\"testCases\");\r",
 									"    pm.expect(data14).to.have.property(\"difficulty\");\r",
@@ -224,7 +225,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"def min_val(numbers)\\n\\t#numbers is a comma-separated string\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"min_val('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"python\"}\r\n    ],\r\n    \"difficulty\": \"easy\",\r\n    \"tags\": [\"strings\"]\r\n}"
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplatePython\": \"def min_val(numbers)\\n\\t#numbers is a comma-separated string\",\r\n    \"codeTemplateJavascript\": \"const min_val => (numbers) {\\n\\t//numbers is a comma-separated string\\n}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"min_val('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"python\"},\r\n        {\"input\": \"min_val('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"python\"}\r\n    ],\r\n    \"difficulty\": \"easy\",\r\n    \"tags\": [\"strings\"]\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/challenges",
@@ -256,7 +257,8 @@
 									"pm.test(\"Challenge contains correct fields\", function () {\r",
 									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"_id\");\r",
 									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"name\");\r",
-									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"codeTemplatePython\");\r",
+									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"codeTemplateJavascript\");\r",
 									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"description\");\r",
 									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"testCases\"); \r",
 									"    pm.expect(pm.response.json().recommendedChallenge).to.have.property(\"difficulty\"); \r",
@@ -1686,7 +1688,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplate\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ],\r\n    \"difficulty\": \"easy\",\r\n    \"tags\": [\"String\"]\r\n}",
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplatePython\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"codeTemplateJavascript\": \"const minVal = (numbers) => {}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ],\r\n    \"difficulty\": \"easy\",\r\n    \"tags\": [\"String\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1845,7 +1847,8 @@
 									"pm.test(\"Challenge contains expected fields\", function () {\r",
 									"    pm.expect(data18.challenge).to.have.property(\"_id\");\r",
 									"    pm.expect(data18.challenge).to.have.property(\"name\");\r",
-									"    pm.expect(data18.challenge).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(data18.challenge).to.have.property(\"codeTemplatePython\");\r",
+									"    pm.expect(data18.challenge).to.have.property(\"codeTemplateJavascript\");\r",
 									"    pm.expect(data18.challenge).to.have.property(\"description\");\r",
 									"    pm.expect(data18.challenge).to.have.property(\"testCases\");    \r",
 									"})\r",
@@ -2265,7 +2268,8 @@
 									"pm.test(\"Response contains expected fields\", function () {\r",
 									"    pm.expect(pm.response.json()).to.have.property(\"_id\");\r",
 									"    pm.expect(pm.response.json()).to.have.property(\"name\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"codeTemplate\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"codeTemplatePython\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"codeTemplateJavascript\");\r",
 									"    pm.expect(pm.response.json()).to.have.property(\"description\");\r",
 									"    pm.expect(pm.response.json()).to.have.property(\"testCases\");\r",
 									"});\r",

@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 // Running and testing code
 async function executeCode(req, res, next) {
     try {
+        console.log("Executing code");
         //later add code hash check so that a user cannot submit two identical submissions
         // Submission.findBy(authorID).where(hash(code) == hash_code)
         const {code, language, authorId, id} = req.body;
@@ -24,8 +25,17 @@ async function executeCode(req, res, next) {
             return res.status(404).json({message: 'Not found: challenge with id not in database'});
         }
 
-        const {result, passed} = await codeRunner.containerizeAndTestCode(code, challenge.testCases, language);
-        if (passed){
+        let testCases;
+        if (language.toLowerCase() == "python") {
+            // Filter for Python test cases
+            testCases = challenge.testCases.filter(tc => tc.language.toLowerCase() === "python");
+        } else if (language.toLowerCase() == "javascript") {
+            // Filter for JavaScript test cases
+            testCases = challenge.testCases.filter(tc => tc.language.toLowerCase() === "javascript");
+        }
+
+        const {result, passed} = await codeRunner.containerizeAndTestCode(code, testCases, language);
+        if (passed) {
             //create a submission draft
             const draftSubmission = await DraftSubmission.findOneAndReplace(
                 {author: authorId, challenge: id},
@@ -35,7 +45,7 @@ async function executeCode(req, res, next) {
                 {upsert: true, new: true},
             )
             return res.status(201).json({message: result, passed: passed, newSubmission: draftSubmission});
-        } else{
+        } else {
             return res.status(200).json({message: result, passed: passed});
         }
     } catch (err) {
@@ -45,8 +55,8 @@ async function executeCode(req, res, next) {
 
 async function createNewChallenge(req, res, next) {
     try {
-        const {name, codeTemplate, description, testCases, difficulty, tags} = req.body
-        if (!name || !codeTemplate || !description || !testCases || !difficulty) {
+        const {name, codeTemplatePython, codeTemplateJavascript, description, testCases, difficulty, tags} = req.body
+        if (!name || !codeTemplatePython || !codeTemplateJavascript || !description || !testCases || !difficulty) {
             return res.status(400).json({message: 'Name or code template or description or test cases or difficulty is missing.'});
         }
 
@@ -62,7 +72,8 @@ async function createNewChallenge(req, res, next) {
         
         const newChallenge = await Challenge.create({
             name: name, 
-            codeTemplate: codeTemplate, 
+            codeTemplatePython: codeTemplatePython, 
+            codeTemplateJavascript: codeTemplateJavascript,
             description: description, 
             testCases: testCaseIds,
             difficulty: difficulty,
@@ -71,7 +82,8 @@ async function createNewChallenge(req, res, next) {
         return res.status(201).json({
             id: newChallenge._id,
             name: newChallenge.name,
-            codeTemplate: newChallenge.codeTemplate,
+            codeTemplatePython: newChallenge.codeTemplatePython,
+            codeTemplateJavascript: newChallenge.codeTemplateJavascript,
             description: newChallenge.description,
             testCases: newChallenge.testCases,
             difficulty: newChallenge.difficulty,
@@ -158,7 +170,6 @@ async function updateChallenge(req, res, next) {
             }
         );
 
-    
         const updatedChallenge = await Challenge.findByIdAndUpdate(
             req.params.id,
             req.body,

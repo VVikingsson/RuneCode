@@ -4,6 +4,9 @@
   "engines": {
     "node": "22.x"
   },
+  "nodemonConfig": {
+    "ignore": "**/sandboxing/temp/**"
+  },
   "private": true,
   "description": "Template for ExpressJS API with Mongoose for Web and Mobile Engineering (DIT342)",
   "main": "./app.js",
