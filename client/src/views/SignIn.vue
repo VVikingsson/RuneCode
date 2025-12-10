@@ -38,21 +38,22 @@ function changeView() {
     }
     
     .sign-in-container {
-        max-width: 30% !important;
+        max-width: 30rem !important;
         background-color:  var(--dark-bg) !important;
         color: var(--text-light) !important;
         font-family: 'JetBrains Mono', monospace;
         border: 2px solid white;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 2rem;
         margin-top: 5rem;
     }
 
     .change-sign-in-type-button {
         margin-top: 1rem;
+        background-color: var(--dark-bg) !important;
     }
 
     .change-sign-in-type-button:hover {
-        background-color: var(--primary-blue) !important;
+        background-color: var(--card-bg) !important;
     }
 </style>
