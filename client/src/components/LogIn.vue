@@ -12,11 +12,20 @@
     import { Api } from '@/Api'
     import { useRouter } from 'vue-router'; 
 
-    function logIn() {
+    const router = useRouter();
+    let identifier = ('');
+    let password = ('');
+
+    async function logIn() {
         try {
             if (identifier == '' || password == '') {
                 alert('Enter correct info bruh');
                 return;
+            }
+
+            const response = await Api.post('/users/sessions', {identifier: identifier, password: password}, {withCredentials: true});
+            if (response.status === 200) {
+                router.push({name: 'home'});
             }
 
         } catch (err) {

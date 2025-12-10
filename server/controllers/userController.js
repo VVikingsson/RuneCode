@@ -51,14 +51,25 @@ async function loginUser(req, res, next) {
 
         const payload = {
             id: user._id,
-            isAdmin: user.isAdmin 
+            isAdmin: user.isAdmin,
+            username: user.username,
+            points: user.points,
+            bio: user.bio,
+            completed: user.completed,
         };
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2h" });
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "12h" });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: 'None',
+            maxAge: 1000 * 60 * 60 * 12, // 12 hours TTL
+            secure: true
+    });
 
         return res.status(200).json({
             message: "Successfully logged in",
-            token: token
+            token
         });
 
     } catch (err) {
