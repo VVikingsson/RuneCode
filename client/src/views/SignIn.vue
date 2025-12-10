@@ -1,0 +1,58 @@
+<template>
+ <RuneCode id="runecode" />
+        <BContainer class="sign-in-container">
+            <LogIn v-if="signingUp==false"/>
+            <SignUp v-if="signingUp==true"/>
+            <br/>
+            <BButton @click="changeView()" class="change-sign-in-type-button">{{ changeSignInTypeButton }}</BButton>
+        </BContainer>
+</template>
+
+
+<script setup>
+import RuneCode from '../components/RuneCode.vue';
+import LogIn from '../components/LogIn.vue';
+import SignUp from '../components/SignUp.vue';
+import { ref } from 'vue';
+
+let signingUp = ref(false);
+let changeSignInTypeButton = ref('I don\'t have an account');
+
+
+function changeView() {
+    signingUp.value = !signingUp.value;
+    if (signingUp.value) {
+        changeSignInTypeButton.value = 'I have an account';
+    } else {
+        changeSignInTypeButton.value = 'I don\'t have an account';
+    }
+}
+
+</script>
+
+
+<style scoped>
+
+    #runecode {
+        margin-top: 2rem;
+    }
+    
+    .sign-in-container {
+        max-width: 30% !important;
+        background-color:  var(--dark-bg) !important;
+        color: var(--text-light) !important;
+        font-family: 'JetBrains Mono', monospace;
+        border: 2px solid white;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-top: 5rem;
+    }
+
+    .change-sign-in-type-button {
+        margin-top: 1rem;
+    }
+
+    .change-sign-in-type-button:hover {
+        background-color: var(--primary-blue) !important;
+    }
+</style>
