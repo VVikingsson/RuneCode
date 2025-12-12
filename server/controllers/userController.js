@@ -15,10 +15,7 @@ async function createNewUser(req, res, next) {
         const newUser = await User.create({username, email, hashedPassword, isAdmin});
 
         return res.status(201).json({
-            id: newUser._id,
-            name: newUser.username,
-            email: newUser.email,
-            isAdmin: newUser.isAdmin
+            user: newUser
         });
     } catch (err) {
         if (err.code === 11000 && err.keyValue) { // Mongoose error for field already existing
@@ -51,11 +48,6 @@ async function loginUser(req, res, next) {
 
         const payload = {
             id: user._id,
-            isAdmin: user.isAdmin,
-            username: user.username,
-            points: user.points,
-            bio: user.bio,
-            completed: user.completed,
         };
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "12h" });
@@ -69,7 +61,8 @@ async function loginUser(req, res, next) {
 
         return res.status(200).json({
             message: "Successfully logged in",
-            token
+            token: token,
+            user: user
         });
 
     } catch (err) {

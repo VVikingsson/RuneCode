@@ -13,7 +13,14 @@
 import NavBar from './components/NavBar.vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
+import { useUserStore } from './stores/user.js';
+import { onMounted } from 'vue';
 const router = useRouter();
+const user = useUserStore();
+
+onMounted(async () => {
+  await user.restoreSession(); // check for existing jwt and store user info in global store
+});
 </script>
 
 <style>

@@ -11,10 +11,13 @@
 <script setup>
     import { Api } from '@/Api'
     import { useRouter } from 'vue-router'; 
+    import {useUserStore} from '@/stores/user';
+    import { ref } from 'vue';
 
     const router = useRouter();
-    let identifier = ('');
-    let password = ('');
+    let identifier = ref('');
+    let password = ref('');
+    const user = useUserStore();
 
     async function logIn() {
         try {
@@ -25,6 +28,7 @@
 
             const response = await Api.post('/users/sessions', {identifier: identifier, password: password}, {withCredentials: true});
             if (response.status === 200) {
+                user.setUser(response.data.user); // Set user in global store
                 router.push({name: 'home'});
             }
 
