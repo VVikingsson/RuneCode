@@ -1,5 +1,5 @@
 <template>
-    <div class="page-wrapper">
+    <BContainer class="page-wrapper">
         <RuneCode id="runecode"/>
 
         <BContainer class="sign-in-container">
@@ -10,7 +10,7 @@
                 {{ changeSignInTypeButton }}
             </BButton>
         </BContainer>
-    </div>
+    </BContainer>
 </template>
 
 <script setup>
@@ -54,8 +54,8 @@ function changeView() {
         border-radius: 16px;
         padding: 2rem;
 
-        margin-top: auto;
-        margin-bottom: auto;
+        margin-top: auto; /* auto sets it in the center of the available space. */
+        margin-bottom: auto; /* without the page-wrapper, there is no free space. This is why we need page wrapper. */
         display: flex;
         flex-direction: column;
         align-items: center;

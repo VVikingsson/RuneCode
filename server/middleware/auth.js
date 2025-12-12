@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-export function authenticateToken(req, res, next) {
+function authenticateToken(req, res, next) {
   const token = req.cookies.token;
 
   if (!token) return res.status(401).json({ error: "Not authenticated" });
@@ -13,3 +13,7 @@ export function authenticateToken(req, res, next) {
     return res.status(401).json({ error: "Invalid token" });
   }
 }
+
+module.exports = {
+    authenticateToken,
+};
