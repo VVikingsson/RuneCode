@@ -1,13 +1,17 @@
 <template>
- <RuneCode id="runecode" />
+    <div class="page-wrapper">
+        <RuneCode id="runecode"/>
+
         <BContainer class="sign-in-container">
             <LogIn v-if="signingUp==false"/>
             <SignUp v-if="signingUp==true"/>
             <br/>
-            <BButton @click="changeView()" class="change-sign-in-type-button">{{ changeSignInTypeButton }}</BButton>
+            <BButton @click="changeView()" class="change-sign-in-type-button">
+                {{ changeSignInTypeButton }}
+            </BButton>
         </BContainer>
+    </div>
 </template>
-
 
 <script setup>
 import RuneCode from '../components/RuneCode.vue';
@@ -32,7 +36,11 @@ function changeView() {
 
 
 <style scoped>
-
+    .page-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
     #runecode {
         margin-top: 2rem;
     }
@@ -45,11 +53,16 @@ function changeView() {
         border: 2px solid white;
         border-radius: 16px;
         padding: 2rem;
-        margin-top: 5rem;
+
+        margin-top: auto;
+        margin-bottom: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .change-sign-in-type-button {
-        margin-top: 1rem;
+        margin-top: 0rem;
         background-color: var(--dark-bg) !important;
     }
 
