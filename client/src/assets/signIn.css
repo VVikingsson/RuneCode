@@ -1,0 +1,16 @@
+.sign-in-field {
+    background-color:  var(--dark-bg) !important;
+    color: var(--text-light) !important;
+    font-family: 'JetBrains mono', 'monospace';
+    margin-bottom: 1rem;
+}
+.sign-in-button {
+    margin-top: 2rem;
+    background-color: var(--neon-orange-dark) !important;
+}
+
+.sign-in-button:hover {
+    background-color: var(--neon-orange) !important;
+}
+
+    
