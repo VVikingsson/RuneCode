@@ -22,13 +22,13 @@
 									"});\r",
 									"\r",
 									"pm.test(\"Response contains required fields\", function () {\r",
-									"    pm.expect(pm.response.json()).to.have.property('id');\r",
-									"    pm.expect(pm.response.json()).to.have.property('name');\r",
-									"    pm.expect(pm.response.json()).to.have.property('email');\r",
-									"    pm.expect(pm.response.json()).to.have.property('isAdmin');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('_id');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('username');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('email');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('isAdmin');\r",
 									"});\r",
 									"\r",
-									"pm.environment.set(\"userID\", pm.response.json().id);"
+									"pm.environment.set(\"userID\", pm.response.json().user._id);"
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -78,13 +78,13 @@
 									"});\r",
 									"\r",
 									"pm.test(\"Response contains required fields\", function () {\r",
-									"    pm.expect(pm.response.json()).to.have.property('id');\r",
-									"    pm.expect(pm.response.json()).to.have.property('name');\r",
-									"    pm.expect(pm.response.json()).to.have.property('email');\r",
-									"    pm.expect(pm.response.json()).to.have.property('isAdmin');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('_id');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('username');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('email');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('isAdmin');\r",
 									"});\r",
 									"\r",
-									"pm.environment.set(\"adminID\", pm.response.json().id);\r",
+									"pm.environment.set(\"adminID\", pm.response.json().user._id);\r",
 									""
 								],
 								"type": "text/javascript",
@@ -240,6 +240,62 @@
 					"response": []
 				},
 				{
+					"name": "POST duplicate post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check that status code is 409\r",
+									"pm.test(\"Status code is 409 for duplicate challenge\", function () {\r",
+									"    pm.response.to.have.status(409);\r",
+									"});\r",
+									"\r",
+									"const data15 = pm.response.json();\r",
+									"\r",
+									"// Check that response contains proper duplicate field message\r",
+									"pm.test(\"Error message indicates duplicate field\", function () {\r",
+									"    pm.expect(data15).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplatePython\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"codeTemplateJavascript\": \"const minVal = (numbers) => {}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ],\r\n    \"difficulty\": \"easy\",\r\n    \"tags\": [\"String\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "GET user recommended challenge",
 					"event": [
 						{
@@ -275,18 +331,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/challenges?recommendedChallengeFor={{userID}}",
+							"raw": "{{baseURL}}/challenges/recommendedChallenges",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"challenges"
-							],
-							"query": [
-								{
-									"key": "recommendedChallengeFor",
-									"value": "{{userID}}"
-								}
+								"challenges",
+								"recommendedChallenges"
 							]
 						}
 					},
@@ -723,39 +774,6 @@
 								"123",
 								"image",
 								"123.jpg"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/users/{{adminID}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"users",
-								"{{adminID}}"
 							]
 						}
 					},
@@ -1651,62 +1669,6 @@
 		{
 			"name": "challenge",
 			"item": [
-				{
-					"name": "POST duplicate post",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 409\r",
-									"pm.test(\"Status code is 409 for duplicate challenge\", function () {\r",
-									"    pm.response.to.have.status(409);\r",
-									"});\r",
-									"\r",
-									"const data15 = pm.response.json();\r",
-									"\r",
-									"// Check that response contains proper duplicate field message\r",
-									"pm.test(\"Error message indicates duplicate field\", function () {\r",
-									"    pm.expect(data15).to.have.property(\"message\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"find-min-val\",\r\n    \"codeTemplatePython\": \"function minVal(numbers){//numbers is a comma-separated string}\",\r\n    \"codeTemplateJavascript\": \"const minVal = (numbers) => {}\",\r\n    \"description\": \"Return the smallest number from a comma-separated string.\",\r\n    \"testCases\": [\r\n        {\"input\": \"minVal('1,2,3,4')\", \"expectedOutput\": \"1\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('1,2,3,4,-7')\", \"expectedOutput\": \"-7\", \"language\": \"javascript\"},\r\n        {\"input\": \"minVal('200,400,201')\", \"expectedOutput\": \"200\", \"language\": \"javascript\"}\r\n    ],\r\n    \"difficulty\": \"easy\",\r\n    \"tags\": [\"String\"]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseURL}}/challenges",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"challenges"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "POST array test",
 					"event": [
@@ -3299,6 +3261,39 @@
 								"{{challengeID}}",
 								"test-cases",
 								"{{relatedTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{adminID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{adminID}}"
 							]
 						}
 					},

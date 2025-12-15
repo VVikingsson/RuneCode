@@ -26,8 +26,7 @@ const router = useRouter();
 
 async function goToRecommendedChallenge() {
     console.log("Pressed button");
-    const userId = import.meta.env.VITE_TEMP_USER_ID;
-    const response = await Api.get(`/challenges?recommendedChallengeFor=${userId}`);
+    const response = await Api.get(`/challenges/recommendedChallenges`, {withCredentials: true});
     const challenge = response.data.recommendedChallenge;
     router.push({name: 'Challenge', params: { id: challenge._id }});
 }
