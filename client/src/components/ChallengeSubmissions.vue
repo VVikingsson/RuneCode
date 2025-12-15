@@ -2,15 +2,12 @@
   <BContainer class="submissions-container">
     <h3 class="mb-3">Submissions</h3>
 
-    <!-- Loading -->
     <p v-if="loading" class="text-body-secondary">Loading submissions...</p>
 
-    <!-- Empty -->
     <p v-else-if="submissions.length === 0" class="text-body-secondary">
       No submissions yet.
     </p>
 
-    <!-- Submissions list -->
     <BListGroup v-else>
       <BListGroupItem
         v-for="submission in submissions"
