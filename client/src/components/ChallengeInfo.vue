@@ -6,7 +6,8 @@
             <p>{{ description }}</p>
         </BContainer>
         </BTab>
-        <BTab title="Submissions"><p>Submissions go here</p>
+        <BTab title="Submissions">
+            <ChallengeSubmissions :challengeId="route.params.id" />
         </BTab>
     </BTabs>
     
@@ -15,6 +16,10 @@
 
 <script setup>
     import { defineProps } from 'vue';
+    import { useRoute } from 'vue-router';
+    import ChallengeSubmissions from './ChallengeSubmissions.vue';
+
+    const route = useRoute();
 
     const props = defineProps({
         description: {type: String, required: true},
