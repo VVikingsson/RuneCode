@@ -26,10 +26,10 @@
                 :extensions="extensions"
             />
         </BTab>
-        <BButton @click="runCode">
+        <BButton class="run-button" "@click="runCode">
             Run
         </BButton>
-        <BButton>
+        <BButton class="submit-button">
             Submit
         </BButton>
     </BTabs>
@@ -165,6 +165,10 @@ const extensions = [syntaxHighlighting(myHighlightStyle)];
 </script>
 
 <style>
+    .run-button {
+        margin-right: 2rem;
+    }
+
     .coding-window {
         text-align: left !important;
     }
@@ -174,9 +178,8 @@ const extensions = [syntaxHighlighting(myHighlightStyle)];
         height: 500px;
         border: 2px solid white;
         border-radius: 8px;
+        overflow: hidden;
     }
-
-    
 
     .cm-gutters, .cm-activeLineGutter{
         background-color: var(--dark-bg) !important;
