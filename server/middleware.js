@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { User } = require('./models');
 
 function verifyJWT(req, res, next) {
     const authHeader = req.headers['authorization'];
@@ -9,15 +10,18 @@ function verifyJWT(req, res, next) {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // { id: ..., isAdmin: ... }
+        req.user = decoded; // { id: ... }
         next();
     } catch (err) {
         return res.status(401).json({ message: 'Invalid or expired token' });
     }
 }
 
-function checkAdmin(req, res, next) {
-    if (!req.user || !req.user.isAdmin) {
+async function checkAdmin(req, res, next) {
+    console.log(req.user);
+    const user = await User.findById(req.user.id);
+    console.log(user);
+    if (!user || !user.isAdmin) {
         return res.status(403).json({ message: 'Admin access required' });
     }
     next();

@@ -9,21 +9,33 @@ async function createNewUser(req, res, next) {
         const {username, email, password, isAdmin} = req.body
         if (!username || !email || !password) {
             return res.status(400).json({message: 'Username or email or password is missing'});
+        } else if (!email.includes('@')) {
+            res.status(400).json({message: 'Email does not contain @'});
         }
         const salt = await bcrypt.genSalt(10);                    // salting is the process of adding a random value to 
         const hashedPassword = await bcrypt.hash(password, salt); // the password before hashing it, making it more secure.
         const newUser = await User.create({username, email, hashedPassword, isAdmin});
 
-        return res.status(201).json({
+        const payload = {
             id: newUser._id,
-            name: newUser.username,
-            email: newUser.email,
-            isAdmin: newUser.isAdmin
+        };
+
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "12h" });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: 'None',
+            maxAge: 1000 * 60 * 60 * 12, // 12 hours TTL
+            secure: true
+        });
+
+        return res.status(201).json({
+            user: newUser
         });
     } catch (err) {
         if (err.code === 11000 && err.keyValue) { // Mongoose error for field already existing
             const field = Object.keys(err.keyValue)[0]; // will be either username or email
-            return res.status(409).json({message: `A user with ${field} already exists`})
+            return res.status(409).json({message: `A user with ${field} '${field == 'username' ? req.body.username : req.body.email}' already exists`});
         }
         next(err);
     }
@@ -39,11 +51,12 @@ async function loginUser(req, res, next) {
         const user = await identifier.includes('@')
         ? await User.findOne({email: identifier}).select("+hashedPassword") 
         : await User.findOne({username: identifier}).select("+hashedPassword");
-        const passwordValid = await bcrypt.compare(password, user.hashedPassword);
 
         if (!user) {
             res.status(404).json({message: "User not found"});
         }
+
+        const passwordValid = await bcrypt.compare(password, user.hashedPassword);
         
         if(!passwordValid) {
             return res.status(401).json({ message: "Password is incorrect" });
@@ -51,14 +64,21 @@ async function loginUser(req, res, next) {
 
         const payload = {
             id: user._id,
-            isAdmin: user.isAdmin 
         };
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2h" });
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "12h" });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: 'None',
+            maxAge: 1000 * 60 * 60 * 12, // 12 hours TTL
+            secure: true
+    });
 
         return res.status(200).json({
             message: "Successfully logged in",
-            token: token
+            token: token,
+            user: user
         });
 
     } catch (err) {

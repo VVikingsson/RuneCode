@@ -10,10 +10,22 @@
   <BNavbarToggle target="nav-collapse"/>
   <BCollapse id="nav-collapse" is-nav>
     <BNavbarNav class="mx-auto p-2">
-      <BNavItem href="/" class="please"><img src="../assets/icons/bonfire.svg" class="icon" id="home-icon"/>Home</BNavItem>
-      <BNavItem href="/challenges"><img src = "../assets/icons/viking.svg" class="icon" id="challenges-icon"/>Challenges</BNavItem>
-      <BNavItem href="/leaderboard"><img src="../assets/icons/paper.svg" class="icon" id="leaderboard-icon"/>Leaderboard</BNavItem>
-      <BNavItem href="/users"><img src="../assets/icons/people.svg" class="icon" id="users-icon"/>Users</BNavItem>
+      <BNavItem href="/">
+        <img src="../assets/icons/bonfire.svg" class="icon" id="home-icon"/>
+        Home
+      </BNavItem>
+      <BNavItem href="/challenges">
+        <img src = "../assets/icons/viking.svg" class="icon" id="challenges-icon"/>
+        Challenges
+      </BNavItem>
+      <BNavItem href="/leaderboard">
+        <img src="../assets/icons/paper.svg" class="icon" id="leaderboard-icon"/>
+        Leaderboard
+      </BNavItem>
+      <BNavItem href="/users">
+        <img src="../assets/icons/people.svg" class="icon" id="users-icon"/>
+        Users
+      </BNavItem>
     </BNavbarNav>
     <!-- Right aligned nav items -->
     <BNavbarNav class="ms-auto mb-2 mb-lg-0">

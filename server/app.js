@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const cors = require('cors');
 const history = require('connect-history-api-fallback');
@@ -27,8 +28,11 @@ function createExpressApp() {
     // HTTP request logger
     app.use(morgan('dev'));
     // Enable cross-origin resource sharing for frontend must be registered before api
-    app.options('*', cors());
-    app.use(cors());
+    app.use(cors({
+    origin: "http://localhost:5173",   // Vue server origin
+    credentials: true,                 // allow cookies
+    }));
+    app.use(cookieParser());
 
     return app;
 }
