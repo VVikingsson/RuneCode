@@ -10,9 +10,11 @@
 
     /* For primary UI */
     --primary-blue: #4A78FF;     
-    --light-blue: #A5BFF8;    
+    --light-blue: #A5BFF8;
+    --light-blue-vague: #a5bff87e;    
     --amber-primary: #F49A32;    
-    --amber-accent: #E7A038;   
+    --amber-accent: #E7A038;  
+    --amber-vague: #e29e373f; 
 
     --text-light: #F2F2F2;    
     --text-muted: #999999; 
