@@ -13,7 +13,13 @@
                     >
                         <div class="challenge-header">
                             <h5 class="mb-1">{{ challenge.name }}</h5>
-                            <small class="text-body-secondary">{{ challenge.difficulty }}</small>
+                            <small
+                                class="difficulty-label"
+                                :class="difficultyLevel(challenge.difficulty).class"
+                            >
+                                {{ difficultyLevel(challenge.difficulty).label }}
+                            </small>
+
                         </div>
 
 
@@ -47,6 +53,21 @@ async function fetchChallenges() {
     }
 }
 
+function difficultyLevel(difficulty) {
+    switch (difficulty?.toLowerCase()) {
+        case 'easy':
+            return { label: 'Skirmish', class: 'difficulty-skirmish' };
+        case 'medium':
+            return { label: 'Pillage', class: 'difficulty-pillage' };
+        case 'hard':
+            return { label: 'Raid', class: 'difficulty-raid' };
+        default:
+            return { label: difficulty, class: '' };
+    }
+}
+
+
+
 function goToChallengePage(_id) {
     if (!_id) return;
     router.push({name: 'Challenge', params: { id: _id }}); 
@@ -66,21 +87,23 @@ export default {
         font-family: 'Kedebideri';
     }
     .main-container {
-        min-width: 100% !important;
+        min-width: 70% !important;
     }
     .top-row {
-        padding-top: 1rem;
+        padding-top: 2rem;
     }
     .left-col {
         margin-left: 2rem;
     }
     #welcome-message {
-        text-align: left;
-        font-size: 1.75rem;
+        color: var(--amber-accent) !important;
+        text-align: center;
+        font-size: 1.5rem;
     }
 
 
     .challenge-header {
+        color: var(--primary-blue);
         display: flex;
         width: 100%;
         justify-content: space-between;
@@ -89,14 +112,43 @@ export default {
 
     .challenge-item-bg {
         cursor: pointer;
-        background-color: var(--section-bg) !important;
+        background-color: var(--dark-bg) !important;
     }
 
     .challenge-description {
         color: var(--light-blue) !important;
 
     }
-    .text-body-secondary {
-        color: var(--amber-accent) !important;
+    .difficulty-label {
+        font-weight: 600;
+        letter-spacing: 0.03em;
     }
+
+    /* Skirmish = easy */
+    .difficulty-skirmish {
+        color: var(--neon-cyan);
+        text-shadow:
+            0 0 2px var(--neon-cyan),
+            0 0 4px var(--neon-cyan),
+            0 0 6px var(--neon-cyan);
+    }
+
+    /* Pillage = medium */
+    .difficulty-pillage {
+        color: var(--neon-magenta);
+        text-shadow:
+            0 0 2px var(--neon-magenta),
+            0 0 4px var(--neon-magenta),
+            0 0 6px var(--neon-magenta);
+    }
+
+    /* Raid = hard */
+    .difficulty-raid {
+        color: var(--neon-orange);
+        text-shadow:
+            0 0 2px var(--neon-orange),
+            0 0 4px var(--neon-orange),
+            0 0 6px var(--neon-orange);
+    }
+
 </style>
