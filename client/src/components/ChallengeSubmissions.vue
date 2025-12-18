@@ -84,4 +84,9 @@ onMounted(() => {
   font-style: italic;
   opacity: 0.85;
 }
+
+.text-muted {
+    color: var(--light-blue) !important;
+
+}
 </style>
