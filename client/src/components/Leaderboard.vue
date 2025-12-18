@@ -46,7 +46,7 @@ onMounted(() => {
       >
         <template #cell(username)="scope">
           <RouterLink
-            :to="{ name: 'User', params: { id: scope.item.id } }"
+            :to="{ name: 'UserPage', params: { id: scope.item.id } }"
             class="text-decoration-none username-link"
           >
             {{ scope.item.username }}

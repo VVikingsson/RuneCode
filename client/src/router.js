@@ -16,9 +16,9 @@ const routes = [
   { path: '/leaderboard', component: Leaderboard },
   { path: '/', name: 'home', component: Home },
   { path: '/challenges/:id', name: 'Challenge', component: Challenge },
-  { path: '/users/:id', name: 'User', component: User, props: true }, // redirects you to a page of a specific user
+  // { path: '/users/:id', name: 'User', component: User, props: true }, // redirects you to a page of a specific user
   { path: '/sign-in', name: 'SignIn', component: SignIn},
-  { path: '/users', component: UserPage }
+  { path: '/users/:id', name: 'UserPage', component: UserPage, props: true }
 
 ]
 
