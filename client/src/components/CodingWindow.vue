@@ -88,13 +88,12 @@ watch(() => activeTabIndex.value, (index) => {
 // --------------
 async function runCode() {
     try {
-        const userId = "69402a6cc3642f3d4435773c";
         const userCode = activeTabIndex.value === 0 ? pythonCode.value : javascriptCode.value;
         const language = activeTabIndex.value === 0 ? "python" : "javascript";
 
 
         const response = await Api.post('/drafts', {
-            code: userCode, language: language, authorId: userId, id: route.params.id
+            code: userCode, language: language, id: route.params.id
         })
         const { passed, message, newSubmission } = response.data;
 
@@ -126,14 +125,12 @@ async function submitCode() {
     }
 
     const authorNote = prompt("Optional note:");
-    const userId = "69402a6cc3642f3d4435773c";
 
     try {
         const response = await Api.post(`/submissions`, {
             title,
             authorNote,
             challengeId: route.params.id,
-            authorId: userId
         });
 
         // ✅ use response to confirm submission

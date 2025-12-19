@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 
 async function createSubmission(req, res, next) {
     try {
-        const {title, authorNote, challengeId, authorId} = req.body;
+        const authorId = req.user.id;
+        const {title, authorNote, challengeId} = req.body;
         if (!challengeId || !authorId ) {
             return res.status(400).json({message: 'Bad request: challenge ID or author ID not provided.'});
         }
