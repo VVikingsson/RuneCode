@@ -36,12 +36,12 @@
                 </div>
             </BTab>
         </BTabs>
-        <BButton class="run-button" @click="runCode">
-            Run
-        </BButton>
-        <BButton class="submit-button">
-            Submit
-        </BButton>
+        <div class = "mt-2">
+            <BButton @click="runCode" class="run-button">Run</BButton>
+            <BButton class="submit-button" :disabled="!submittable" @click="submitCode">Submit</BButton>
+        </div>
+
+        
     </BContainer>
 </template>
 
@@ -71,6 +71,9 @@ const alertMessage = ref('');
 const showAlert = ref(false);
 const alertVariant = ref('');
 
+const submittable = ref(false);
+const draftSaved = ref(false);
+
 // Observers
 watch(() => props.pythonCodeTemplate, (newTemplate) => {
     pythonCode.value = newTemplate;
@@ -84,35 +87,65 @@ watch(() => activeTabIndex.value, (index) => {
 
 // --------------
 async function runCode() {
-    
     try {
-        const userId = import.meta.env.VITE_TEMP_USER_ID;
+        const userId = "69402a6cc3642f3d4435773c";
         const userCode = activeTabIndex.value === 0 ? pythonCode.value : javascriptCode.value;
         const language = activeTabIndex.value === 0 ? "python" : "javascript";
 
 
-        console.log(activeTabIndex.value);
-
-        await Api.post('/drafts', {
+        const response = await Api.post('/drafts', {
             code: userCode, language: language, authorId: userId, id: route.params.id
-        }).then( (response) => {
-            if (response.data.passed) {
-                alertMessage.value = response.data.message;
-                alertVariant.value = 'success';
-                showAlert.value = true;
-            } else {
-                alertMessage.value = response.data.message;
-                alertVariant.value = 'danger';
-                showAlert.value = true;
-            }
-        });
+        })
+        const { passed, message, newSubmission } = response.data;
+
+        if (passed) {
+            draftSaved.value = true;
+            submittable.value = true;  
+            alertMessage.value = message;
+            alertVariant.value = 'success';
+            showAlert.value = true;
+        } else {
+            draftSaved.value = false;
+            submittable.value = false;
+            alertMessage.value = response.data.message;
+            alertVariant.value = 'danger';
+            showAlert.value = true;
+        }
     } catch (err) {
         alertMessage.value = 'Error posting to drafts: ' + err;
     }
-
 }
 
-// Syntax highlighting customization, generated from careful prompting of Gemini.
+async function submitCode() {
+    if (!submittable.value) return;
+
+    const title = prompt("Enter submission title:");
+    if (!title || title.trim() === "") {
+        alert("Submission title is required.");
+        return;
+    }
+
+    const authorNote = prompt("Optional note:");
+    const userId = "69402a6cc3642f3d4435773c";
+
+    try {
+        const response = await Api.post(`/submissions`, {
+            title,
+            authorNote,
+            challengeId: route.params.id,
+            authorId: userId
+        });
+
+        // ✅ use response to confirm submission
+        alert("Submission created successfully! ID: " + response.data._id);
+
+        submittable.value = false;
+        draftSaved.value = false;
+    } catch (err) {
+        console.log("Error submitting code:", err);
+        alert("Failed to submit code.");
+    }
+}// Syntax highlighting customization, generated from careful prompting of Gemini.
 const myHighlightStyle = HighlightStyle.define([
   // Fallback for names and default text
   { tag: tags.name, color: "#F2F2F2" },
@@ -178,6 +211,7 @@ const myHighlightStyle = HighlightStyle.define([
 const extensions = [syntaxHighlighting(myHighlightStyle)];
 
 </script>
+
 
 <style>
     .coding-window-container {
