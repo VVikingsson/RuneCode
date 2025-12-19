@@ -1,41 +1,41 @@
 <template>
     <BContainer class="coding-window-container">
         <BTabs class="coding-tabs" v-model:index="activeTabIndex" content-class="mt-3">
-        <BTab class="coding-tab" title="Python" active>
-            <div class="editor-wrapper">
-            <code-mirror
-                class="coding-window"
-                v-model="pythonCode"
-                basic
-                :lang="lang"
-                :tab="true"
-                :tab-size="4"
-                :allow-multiple-selections="true"
-                :extensions="extensions"
-            />
-            <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
-                {{ alertMessage }}
-            </BAlert>
-            </div>
-        </BTab>
-        <BTab class="coding-tab" title="Javascript">
-            <div class="editor-wrapper">
-            <code-mirror
-                class="coding-window"
-                v-model="javascriptCode"
-                basic
-                :lang="lang"
-                :tab="true"
-                :tab-size=4
-                :allow-multiple-selections="true"
-                :extensions="extensions"
-            />
-            <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
-                {{ alertMessage }}
-            </BAlert>
-            </div>
-        </BTab>
-    </BTabs>
+            <BTab class="coding-tab" title="Python" active>
+                <div class="editor-wrapper">
+                <code-mirror
+                    class="coding-window"
+                    v-model="pythonCode"
+                    basic
+                    :lang="lang"
+                    :tab="true"
+                    :tab-size="4"
+                    :allow-multiple-selections="true"
+                    :extensions="extensions"
+                />
+                <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
+                    {{ alertMessage }}
+                </BAlert>
+                </div>
+            </BTab>
+            <BTab class="coding-tab" title="Javascript">
+                <div class="editor-wrapper">
+                <code-mirror
+                    class="coding-window"
+                    v-model="javascriptCode"
+                    basic
+                    :lang="lang"
+                    :tab="true"
+                    :tab-size=4
+                    :allow-multiple-selections="true"
+                    :extensions="extensions"
+                />
+                <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
+                    {{ alertMessage }}
+                </BAlert>
+                </div>
+            </BTab>
+        </BTabs>
         <BButton class="run-button" @click="runCode">
             Run
         </BButton>
@@ -199,14 +199,28 @@ const extensions = [syntaxHighlighting(myHighlightStyle)];
 
     .run-button {
         margin-right: 2rem;
+        background-color: var(--dark-bg) !important;
+    }
+
+    .run-button:hover {
+        background-color: var(--card-bg) !important;
     }
 
     .submit-button {
+        background-color: var(--dark-bg) !important;
+    }
+
+    .submit-button:hover {
+        background-color: var(--card-bg) !important;
     }
 
     .coding-window {
         text-align: left !important;
         position: relative !important;
+    }
+
+    .coding-tabs {
+        margin-bottom: 0.25rem;
     }
     
     .cm-editor {
