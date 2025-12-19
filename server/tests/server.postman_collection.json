@@ -2658,7 +2658,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"challengeId\": \"{{challengeID}}\",\r\n    \"authorId\": \"I'm not a user ID\"\r\n}"
+							"raw": "{\r\n    \"challengeId\": \"I'm not a challenge ID\"\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/submissions",

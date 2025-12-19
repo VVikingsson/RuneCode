@@ -6,10 +6,8 @@ const jwt = require("jsonwebtoken");
 // Running and testing code
 async function executeCode(req, res, next) {
     try {
-        console.log("Executing code");
-        //later add code hash check so that a user cannot submit two identical submissions
-        // Submission.findBy(authorID).where(hash(code) == hash_code)
-        const {code, language, authorId, id} = req.body;
+        const authorId = req.user.id;
+        const {code, language, id} = req.body;
         // Error handling
         for (const objectId of [id, authorId]) {
             if (!mongoose.isValidObjectId(objectId)) {
@@ -302,7 +300,7 @@ async function getRelatedSubmissions(req, res, next) {
             return res.status(400).json({
                 message: `Bad request: Not a valid MongoDB object ID: ${challengeId}`})
         }
-        const submissions = await Submission.find({challenge: challengeId});
+        const submissions = await Submission.find({challenge: challengeId}).populate('author');
         res.status(200).json(submissions);
     } catch(err) {
         next(err);

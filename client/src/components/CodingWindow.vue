@@ -1,38 +1,47 @@
 <template>
     <BContainer class="coding-window-container">
         <BTabs class="coding-tabs" v-model:index="activeTabIndex" content-class="mt-3">
-        <BTab class="coding-tab" title="Python" active>
-            <code-mirror
-                class="coding-window"
-                v-model="pythonCode"
-                basic
-                :lang="lang"
-                :tab="true"
-                :tab-size="4"
-                :allow-multiple-selections="true"
-                :extensions="extensions"
-                autofocus
-            />
-        </BTab>
-        <BTab class="coding-tab" title="Javascript">
-            <code-mirror
-                class="coding-window"
-                v-model="javascriptCode"
-                basic
-                :lang="lang"
-                :tab="true"
-                :tab-size=4
-                :allow-multiple-selections="true"
-                :extensions="extensions"
-            />
-        </BTab>
+            <BTab class="coding-tab" title="Python" active>
+                <div class="editor-wrapper">
+                <code-mirror
+                    class="coding-window"
+                    v-model="pythonCode"
+                    basic
+                    :lang="lang"
+                    :tab="true"
+                    :tab-size="4"
+                    :allow-multiple-selections="true"
+                    :extensions="extensions"
+                />
+                <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
+                    {{ alertMessage }}
+                </BAlert>
+                </div>
+            </BTab>
+            <BTab class="coding-tab" title="Javascript">
+                <div class="editor-wrapper">
+                <code-mirror
+                    class="coding-window"
+                    v-model="javascriptCode"
+                    basic
+                    :lang="lang"
+                    :tab="true"
+                    :tab-size=4
+                    :allow-multiple-selections="true"
+                    :extensions="extensions"
+                />
+                <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
+                    {{ alertMessage }}
+                </BAlert>
+                </div>
+            </BTab>
         </BTabs>
-
         <div class = "mt-2">
-            <BButton @click="runCode">Run</BButton>
-            <BButton :disabled="!submittable" @click="submitCode">Submit</BButton>
-            <span v-if="draftSaved" class="ms-2 success">Draft saved</span>
+            <BButton @click="runCode" class="run-button">Run</BButton>
+            <BButton class="submit-button" :disabled="!submittable" @click="submitCode">Submit</BButton>
         </div>
+
+        
     </BContainer>
 </template>
 
@@ -58,6 +67,9 @@ const pythonCode = ref(props.pythonCodeTemplate);
 const javascriptCode = ref(props.javascriptCodeTemplate); 
 const activeTabIndex = ref(0); 
 const lang = ref(python());
+const alertMessage = ref('');
+const showAlert = ref(false);
+const alertVariant = ref('');
 
 const submittable = ref(false);
 const draftSaved = ref(false);
@@ -76,30 +88,30 @@ watch(() => activeTabIndex.value, (index) => {
 // --------------
 async function runCode() {
     try {
-        const userId = "69402a6cc3642f3d4435773c";
         const userCode = activeTabIndex.value === 0 ? pythonCode.value : javascriptCode.value;
         const language = activeTabIndex.value === 0 ? "python" : "javascript";
 
-        const response = await Api.post(`/drafts`, {
-            code: userCode,
-            language: language,
-            authorId: userId,
-            id: route.params.id,
-        });
 
+        const response = await Api.post('/drafts', {
+            code: userCode, language: language, id: route.params.id
+        })
         const { passed, message, newSubmission } = response.data;
 
         if (passed) {
             draftSaved.value = true;
             submittable.value = true;  
-            alert("Passed. Draft saved. " + message);
+            alertMessage.value = message;
+            alertVariant.value = 'success';
+            showAlert.value = true;
         } else {
             draftSaved.value = false;
             submittable.value = false;
-            alert("Failed. " + message );
+            alertMessage.value = response.data.message;
+            alertVariant.value = 'danger';
+            showAlert.value = true;
         }
     } catch (err) {
-        console.log('Error posting to drafts:', err);
+        alertMessage.value = 'Error posting to drafts: ' + err;
     }
 }
 
@@ -113,14 +125,12 @@ async function submitCode() {
     }
 
     const authorNote = prompt("Optional note:");
-    const userId = "69402a6cc3642f3d4435773c";
 
     try {
         const response = await Api.post(`/submissions`, {
             title,
             authorNote,
             challengeId: route.params.id,
-            authorId: userId
         });
 
         // ✅ use response to confirm submission
@@ -201,14 +211,48 @@ const extensions = [syntaxHighlighting(myHighlightStyle)];
 
 
 <style>
+    .coding-window-container {
+        height: calc(80vh);
+    }
+
+    .editor-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .code-feedback-alert {
+        position: absolute !important;
+        bottom: 0;           
+        left: 0;
+        margin: unset !important;
+        width: 100%;      
+    }
+
     .run-button {
         margin-right: 2rem;
+        background-color: var(--dark-bg) !important;
+    }
+
+    .run-button:hover {
+        background-color: var(--card-bg) !important;
+    }
+
+    .submit-button {
+        background-color: var(--dark-bg) !important;
+    }
+
+    .submit-button:hover {
+        background-color: var(--card-bg) !important;
     }
 
     .coding-window {
         text-align: left !important;
+        position: relative !important;
     }
 
+    .coding-tabs {
+        margin-bottom: 0.25rem;
+    }
     
     .cm-editor {
         height: 500px;
@@ -224,10 +268,6 @@ const extensions = [syntaxHighlighting(myHighlightStyle)];
     
     .cm-cursor {
         border-left-color: var(--light-blue) !important;
-    }
-
-    .coding-window-container {
-        height: calc(100vh - 80px);
     }
 
     .cm-activeLine {
