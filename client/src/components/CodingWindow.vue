@@ -2,6 +2,7 @@
     <BContainer class="coding-window-container">
         <BTabs class="coding-tabs" v-model:index="activeTabIndex" content-class="mt-3">
         <BTab class="coding-tab" title="Python" active>
+            <div class="editor-wrapper">
             <code-mirror
                 class="coding-window"
                 v-model="pythonCode"
@@ -11,10 +12,14 @@
                 :tab-size="4"
                 :allow-multiple-selections="true"
                 :extensions="extensions"
-                autofocus
             />
+            <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
+                {{ alertMessage }}
+            </BAlert>
+            </div>
         </BTab>
         <BTab class="coding-tab" title="Javascript">
+            <div class="editor-wrapper">
             <code-mirror
                 class="coding-window"
                 v-model="javascriptCode"
@@ -25,15 +30,18 @@
                 :allow-multiple-selections="true"
                 :extensions="extensions"
             />
+            <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
+                {{ alertMessage }}
+            </BAlert>
+            </div>
         </BTab>
-        <BButton class="run-button" "@click="runCode">
+    </BTabs>
+        <BButton class="run-button" @click="runCode">
             Run
         </BButton>
         <BButton class="submit-button">
             Submit
         </BButton>
-    </BTabs>
-        
     </BContainer>
 </template>
 
@@ -59,6 +67,9 @@ const pythonCode = ref(props.pythonCodeTemplate);
 const javascriptCode = ref(props.javascriptCodeTemplate); 
 const activeTabIndex = ref(0); 
 const lang = ref(python());
+const alertMessage = ref('');
+const showAlert = ref(false);
+const alertVariant = ref('');
 
 // Observers
 watch(() => props.pythonCodeTemplate, (newTemplate) => {
@@ -86,13 +97,17 @@ async function runCode() {
             code: userCode, language: language, authorId: userId, id: route.params.id
         }).then( (response) => {
             if (response.data.passed) {
-            alert('Passed! ' + response.data.message);
+                alertMessage.value = response.data.message;
+                alertVariant.value = 'success';
+                showAlert.value = true;
             } else {
-                alert('Failed :( ' + response.data.message);
+                alertMessage.value = response.data.message;
+                alertVariant.value = 'danger';
+                showAlert.value = true;
             }
         });
     } catch (err) {
-        console.log('Error posting to drafts:', err);
+        alertMessage.value = 'Error posting to drafts: ' + err;
     }
 
 }
@@ -165,14 +180,34 @@ const extensions = [syntaxHighlighting(myHighlightStyle)];
 </script>
 
 <style>
+    .coding-window-container {
+        height: calc(80vh);
+    }
+
+    .editor-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .code-feedback-alert {
+        position: absolute !important;
+        bottom: 0;           
+        left: 0;
+        margin: unset !important;
+        width: 100%;      
+    }
+
     .run-button {
         margin-right: 2rem;
     }
 
-    .coding-window {
-        text-align: left !important;
+    .submit-button {
     }
 
+    .coding-window {
+        text-align: left !important;
+        position: relative !important;
+    }
     
     .cm-editor {
         height: 500px;
@@ -188,10 +223,6 @@ const extensions = [syntaxHighlighting(myHighlightStyle)];
     
     .cm-cursor {
         border-left-color: var(--light-blue) !important;
-    }
-
-    .coding-window-container {
-        height: calc(100vh - 80px);
     }
 
     .cm-activeLine {
