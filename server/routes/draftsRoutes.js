@@ -1,8 +1,9 @@
 const express = require('express');
 const { challengeController } = require('../controllers');
+const { authenticateToken } = require('../middleware/auth.js');
 
 const router = express.Router();
 
-router.post('', challengeController.executeCode);
+router.post('', authenticateToken, challengeController.executeCode);
 
 module.exports = router;

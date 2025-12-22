@@ -10,12 +10,22 @@
     "lint": "eslint --ext .js,.vue --ignore-path ../.gitignore --fix ."
   },
   "dependencies": {
+    "@codemirror/commands": "^6.10.0",
+    "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/lang-python": "^6.2.1",
+    "@codemirror/language": "^6.11.3",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.39.4",
+    "@lezer/highlight": "^1.2.3",
     "axios": "^1.7.4",
     "bootstrap": "^5.3.3",
     "bootstrap-vue-next": "^0.40.9",
+    "codemirror": "^6.0.2",
     "pinia": "^3.0.4",
     "unplugin-vue-components": "^0.27.4",
     "vue": "^3.4.38",
+    "vue-codemirror6": "^1.4.1",
     "vue-router": "^4.4.3"
   },
   "devDependencies": {
