@@ -62,7 +62,7 @@ const props = defineProps({
     javascriptCodeTemplate: {type: String, required: true}
 });
 
-// reactive variables
+// ************************** REACTIVE VARIABLES
 const pythonCode = ref(props.pythonCodeTemplate);
 const javascriptCode = ref(props.javascriptCodeTemplate); 
 const activeTabIndex = ref(0); 
@@ -74,7 +74,7 @@ const alertVariant = ref('');
 const submittable = ref(false);
 const draftSaved = ref(false);
 
-// Observers
+// *************************** OBSERVERS
 watch(() => props.pythonCodeTemplate, (newTemplate) => {
     pythonCode.value = newTemplate;
 });
@@ -85,7 +85,7 @@ watch(() => activeTabIndex.value, (index) => {
     lang.value = [python(), javascript()][index];
 });
 
-// --------------
+// ************************** FUNCTIONS
 async function runCode() {
     try {
         const userCode = activeTabIndex.value === 0 ? pythonCode.value : javascriptCode.value;
@@ -142,7 +142,22 @@ async function submitCode() {
         console.log("Error submitting code:", err);
         alert("Failed to submit code.");
     }
-}// Syntax highlighting customization, generated from careful prompting of Gemini.
+}
+
+async function loadWorkspace() {
+    
+}
+
+async function saveWorkspace() {
+
+}
+
+async function resetWorkspace() {
+
+}
+
+// ***********************************************************
+// Syntax highlighting customization, generated from careful prompting of Gemini.
 const myHighlightStyle = HighlightStyle.define([
   // Fallback for names and default text
   { tag: tags.name, color: "#F2F2F2" },

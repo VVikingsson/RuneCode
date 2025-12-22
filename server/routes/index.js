@@ -7,6 +7,7 @@ const challengeRouter = require('./challengeRoutes');
 const submissionRouter = require('./submissionRoutes');
 const leaderboardRouter = require('./leaderboardRoutes');
 const draftsRouter = require('./draftsRoutes');
+const workspaceRouter = require('./workspaceRoutes');
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.use('/challenges', challengeRouter);
 router.use('/submissions', submissionRouter);
 router.use('/leaderboard', leaderboardRouter);
 router.use('/drafts', draftsRouter);
+router.use('/workspaces', workspaceRouter);
 
 module.exports = router;
