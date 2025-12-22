@@ -27,7 +27,7 @@ function getUser(userID) {
       isLoading.value = false
     })
 }
-
+// form editing logic
 const isEditing = ref(false)
 const newBio = ref('')
 const isSubmitting = ref(false)
@@ -67,7 +67,7 @@ function patchUser() {
       isSubmitting.value = false
     })
 }
-
+// submission logic
 const userSubmissions = ref(null)
 const isSubmissionsLoading = ref(false)
 const submissionsError = ref(null)
@@ -92,6 +92,8 @@ function getSubmissions() {
       isSubmissionsLoading.value = false
     })
 }
+// delete user logic
+
 const router = useRouter()
 
 function deleteUser() {
