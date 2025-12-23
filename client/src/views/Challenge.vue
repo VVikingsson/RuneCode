@@ -1,11 +1,17 @@
 <template>
-    <BContainer class="main-container">
+    <div class="main-container">
         <ChallengeBanner :number="challNumber" :name="challName" :tags="challTags" :difficulty="challDifficulty"/>
+    </div>
+    <BContainer>
+    <BRow>
+        <BCol cols="12" lg="4">
+            <ChallengeInfo :description="challDescription" class="challenge-info"/>
+        </BCol>
+        <BCol cols="12" lg="8">
+            <CodingWindow class="coding-window" :pythonCodeTemplate="challPythonTemplate" :javascriptCodeTemplate="challJavascriptTemplate"/>
+        </BCol>
+    </BRow>  
     </BContainer>
-    <BContainer class="challenge-info-flex-container">
-        <ChallengeInfo :description="challDescription" class="challenge-info"/>
-        <CodingWindow class="coding-window" :pythonCodeTemplate="challPythonTemplate" :javascriptCodeTemplate="challJavascriptTemplate"/>
-    </BContainer>    
 </template>
 
 <script setup>
@@ -56,6 +62,11 @@ onMounted(async () => {
         display: flex !important;
         max-width: unset !important;
         padding: unset !important;
+    }
+
+    .main-row {
+        padding-right: unset;
+        padding-left: unset !important;
     }
 
     .challenge-info {
