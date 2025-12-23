@@ -47,7 +47,7 @@
 
 <script setup>
 import { Api } from '@/Api'
-import { defineProps, ref, watch} from 'vue';
+import { defineProps, ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import CodeMirror from 'vue-codemirror6'
 import { javascript } from '@codemirror/lang-javascript';
@@ -76,13 +76,23 @@ const draftSaved = ref(false);
 
 // *************************** OBSERVERS
 watch(() => props.pythonCodeTemplate, (newTemplate) => {
-    pythonCode.value = newTemplate;
+    if (!pythonCode.value) {
+        pythonCode.value = newTemplate;
+    }
 });
 watch(() => props.javascriptCodeTemplate, (newTemplate) => {
-    javascriptCode.value = newTemplate;
+    if (!javascriptCode.value) {
+        javascriptCode.value = newTemplate;
+    }
 });
 watch(() => activeTabIndex.value, (index) => {
     lang.value = [python(), javascript()][index];
+});
+// Save workspace 2 seconds after changing it. If a new change happens before 2 seconds, timer is reset.
+let timer;
+watch(() => [pythonCode.value, javascriptCode.value], () => {
+    clearTimeout(timer);
+    timer = setTimeout(saveWorkspace, 2000);
 });
 
 // ************************** FUNCTIONS
@@ -133,7 +143,6 @@ async function submitCode() {
             challengeId: route.params.id,
         });
 
-        // ✅ use response to confirm submission
         alert("Submission created successfully! ID: " + response.data._id);
 
         submittable.value = false;
@@ -145,15 +154,39 @@ async function submitCode() {
 }
 
 async function loadWorkspace() {
-    
+    try {
+        const response = await Api.get(`workspaces?challId=${route.params.id}`);
+        if (response.data) {
+            pythonCode.value = response.data.pythonCode;
+            javascriptCode.value = response.data.javascriptCode;
+        }
+    } catch (err) {
+        console.log('Error:', err);
+    }
 }
 
 async function saveWorkspace() {
-
+    console.log('Saving workspace');
+    try {
+        const response = await Api.put(`workspaces?challId=${route.params.id}`, {
+            pythonCode: pythonCode.value, javascriptCode: javascriptCode.value
+        });
+        console.log('Saved workspace');
+    } catch (err) {
+        console.log(`Failed saving workspace: ${err}`);
+    }
 }
 
-async function resetWorkspace() {
-
+async function resetWorkspaceToDefault() {
+    try {
+        response = await Api.put(`workspaces?challId=${route.params.id}`, {
+        pythonCode: pythonCodeTemplate.value, javascriptCode: javascriptCodeTemplate.value
+        });
+        pythonCode.value = pythonCodeTemplate.value;
+        javascriptCode.value = javascriptCodeTemplate.value;
+    } catch (err) {
+        console.log(`Failed to reset workspace to default: ${err}`);
+    }
 }
 
 // ***********************************************************
@@ -221,6 +254,10 @@ const myHighlightStyle = HighlightStyle.define([
 ]);
 
 const extensions = [syntaxHighlighting(myHighlightStyle)];
+
+onMounted(async () => {
+    await loadWorkspace();
+})
 
 </script>
 
