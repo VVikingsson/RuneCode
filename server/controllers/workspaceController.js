@@ -3,9 +3,19 @@ const mongoose = require('mongoose');
 
 async function saveWorkspace(req, res, next) {
     try {
-        const challId = req.params.challId;
+        const challId = req.query.challId;
         const userId = req.user.id;
         const {pythonCode, javascriptCode} = req.body;
+        if (!userId) {
+            return res.status(400).json({
+                message: `Bad request: Missing user ID`
+            });
+        }
+        if (!challId) {
+            return res.status(400).json({
+                message: `Bad request: Missing Challenge ID`
+            });
+        }
         for (const objectId of [challId, userId]) {
             if (!mongoose.isValidObjectId(objectId)) {
                 return res.status(400).json({
@@ -28,13 +38,15 @@ async function saveWorkspace(req, res, next) {
         await workspace.save();
         return res.status(200).json({message: 'Successfully updated workspace', workspace: workspace});
     } catch (err) {
+
+        console.log(err);
         next(err);
     }
 }
 
 async function getPersonalWorkspace(req, res, next) {
     try {
-        const challId = req.params.challId;
+        const challId = req.query.challId;
         const userId = req.user.id;
         for (const objectId of [challId, userId]) {
             if (!mongoose.isValidObjectId(objectId)) {
@@ -57,7 +69,7 @@ async function getPersonalWorkspace(req, res, next) {
 
 async function deleteWorkspace(req, res, next) {
     try {
-        const challId = req.params.challId;
+        const challId = req.query.challId;
         const userId = req.user.id;
         for (const objectId of [challId, userId]) {
             if (!mongoose.isValidObjectId(objectId)) {
