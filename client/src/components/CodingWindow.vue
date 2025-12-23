@@ -1,47 +1,52 @@
 <template>
-    <BContainer class="coding-window-container">
-        <BTabs class="coding-tabs" v-model:index="activeTabIndex" content-class="mt-3">
-            <BTab class="coding-tab" title="Python" active>
-                <div class="editor-wrapper">
-                <code-mirror
-                    class="coding-window"
-                    v-model="pythonCode"
-                    basic
-                    :lang="lang"
-                    :tab="true"
-                    :tab-size="4"
-                    :allow-multiple-selections="true"
-                    :extensions="extensions"
-                />
-                <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
-                    {{ alertMessage }}
-                </BAlert>
+    <BContainer>
+        <BRow>
+            <BCol cols="12" md="10">
+            <BTabs pills class="coding-tabs" v-model:index="activeTabIndex" content-class="mt-3">
+                <BTab class="coding-tab" title="Python" active>
+                    <div class="editor-wrapper">
+                    <code-mirror
+                        class="coding-window"
+                        v-model="pythonCode"
+                        basic
+                        :lang="lang"
+                        :tab="true"
+                        :tab-size="4"
+                        :allow-multiple-selections="true"
+                        :extensions="extensions"
+                    />
+                    <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
+                        {{ alertMessage }}
+                    </BAlert>
+                    </div>
+                </BTab>
+                <BTab class="coding-tab" title="Javascript">
+                    <div class="editor-wrapper">
+                    <code-mirror
+                        class="coding-window"
+                        v-model="javascriptCode"
+                        basic
+                        :lang="lang"
+                        :tab="true"
+                        :tab-size=4
+                        :allow-multiple-selections="true"
+                        :extensions="extensions"
+                    />
+                    <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
+                        {{ alertMessage }}
+                    </BAlert>
+                    </div>
+                </BTab>
+            </BTabs>
+            </BCol>
+            <BCol cols="12" md="2"">
+                <div class="d-flex flex-row flex-md-column gap-2" id="all-buttons">
+                    <BButton @click="runCode" class="run-button">Run</BButton>
+                    <BButton class="submit-button" :disabled="!submittable" @click="submitCode">Submit</BButton>
+                    <BButton class="reset-workspace-button" @click="resetWorkspaceToDefault">Reset Workspace</BButton>
                 </div>
-            </BTab>
-            <BTab class="coding-tab" title="Javascript">
-                <div class="editor-wrapper">
-                <code-mirror
-                    class="coding-window"
-                    v-model="javascriptCode"
-                    basic
-                    :lang="lang"
-                    :tab="true"
-                    :tab-size=4
-                    :allow-multiple-selections="true"
-                    :extensions="extensions"
-                />
-                <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
-                    {{ alertMessage }}
-                </BAlert>
-                </div>
-            </BTab>
-        </BTabs>
-        <div class = "mt-2">
-            <BButton @click="runCode" class="run-button">Run</BButton>
-            <BButton class="submit-button" :disabled="!submittable" @click="submitCode">Submit</BButton>
-        </div>
-
-        
+            </BCol>
+        </BRow>
     </BContainer>
 </template>
 
@@ -70,17 +75,20 @@ const lang = ref(python());
 const alertMessage = ref('');
 const showAlert = ref(false);
 const alertVariant = ref('');
-
 const submittable = ref(false);
 const draftSaved = ref(false);
 
 // *************************** OBSERVERS
+let pythonTemplate = "";
+let javascriptTemplate = "";
 watch(() => props.pythonCodeTemplate, (newTemplate) => {
+    pythonTemplate = newTemplate;
     if (!pythonCode.value) {
         pythonCode.value = newTemplate;
     }
 });
 watch(() => props.javascriptCodeTemplate, (newTemplate) => {
+    javascriptTemplate = newTemplate;
     if (!javascriptCode.value) {
         javascriptCode.value = newTemplate;
     }
@@ -179,11 +187,11 @@ async function saveWorkspace() {
 
 async function resetWorkspaceToDefault() {
     try {
-        response = await Api.put(`workspaces?challId=${route.params.id}`, {
-        pythonCode: pythonCodeTemplate.value, javascriptCode: javascriptCodeTemplate.value
+        const response = await Api.put(`workspaces?challId=${route.params.id}`, {
+        pythonCode: pythonTemplate, javascriptCode: javascriptTemplate
         });
-        pythonCode.value = pythonCodeTemplate.value;
-        javascriptCode.value = javascriptCodeTemplate.value;
+        pythonCode.value = pythonTemplate;
+        javascriptCode.value = javascriptTemplate;
     } catch (err) {
         console.log(`Failed to reset workspace to default: ${err}`);
     }
@@ -263,6 +271,44 @@ onMounted(async () => {
 
 
 <style>
+    #all-buttons .btn {
+        font-family: 'JetBrains Mono', monospace !important;
+        background-color: unset !important;
+        border: 2px solid white !important;
+        width: 130px;
+    }
+
+    @media (min-width: 768px) {
+        #all-buttons {
+            margin-top: calc(43.2px + 1rem);
+        }
+    }
+
+    .btn:hover {
+        background-color: var(--card-bg) !important;
+    }
+
+    .nav-pills .nav-link {
+        background-color: unset !important;
+        border: 2px solid var(--text-muted) !important;
+        color: var(--text-muted) !important;
+        margin-right: 1rem;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+
+    .nav-pills .nav-link.active {
+        color: var(--amber-primary) !important;
+        border-color: white !important;
+    }
+
+    .nav-pills .nav-link:hover {
+        color: white !important;
+    }
+
+    .nav-pills .nav-link.active:hover {
+        color: var(--amber-primary) !important;
+    }
+
     .coding-window-container {
         height: calc(80vh);
     }
@@ -278,23 +324,6 @@ onMounted(async () => {
         left: 0;
         margin: unset !important;
         width: 100%;      
-    }
-
-    .run-button {
-        margin-right: 2rem;
-        background-color: var(--dark-bg) !important;
-    }
-
-    .run-button:hover {
-        background-color: var(--card-bg) !important;
-    }
-
-    .submit-button {
-        background-color: var(--dark-bg) !important;
-    }
-
-    .submit-button:hover {
-        background-color: var(--card-bg) !important;
     }
 
     .coding-window {
