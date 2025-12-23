@@ -274,8 +274,9 @@ onMounted(async () => {
     #all-buttons .btn {
         font-family: 'JetBrains Mono', monospace !important;
         background-color: unset !important;
-        border: 2px solid white !important;
+        border: 2px solid var(--text-muted) !important;
         width: 130px;
+        color: var(--text-muted) !important;
     }
 
     @media (min-width: 768px) {
@@ -284,8 +285,9 @@ onMounted(async () => {
         }
     }
 
-    .btn:hover {
-        background-color: var(--card-bg) !important;
+    #all-buttons .btn:hover {
+        color: white !important;
+        border-color: white !important;
     }
 
     .nav-pills .nav-link {
@@ -336,11 +338,15 @@ onMounted(async () => {
     }
     
     .cm-editor {
-        height: 500px;
+        height: 100vh;
         border: 2px solid white;
         border-radius: 8px;
         overflow: hidden;
+        min-height: 100px;
+        max-height: 600px;
     }
+
+    
 
     .cm-gutters, .cm-activeLineGutter{
         background-color: var(--dark-bg) !important;
