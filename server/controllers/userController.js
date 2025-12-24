@@ -20,6 +20,10 @@ async function createNewUser(req, res, next) {
             id: newUser._id,
         };
 
+        if (!process.env.JWT_SECRET) {
+            console.log('Missing JWT secret in backend environment');
+            return res.status(500).json({message: 'Internal server error: for security purposes, see error in server console.'});
+        }
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "12h" });
 
         res.cookie('token', token, {
