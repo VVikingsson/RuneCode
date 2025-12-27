@@ -1,6 +1,5 @@
 <script setup>
-import {BCard, BCardImg, BCol, BContainer, BImg, BRow, BTab, BTabs} from "bootstrap-vue-next";
-import { ref } from 'vue'
+import {BContainer} from "bootstrap-vue-next";
 import UserHeader from '../components/UserHeader.vue'
 import UserSolutions from '../components/UserSolutions.vue'
 
