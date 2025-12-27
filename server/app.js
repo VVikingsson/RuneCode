@@ -95,7 +95,7 @@ function main() {
     
     connectToDB(mongoURI);
     var app = createExpressApp();
-    app.use('/api/v1/users/:id/image', express.static(process.env.UPLOADS || 'D:\\uploads')); //will generate get endpoint for returning users' images
+    app.use('/api/v1/users/avatar', express.static(process.env.UPLOADS || 'D:\\uploads')); //will generate get endpoint for returning users' images
     setupRoutes(app);
     setupFrontend(app);
     setupErrorHandler(app);
