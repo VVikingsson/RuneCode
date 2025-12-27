@@ -199,7 +199,7 @@ const isDisabled = computed(() => {
         <div class="profile-image">
           <div class="image-wrapper">
             <img
-              :src="avatarSrc"
+              :src="avatarSrc + '?' + new Date().getTime()"
               alt="lebron james"
               class="image"
             />
