@@ -3,8 +3,8 @@
 		"_postman_id": "b7be7182-a3e5-4c4b-b2fe-581b28c23cc7",
 		"name": "server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "49945255",
-		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-b7be7182-a3e5-4c4b-b2fe-581b28c23cc7?action=share&source=collection_link&creator=49945255"
+		"_exporter_id": "50025142",
+		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-b7be7182-a3e5-4c4b-b2fe-581b28c23cc7?action=share&source=collection_link&creator=50025142"
 	},
 	"item": [
 		{
@@ -579,13 +579,12 @@
 									"});\r",
 									"\r",
 									"pm.test(\"Response contains correct fields\", function() {\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"_id\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"username\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"email\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"isAdmin\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"points\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"completed\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"bio\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"_id\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"username\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"isAdmin\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"points\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"completed\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"bio\");\r",
 									"})"
 								],
 								"type": "text/javascript",
@@ -738,13 +737,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/users/{{userID}}",
+							"raw": "{{baseURL}}/users/{{adminID}}",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"users",
-								"{{userID}}"
+								"{{adminID}}"
 							]
 						}
 					},
@@ -926,6 +925,169 @@
 								"users",
 								"123",
 								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains users list\", function() {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"users\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected user\", function() {\r",
+									"    pm.expect(pm.response.json().users[0].username).to.include(\"Sparkles\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Sparkles\",\r\n    \"email\": \"sparkles@gmail.com\",\r\n    \"password\": \"testingSparkles\",\r\n    \"isAdmin\": true\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/search?searchQuery=rkl",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "searchQuery",
+									"value": "rkl"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search user missing query",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message\", function() {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response message includes 'Bad request'\", function() {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"ad request\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Sparkles\",\r\n    \"email\": \"sparkles@gmail.com\",\r\n    \"password\": \"testingSparkles\",\r\n    \"isAdmin\": true\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/search?searchQuery",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "searchQuery",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logged in user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains correct fields\", function() {\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"_id\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"username\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"email\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"isAdmin\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"points\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"completed\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"bio\");\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{adminID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{adminID}}"
 							]
 						}
 					},
