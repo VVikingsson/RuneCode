@@ -18,6 +18,7 @@ export const useUserStore = defineStore('user', {
         this.user = res.data.user;
         this.loggedIn = true;
       } catch (err) {
+        console.log('Session not available. User logged out.');
         this.user = null;
         this.loggedIn = false;
       }

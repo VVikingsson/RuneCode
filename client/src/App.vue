@@ -20,12 +20,13 @@ const user = useUserStore();
 
 onMounted(async () => {
   await user.restoreSession(); // check for existing jwt and store user info in global store
+
 });
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Kedebideri', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

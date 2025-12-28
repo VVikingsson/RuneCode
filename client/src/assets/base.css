@@ -3,7 +3,8 @@
 :root {
     /* Core theme colors */ 
     /* Background colors, dark blue, for different amounts of depth */
-    --dark-bg: #0D1622;        
+    --dark-bg: #0D1622;       
+    --dark-bg2: #0f1b2a;       
     --card-bg: #1A2635;         
     --section-bg: #323d53;  
     --navbar-bg: #242d3e;     
