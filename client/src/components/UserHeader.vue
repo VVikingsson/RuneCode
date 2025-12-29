@@ -12,7 +12,7 @@ const isLoading = ref(true)
 const error = ref(null)
 
 const totalSolved = computed(() => {
-  return userData.value.completed.easy + userData.value.completed.medium + userData.value.completed.hard
+  return userData.value.user.completed.easy + userData.value.user.completed.medium + userData.value.user.completed.hard
 })
 // getting info for a specific user
 function getUser(userID) {
@@ -65,9 +65,9 @@ onMounted(() => {
         </BCol>
       </BRow>
       <BRow class="text-start">
-        <p class="username">{{userData.username}}</p>
-        <p>Points {{ userData.points.toLocaleString('en-US') }}</p>
-        <div>{{ userData.bio || 'You have no bio yet.' }}</div>
+        <p class="username">{{userData.user.username}}</p>
+        <p>Points {{ userData.user.points?.toLocaleString('en-US') || 0}}</p>
+        <div>{{ userData.user.bio || 'You have no bio yet.' }}</div>
       </BRow>
     </BCol>
 
@@ -80,15 +80,15 @@ onMounted(() => {
         <BCol class="diff-col p-4 gap-4">
           <div>
             <div>Easy</div>
-            <div>{{userData.completed.easy}}</div>
+            <div>{{userData.user.completed.easy}}</div>
           </div>
           <div>
             <div>Medium</div>
-            <div>{{userData.completed.medium}}</div>
+            <div>{{userData.user.completed.medium}}</div>
           </div>
           <div>
             <div>Hard</div>
-            <div>{{userData.completed.hard}}</div>
+            <div>{{userData.user.completed.hard}}</div>
           </div>
         </BCol>
       </BRow>

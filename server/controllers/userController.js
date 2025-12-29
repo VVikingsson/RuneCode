@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs'); // library for hashing passwords
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const mongoose = require('mongoose');
+const fs = require("fs/promises");
 
 async function searchUser(req, res, next) {
     try {
@@ -108,11 +109,22 @@ async function loginUser(req, res, next) {
 
 async function getUser(req, res, next) {
     try {
-        const user = await User.findById(req.params.id);
+        const isMe = req.user.id === req.params.id
+        const user = await User.findById(req.params.id).select(isMe ? '' : '-email');
         if (!user) {
-            res.status(404).json({message: "No user found with given id"});
+            return res.status(404).json({message: "No user found with given id"});
         }
-    res.status(200).json(user);
+        // url to insert in the <img> tag
+        //check if image exists, and only then return the url for the image
+        //const url = `http://localhost:3000/api/v1/users/avatar/${req.user.id}`;
+        let url = ''
+        const imgPath = path.join(process.env.UPLOADS, `${req.user.id}`)
+        try {
+            await fs.access(imgPath);
+            url = `http://localhost:3000/api/v1/users/avatar/${req.user.id}`
+        } catch(err) {}
+
+        res.status(200).json({user, isMe, url});
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'req.'});
@@ -147,17 +159,32 @@ async function getAllUsers(req, res, next) {
 
 async function updateUser(req, res, next) {
     try {
-        const updatedUser = await User.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true } // new makes sure the updated user is returned
-        );                                     // runValidators makes sure our Schema constraints (unique) are applied
+        //checking whether the user who sent the request is the owner of the profile
+        if (req.user.id === req.params.id) {
+            const updatedUser = await User.findByIdAndUpdate(
+                req.params.id,
+                req.body,
+                { new: true, runValidators: true } // new makes sure the updated user is returned
+            );                                     // runValidators makes sure our Schema constraints (unique) are applied
 
-        if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found' });
+            if (!updatedUser) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.status(200).json({ user: updatedUser });
         }
-        res.status(200).json({ message: 'User updated', user: updatedUser });
+        else {
+            res.status(401).json({ message: 'You are not the owner of the account you are trying to modify' });
+        }
     } catch (err) {
+        if (err.code === 11000) {
+            // determine which field caused the conflict
+            const field = Object.keys(err.keyPattern)[0];
+
+            return res.status(409).json({
+                message: `${field} is already taken`
+            });
+        }
+
         next(err);
     }
 }
@@ -169,10 +196,8 @@ function uploadImage(req, res, next) {
             return res.status(400).send('No file uploaded.');
         }
         res.status(200).json({
-            message: 'File uploaded successfully',
-            url: `http://localhost:3000/api/v1/users/${req.params.id}/image/`
-                + req.params.id
-                + path.extname(req.file.originalname) //url passed to frontend for calling get request to get a picture
+            url: `http://localhost:3000/api/v1/users/avatar/`
+                + req.user.id  //url passed to frontend for calling get request to get a picture
         });
     } catch (err) {
         next(err);

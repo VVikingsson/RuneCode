@@ -240,7 +240,7 @@
 					"response": []
 				},
 				{
-					"name": "POST duplicate post",
+					"name": "POST duplicate challenge",
 					"event": [
 						{
 							"listen": "test",
@@ -579,13 +579,12 @@
 									"});\r",
 									"\r",
 									"pm.test(\"Response contains correct fields\", function() {\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"_id\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"username\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"email\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"isAdmin\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"points\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"completed\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"bio\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"_id\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"username\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"isAdmin\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"points\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"completed\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"bio\");\r",
 									"})"
 								],
 								"type": "text/javascript",
@@ -738,13 +737,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/users/{{userID}}",
+							"raw": "{{baseURL}}/users/{{adminID}}",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"users",
-								"{{userID}}"
+								"{{adminID}}"
 							]
 						}
 					},
@@ -1046,6 +1045,49 @@
 									"key": "searchQuery",
 									"value": null
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logged in user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains correct fields\", function() {\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"_id\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"username\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"email\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"isAdmin\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"points\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"completed\");\r",
+									"    pm.expect(pm.response.json().user).to.have.property(\"bio\");\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{adminID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{adminID}}"
 							]
 						}
 					},
@@ -2789,7 +2831,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Reponse code is 201\", function () {\r",
+									"pm.test(\"Reponse code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",

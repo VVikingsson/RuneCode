@@ -48,8 +48,8 @@
           class="avatar"
         />
         <div class="dropdown-content">
-          <a href="#">View profile</a>
-          <a href="#">Edit profile</a>
+          <a :href="`/users/${user.user.id}`">View profile</a>
+          <a href="/edit">Edit profile</a>
           <BDropdownItem class="sign-out-drpdwn" @click.prevent="logOut">Log out</BDropdownItem>
         </div>
       </div>
@@ -62,6 +62,7 @@
 import { useUserStore } from '@/stores/user.js'
 import { useRouter } from 'vue-router'
 const user = useUserStore()
+console.log(user)
 const router = useRouter()
 const logOut = async () => {
   user.logout()
