@@ -5,9 +5,10 @@ import Leaderboard from '@/components/Leaderboard.vue'
 import Challenge from './views/Challenge.vue'
 import User from './views/User.vue'
 import Challenges from './views/Challenges.vue'
-import test from './views/Test.vue';
-import SignIn from './views/SignIn.vue';
-import UserPage from './views/UserPage.vue';
+import test from './views/Test.vue'
+import SignIn from './views/SignIn.vue'
+import UserPage from './views/UserPage.vue'
+import EditableProfile from '@/views/EditableProfile.vue'
 
 
 const routes = [
@@ -20,7 +21,8 @@ const routes = [
   { path: '/challenges/:id', name: 'Challenge', component: Challenge },
   // { path: '/users/:id', name: 'User', component: User, props: true }, // redirects you to a page of a specific user
   { path: '/sign-in', name: 'SignIn', component: SignIn},
-  { path: '/users/:id', name: 'UserPage', component: UserPage, props: true }
+  { path: '/users/:id', name: 'UserPage', component: UserPage, props: true },
+  { path: '/edit', name: 'EditableProfile', component: EditableProfile }
 
 ]
 
