@@ -311,10 +311,6 @@ onMounted(async () => {
         color: var(--amber-primary) !important;
     }
 
-    .coding-window-container {
-        height: calc(80vh);
-    }
-
     .editor-wrapper {
         position: relative;
         width: 100%;
@@ -343,7 +339,7 @@ onMounted(async () => {
         border-radius: 8px;
         overflow: hidden;
         min-height: 100px;
-        max-height: 600px;
+        max-height: 70vh;
     }
 
     

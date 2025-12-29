@@ -5,6 +5,22 @@ const path = require("path");
 const mongoose = require('mongoose');
 const fs = require("fs/promises");
 
+async function searchUser(req, res, next) {
+    try {
+        const searchQuery = req.query.searchQuery;
+        if (!searchQuery) {
+            return res.status(400).json({message: 'Bad request: Missing searchQuery query parameter.'});
+        }
+        const users = await User.find({username: {$regex: `.*${searchQuery}.*`} });
+        if (!users) {
+            return res.status(404).json({messasge: `Not found: No users found for query ${searchQuery}`});
+        }
+        return res.status(200).json({users: users});
+    } catch (err) {
+        return res.status(500).json({message: `Error when searching user: ${err}`}); // SANS MENTION!!!
+    }
+}
+
 async function createNewUser(req, res, next) {
     try {
         const {username, email, password, isAdmin} = req.body
@@ -111,7 +127,7 @@ async function getUser(req, res, next) {
         res.status(200).json({user, isMe, url});
     } catch (err) {
         if (err.name === 'CastError') {
-            return res.status(400).json({message: 'Invalid id format'});
+            return res.status(400).json({message: 'req.'});
         }
         next(err);
     }
@@ -236,4 +252,5 @@ module.exports = {
     uploadImage,
     getTop100Users,
     getRelatedSubmissions,
+    searchUser,
 }

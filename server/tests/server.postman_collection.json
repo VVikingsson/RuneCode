@@ -3,8 +3,8 @@
 		"_postman_id": "b7be7182-a3e5-4c4b-b2fe-581b28c23cc7",
 		"name": "server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "50025142",
-		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-b7be7182-a3e5-4c4b-b2fe-581b28c23cc7?action=share&source=collection_link&creator=50025142"
+		"_exporter_id": "49945255",
+		"_collection_link": "https://gusvikivi-8651204.postman.co/workspace/group-05---2025's-Workspace~ff77abb5-15cc-4d83-89d7-cbab9a55dbaf/collection/49945255-b7be7182-a3e5-4c4b-b2fe-581b28c23cc7?action=share&source=collection_link&creator=49945255"
 	},
 	"item": [
 		{
@@ -240,7 +240,7 @@
 					"response": []
 				},
 				{
-					"name": "POST duplicate post",
+					"name": "POST duplicate challenge",
 					"event": [
 						{
 							"listen": "test",
@@ -2831,7 +2831,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Reponse code is 201\", function () {\r",
+									"pm.test(\"Reponse code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",
