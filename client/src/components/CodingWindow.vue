@@ -37,13 +37,16 @@
                     </BAlert>
                     </div>
                 </BTab>
+                <template #tabs-end>
+                    <BButton id="edit-tests-btn">Edit Tests</BButton>
+                </template>
             </BTabs>
             </BCol>
             <BCol cols="12" md="2"">
-                <div class="d-flex flex-row flex-md-column gap-2" id="all-buttons">
+                <div class="all-buttons d-flex flex-row flex-md-column gap-2">
                     <BButton @click="runCode" class="run-button">Run</BButton>
                     <BButton class="submit-button" :disabled="!submittable" @click="submitCode">Submit</BButton>
-                    <BButton class="reset-workspace-button" @click="resetWorkspaceToDefault">Reset Workspace</BButton>
+                    <BButton @click="resetWorkspaceToDefault">Reset Workspace</BButton>
                 </div>
             </BCol>
         </BRow>
@@ -59,8 +62,10 @@ import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import { tags } from "@lezer/highlight";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
+import { useUserStore } from '../stores/user.js';
 
 const route = useRoute();
+const user = useUserStore();
 
 const props = defineProps({
     pythonCodeTemplate: {type: String, required: true},
@@ -271,7 +276,21 @@ onMounted(async () => {
 
 
 <style>
-    #all-buttons .btn {
+    #edit-tests-btn {
+        margin-left: auto;
+        font-family: 'JetBrains Mono', monospace !important;
+        background-color: unset !important;
+        border: 2px solid var(--text-muted) !important;
+        width: 130px;
+        color: var(--text-muted) !important;
+    }
+
+    #edit-tests-btn:hover {
+        color: var(--neon-cyan) !important;
+        border-color: white !important;
+    }
+
+    .all-buttons .btn {
         font-family: 'JetBrains Mono', monospace !important;
         background-color: unset !important;
         border: 2px solid var(--text-muted) !important;
@@ -285,7 +304,7 @@ onMounted(async () => {
         }
     }
 
-    #all-buttons .btn:hover {
+    .all-buttons .btn:hover {
         color: white !important;
         border-color: white !important;
     }
@@ -331,6 +350,7 @@ onMounted(async () => {
 
     .coding-tabs {
         margin-bottom: 0.25rem;
+        border: 1px red solid;
     }
     
     .cm-editor {
