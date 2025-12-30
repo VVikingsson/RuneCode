@@ -1,4 +1,7 @@
 <template>
+    <BModal v-model="showTestCaseModal" centered scrollable class="test-cases-modal" size="lg">
+        <TestCaseEditor :testCases="testCases"/>
+    </BModal>
     <BContainer>
         <BRow>
             <BCol cols="12" md="10">
@@ -38,7 +41,7 @@
                     </div>
                 </BTab>
                 <template #tabs-end>
-                    <BButton id="edit-tests-btn">Edit Tests</BButton>
+                    <BButton id="edit-tests-btn" @click="loadTestCases(); showTestCaseModal = !showTestCaseModal">Edit Tests</BButton>
                 </template>
             </BTabs>
             </BCol>
@@ -63,6 +66,7 @@ import { python } from '@codemirror/lang-python';
 import { tags } from "@lezer/highlight";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { useUserStore } from '../stores/user.js';
+import TestCaseEditor from './TestCaseEditor.vue';
 
 const route = useRoute();
 const user = useUserStore();
@@ -79,6 +83,8 @@ const activeTabIndex = ref(0);
 const lang = ref(python());
 const alertMessage = ref('');
 const showAlert = ref(false);
+const showTestCaseModal = ref(false);
+const testCases = ref([]);
 const alertVariant = ref('');
 const submittable = ref(false);
 const draftSaved = ref(false);
@@ -202,6 +208,17 @@ async function resetWorkspaceToDefault() {
     }
 }
 
+async function loadTestCases() {
+    try {
+        const response = await Api.get(`challenges/${route.params.id}/test-cases`);
+        console.log(response.data.testCases);
+        testCases.value = response.data.testCases;
+        
+    } catch (err) {
+        console.log(`Failed to load test cases: ${err}`);
+    }
+}
+
 // ***********************************************************
 // Syntax highlighting customization, generated from careful prompting of Gemini.
 const myHighlightStyle = HighlightStyle.define([
@@ -276,6 +293,59 @@ onMounted(async () => {
 
 
 <style>
+    .test-cases-modal * {
+        border: unset !important;
+    }
+
+    .test-cases-modal .btn-close {
+        filter: brightness(0) saturate(100%) invert(70%) sepia(0%) saturate(0%) hue-rotate(206deg) brightness(88%) contrast(85%);
+    }
+
+    .test-cases-modal .btn-close:hover {
+        filter: brightness(0) saturate(100%) invert(100%) sepia(10%) saturate(3129%) hue-rotate(188deg) brightness(124%) contrast(100%);
+    }
+
+    .test-cases-modal .btn-secondary,
+    .test-cases-modal .btn-primary {
+        background-color: unset;
+        border: 2px var(--text-light) solid !important;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .test-cases-modal .btn-secondary:hover {
+        color: var(--amber-primary);
+        background-color: unset;
+    }
+
+    .test-cases-modal .btn-primary:hover {
+        color: var(--neon-cyan);
+        background-color: unset;
+    }
+    
+    .test-cases-modal .modal-content {
+        background-color: var(--dark-bg) !important;
+        border: 2px var(--text-light) solid !important;
+        padding-right: 4px;
+    }
+
+    .test-cases-modal .modal-body::-webkit-scrollbar {
+    width: 8px;
+    }
+
+    .test-cases-modal .modal-body::-webkit-scrollbar-track {
+    background: unset;
+    }
+
+    .test-cases-modal .modal-body::-webkit-scrollbar-thumb {
+    background-color: var(--card-bg);
+    border-radius: 5px;
+    border: 1px var(--text-muted) solid;
+    }
+
+    .test-cases-modal .modal-body::-webkit-scrollbar-thumb:hover {
+    background-color: var(--section-bg);
+    }
+
     #edit-tests-btn {
         margin-left: auto;
         font-family: 'JetBrains Mono', monospace !important;
@@ -350,7 +420,6 @@ onMounted(async () => {
 
     .coding-tabs {
         margin-bottom: 0.25rem;
-        border: 1px red solid;
     }
     
     .cm-editor {
