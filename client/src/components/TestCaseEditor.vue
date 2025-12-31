@@ -1,29 +1,56 @@
 <template>
-  <BCard class="tc-card" v-for="tc in testCases" :key="tc._id">
-    <BRow>
-        <BCol cols="8">
-            <BFormGroup>
-                <label for="input">Input</label>
-                <BFormInput class="tc-form tc-input mb-2" v-model="tc.input" :key="input">Input</BFormInput>
-                <label for="output">Expected Output</label>
-                <BFormInput class="tc-form tc-output mb-2" v-model="tc.expectedOutput" :key="output">Output</BFormInput>
-            </BFormGroup>
-        </BCol>
-        <BCol cols="4" class="d-flex align-items-center justify-content-end">
-            <BButton class="tc-edit-button tc-save-button d-flex align-items-center justify-content-center me-3" variant="outline-light">
-                Save
-            </BButton>
-            <BButton class="tc-edit-button tc-icon-button tc-del-button d-flex align-items-center justify-content-center" variant="outline-light">
-                <img src="@/assets/icons/minus.png" class="tc-edit-icon"/>
-            </BButton>
-        </BCol>
-    </BRow>
-  </Bcard>
+  <BCard class="tc-card">
+    <h5 class="ms-3 tc-header">Python Test Cases</h5>
+    <BCard class="tc-card" v-for="tc in pythonTestCases" :key="tc._id">
+        <BRow>
+            <BCol cols="8">
+                <BFormGroup>
+                    <label for="input">Input</label>
+                    <BFormInput class="tc-form tc-input mb-2" v-model="tc.input" :key="input">Input</BFormInput>
+                    <label for="output">Expected Output</label>
+                    <BFormInput class="tc-form tc-output mb-2" v-model="tc.expectedOutput" :key="output">Output</BFormInput>
+                </BFormGroup>
+            </BCol>
+            <BCol cols="4" class="d-flex align-items-center justify-content-end">
+                <BButton class="tc-edit-button tc-save-button d-flex align-items-center justify-content-center me-3"
+                variant="outline-light" @click="saveTestCase(tc)">
+                    Save
+                </BButton>
+                <BButton class="tc-edit-button tc-icon-button tc-del-button d-flex align-items-center justify-content-center" variant="outline-light">
+                    <img src="@/assets/icons/minus.png" class="tc-edit-icon"/>
+                </BButton>
+            </BCol>
+        </BRow>
+    </Bcard>
+    <h5 class="ms-3 tc-header">Javascript Test Cases</h5>
+    <BCard class="tc-card" v-for="tc in javascriptTestCases" :key="tc._id">
+        <BRow>
+            <BCol cols="8">
+                <BFormGroup>
+                    <label for="input">Input</label>
+                    <BFormInput class="tc-form tc-input mb-2" v-model="tc.input" :key="input">Input</BFormInput>
+                    <label for="output">Expected Output</label>
+                    <BFormInput class="tc-form tc-output mb-2" v-model="tc.expectedOutput" :key="output">Output</BFormInput>
+                </BFormGroup>
+            </BCol>
+            <BCol cols="4" class="d-flex align-items-center justify-content-end">
+                <BButton class="tc-edit-button tc-save-button d-flex align-items-center justify-content-center me-3"
+                variant="outline-light" @click="saveTestCase(tc)">
+                    Save
+                </BButton>
+                <BButton class="tc-edit-button tc-icon-button tc-del-button d-flex align-items-center justify-content-center" variant="outline-light">
+                    <img src="@/assets/icons/minus.png" class="tc-edit-icon"/>
+                </BButton>
+            </BCol>
+        </BRow>
+    </Bcard>
+  </BCard>
 </template>
 
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, computed } from 'vue';
+import { Api } from '@/Api';
 
 const props = defineProps(
     {
@@ -31,10 +58,38 @@ const props = defineProps(
     }
 )
 
+const pythonTestCases = computed(() =>
+    props.testCases.filter(tc => tc.language.toLowerCase() === 'python')
+);
+
+const javascriptTestCases = computed(() =>
+    props.testCases.filter(tc => tc.language.toLowerCase() === 'javascript')
+);
+
+async function saveTestCase(tc) {
+    try {
+        const response = await Api.put(`testCases/${tc._id}`,
+            {
+                input: tc.input,
+                expectedOutput: tc.expectedOutput,
+                language: tc.language // not worth it timewise to remove this from backend and tests
+            }
+        );
+        if (response.status == 200) {
+            console.log('Saved test case: 200');
+            // Show 'TestCase successfully saved'
+        }
+    } catch (err) {
+        console.log(`Error when saving test case: ${err}`);
+    }
+}
 </script>
 
 
 <style scoped>
+    .tc-header {
+        color: var(--text-light);
+    }
     label {
         color: var(--text-muted);
     }
