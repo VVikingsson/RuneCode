@@ -3,9 +3,10 @@ import {ref, computed, watch, reactive, onMounted} from 'vue'
 import _ from 'lodash'
 import { Api } from '@/Api.js'
 import { useUserStore } from '@/stores/user.js'
-import { BButton, BModal, useModal } from 'bootstrap-vue-next'
+import { BButton, BModal, useModal, useToast } from 'bootstrap-vue-next'
 
 const { hide } = useModal()
+const { create } = useToast()
 
 const user = useUserStore()
 watch(
@@ -14,10 +15,9 @@ watch(
     id && getUser(id)
   }
 )
-
 // true when data is being fetched from the server
 const isLoading = ref(true)
-const alertMessage = ref(null)
+const failMessage = ref(null)
 const successMessage = ref(null)
 
 const defaultAvatar = 'https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0'
@@ -36,26 +36,45 @@ function getUser(userID) {
     .then(response => {
       if (response.status !== 200) {
         // something went wrong
-        alertMessage.value = response.data.message
+        failMessage.value = response.data.message
         return
       }
       // raw data
       userData.value = response.data
     })
     .catch(error => {
-      alertMessage.value = error
+      console.error('Failed to update user:', error)
+      // failMessage.value = error
     })
     .finally(() => {
       isLoading.value = false
     })
 }
+const alertMessage = ref(null)
+const isVisible = ref(false)
 
 function patchUser() {
+  if (!form.value.username) {
+    alertMessage.value = 'Username is required'
+    isVisible.value = true
+    return
+  }
+  if (!form.value.email) {
+    alertMessage.value = 'Email is required'
+    isVisible.value = true
+    return
+  }
+  if (!form.value.email.includes('@')) {
+    alertMessage.value = 'Email needs an @-sign'
+    isVisible.value = true
+    return
+  }
   Api.patch(`/users/${user.user.id}`, form.value)
     .then(response => {
       if (response.status !== 200) {
         // something went wrong
         alertMessage.value = response.data.message
+        isVisible.value = true
         return
       }
       // update userData ref
@@ -65,6 +84,7 @@ function patchUser() {
       console.error('Failed to update user:', error)
       // for user
       alertMessage.value = error.response.data.message
+      isVisible.value = true
     })
     .finally(() => {
     })
@@ -77,11 +97,11 @@ function uploadAvatar() {
     .then(response => {
       if (response.status !== 200) {
         // something went wrong
-        alertMessage.value = response.data.message
+        failMessage.value = response.data.message
         return
       }
       userData.value = { ...userData.value, url: response.data.url }
-      successMessage.value = 'File uploaded successfully!'
+      successMessage.value = 'Image uploaded successfully!'
       // selectedAvatar.value = null
       // selectedFile.value = null
       // hide modal
@@ -90,9 +110,41 @@ function uploadAvatar() {
     .catch(error => {
       console.error('Failed to upload profile picture:', error)
       // for user
-      alertMessage.value = 'Failed to upload profile. Please try again.'
+      failMessage.value = 'Failed to upload image. Please try again.'
     })
 }
+// function triggered to show the toast
+const showMe = (message, color) => {
+  create({
+    body: message,
+    modelValue: 4000,
+    variant: color,
+    pos: 'top-center',
+    progressProps: {
+      variant: color
+    }
+  })
+}
+// watch success message
+watch(successMessage, (newValue) => {
+  // Only trigger if the message isn't empty
+  if (newValue) {
+    showMe(newValue, 'success')
+    // clear the message after showing
+    // so that the same message can trigger the toast again later
+    successMessage.value = ''
+  }
+})
+// watch failure message
+watch(failMessage, (newValue) => {
+  // Only trigger if the message isn't empty
+  if (newValue) {
+    showMe(newValue, 'warning')
+    // clear the message after showing
+    // so that the same message can trigger the toast again later
+    failMessage.value = ''
+  }
+})
 
 const selectedAvatar = ref(null)
 const selectedFile = ref(null)
@@ -136,22 +188,6 @@ function resetForm() {
   form.value.email = userData.value.user.email
   form.value.bio = userData.value.user.bio
 }
-
-const showAlertToast = ref(false)
-const showSuccessToast = ref(false)
-
-// Watch the messages and show toasts automatically
-watch(alertMessage, (val) => {
-  if (val) {
-    showAlertToast.value = true
-  }
-})
-
-watch(successMessage, (val) => {
-  if (val) {
-    showSuccessToast.value = true
-  }
-})
 // for keeping track of whether original data has being changed
 const isDisabled = computed(() => {
   return _.isEqual(form.value, originalForm.value)
@@ -164,31 +200,6 @@ const isDisabled = computed(() => {
 
 <template>
   <div class="main-container">
-    <BToast
-      v-model="showSuccessToast"
-      title="Success"
-      variant="success"
-      solid
-      :delay="3000"
-      auto-hide
-      toaster="b-toaster-top-right"
-      @hidden="successMessage = null"
-    >
-      {{ successMessage }}
-    </BToast>
-
-    <!-- Alert Toast -->
-    <BToast
-      v-model="showAlertToast"
-      title="Error"
-      variant="danger"
-      solid
-      auto-hide-delay="5000"
-      toaster="b-toaster-top-right"
-      @hidden="() => { showAlertToast = false; alertMessage = null }"
-    >
-      {{ alertMessage }}
-    </BToast>
     <div v-if="isLoading" class="text-center text-white">
       <BSpinner label="Loading..." variant="primary"/>
       <p class="mt-2">Loading user's profile </p>
@@ -252,7 +263,7 @@ const isDisabled = computed(() => {
         </div>
 
         <div class="profile-info">
-          <form @submit.prevent="patchUser">
+          <form @submit.prevent="patchUser" @input="isVisible &&= false">
             <div class="input-wrapper">
               <label>Username</label>
               <input v-model="form.username" type="text" class="input" placeholder="Choose username"/>
@@ -265,9 +276,10 @@ const isDisabled = computed(() => {
               <label>Bio</label>
               <textarea v-model="form.bio" type="text" class="input" placeholder="Your bio"/>
             </div>
+            <BAlert v-model="isVisible" class="sign-up-alert" variant="warning">{{  alertMessage }}</BAlert>
             <div class="buttons">
               <button type="submit" :disabled="isDisabled">Save</button>
-              <button :disabled="isDisabled" @click.prevent="resetForm">Cancel</button>
+              <button :disabled="isDisabled" @click.prevent="resetForm">Reset</button>
             </div>
           </form>
         </div>

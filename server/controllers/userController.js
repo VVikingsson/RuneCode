@@ -181,7 +181,7 @@ async function updateUser(req, res, next) {
             const field = Object.keys(err.keyPattern)[0];
 
             return res.status(409).json({
-                message: `${field} is already taken`
+                message: `${field} '${field == 'username' ? req.body.username : req.body.email}' is taken`
             });
         }
 
