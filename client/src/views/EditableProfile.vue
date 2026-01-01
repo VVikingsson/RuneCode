@@ -78,7 +78,7 @@ function patchUser() {
         return
       }
       // update userData ref
-      userData.value = response.data
+      userData.value = userData.value = { ...userData.value, ...response.data }
     })
     .catch(error => {
       console.error('Failed to update user:', error)
@@ -215,9 +215,9 @@ const isDisabled = computed(() => {
               class="image"
             />
           </div>
-          <BButton v-b-modal.directive-modal>
-            Edit picture
-          </BButton>
+          <button v-b-modal.directive-modal class="btn-edit-img">
+            Edit image
+          </button>
           <BModal
             title="Edit picture"
             id="directive-modal"
@@ -228,7 +228,7 @@ const isDisabled = computed(() => {
             no-close-on-backdrop
           >
             <template #header>
-              Modal Header
+              Choose your profile image
             </template>
             <template #default>
               <div class="avatar-submit">
@@ -254,7 +254,7 @@ const isDisabled = computed(() => {
             </template>
             <template #footer>
               <div class="footer-buttons">
-                <button :disabled="!selectedAvatar" type="submit" form="avatar-form" class="btn-primary">Save</button>
+                <button :disabled="!selectedAvatar" type="submit" form="avatar-form" class="btn-pic-save">Save</button>
                 <button @click="onCancel" class="btn-info">Cancel</button>
               </div>
             </template>
@@ -278,8 +278,8 @@ const isDisabled = computed(() => {
             </div>
             <BAlert v-model="isVisible" class="sign-up-alert" variant="warning">{{  alertMessage }}</BAlert>
             <div class="buttons">
-              <button type="submit" :disabled="isDisabled">Save</button>
-              <button :disabled="isDisabled" @click.prevent="resetForm">Reset</button>
+              <button class="save-input" type="submit" :disabled="isDisabled">Save</button>
+              <button class="reset-input" :disabled="isDisabled" @click.prevent="resetForm">Reset</button>
             </div>
           </form>
         </div>
@@ -307,7 +307,8 @@ h2 {
 }
 
 .edit-container {
-  border: 1px solid white;
+  background: rgba(18, 22, 55, 0.75);
+  border: 1px solid var(--text-light);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -366,11 +367,16 @@ form {
 }
 
 .input {
-  border: 2px solid var(--primary-blue);
+  border: 1px solid var(--text-light);
   border-radius: 8px;
-  background-color: var(--card-bg);
+  background-color: var(--dark-bg2);
   padding: 10px 10px;
   color: white;
+  outline: none;
+}
+
+.input:focus {
+  border: 2px solid var(--primary-blue);
 }
 
 .buttons {
@@ -379,15 +385,28 @@ form {
   gap: 8px;
   padding-top: 16px;
 }
-
-.buttons > * {
+.save-input, .avatar-label, .reset-input, .btn-edit-img, .footer-buttons >* {
+  padding: 10px 20px;
+  border-radius: 12px;
+}
+.save-input, .avatar-label {
   background-color: var(--amber-accent);
-  padding: 10px;
-  border-radius: 8px;
-  border: 2px solid beige;
   color: white;
+  border: none;
+  transition: box-shadow 0.3s ease;
+}
+.save-input:hover:not(:disabled) {
+  box-shadow: 0 0 0 3px #00aaff, 0 0 10px #00aaff, 0 0 20px rgba(0, 170, 255, 0.8);
 }
 
+.reset-input, .btn-edit-img {
+  background: none;
+  border: 1px solid white;
+  color: white;
+}
+.btn-edit-img:hover {
+  background-color: rgba(74, 120, 255, 0.5);
+}
 .buttons > *:disabled {
   cursor: not-allowed;
   opacity: 0.6;
@@ -399,17 +418,18 @@ form {
   align-items: center;
 }
 
-.avatar-label {
-  background-color: var(--primary-blue);
-  padding: 6px;
-  border-radius: 8px;
-
-}
-
 .footer-buttons {
   display: flex;
   gap: 8px;
   align-items: end;
+}
+.footer-buttons >* {
+  background: none;
+  border: 1px solid black;
+  color: black
+}
+.btn-pic-save:hover {
+  background-color: var(--amber-vague);
 }
 </style>
 <style>
