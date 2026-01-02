@@ -47,12 +47,11 @@ onMounted(() => {
     Error loading user data. Please try again.
   </BAlert>
   <!--  load this container if user data is loaded-->
-  <BContainer
-    v-else-if="userData"
-    class="profile-header flex-wrap d-flex align-items-stretch rounded-3 gap-3 p-0"
-    fluid
+  <div
+    v-else-if="userData?.user"
+    class="profile-header"
   >
-    <BCol class="profile-col p-3 rounded-4">
+    <BCol class="profile-col p-3">
       <BRow class="row-image">
         <BCol class="column-img px-4 py-2 text-start">
           <BImg
@@ -71,7 +70,7 @@ onMounted(() => {
       </BRow>
     </BCol>
 
-    <BCol class="challenge-stat-col p-3 rounded-4">
+    <BCol class="challenge-stat-col p-3">
       <BRow class="h-100">
         <BCol class="chall-no-col d-flex flex-column justify-content-center">
           <div>{{totalSolved}}</div>
@@ -93,7 +92,7 @@ onMounted(() => {
         </BCol>
       </BRow>
     </BCol>
-  </BContainer>
+  </div>
   <BAlert v-else show variant="warning">
     User profile not found.
   </BAlert>
@@ -103,15 +102,23 @@ onMounted(() => {
 .main-con {
   width: 90%;
 }
+.profile-header {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 22px;
+}
 .profile-col {
   background-color: var(--card-bg);
   border: 1px solid var(--primary-blue);
+  border-radius: 16px;
 }
 
 .challenge-stat-col {
   background-color: var(--card-bg);
   border: 1px solid var(--primary-blue);
   flex: 2;
+  border-radius: 16px;
 }
 .chall-no-col {
   flex: 2
@@ -125,8 +132,8 @@ onMounted(() => {
   flex-direction: column;
   flex: 1;
   justify-content: center;
-  border-radius: 16px;
-  background-color: var(--light-blue);
+  border-radius: 12px;
+  background-color: var(--light-blue-vague);
 }
 
 p {

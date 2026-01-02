@@ -14,12 +14,12 @@
         </BFormInput>
         <BAlert v-model:model-value="showAlert" class="sign-up-alert" variant="warning">{{  alertMessage }}</BAlert>
         <BButton type=submit class="sign-in-button">Sign Up</BButton>
-    </BForm>    
+    </BForm>
 </template>
 
 <script setup>
     import { Api } from '@/Api';
-    import { useRouter } from 'vue-router'; 
+    import { useRouter } from 'vue-router';
     import { useUserStore } from '@/stores/user';
     import { ref } from 'vue';
 
@@ -61,11 +61,11 @@
             }, {withCredentials: true});
 
             if (response.status === 201) {
-                user.setUser(response.data.user); // Set user in global store
-                router.push({name: 'home'});
-                return;
+              await user.restoreSession();
+              await router.push({ name: 'home' });
+              return;
             }
-            
+
             alertMessage.value = 'Something went wrong';
             showAlert.value = true;
 

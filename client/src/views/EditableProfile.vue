@@ -303,7 +303,6 @@ const isDisabled = computed(() => {
 
 h2 {
   text-align: left;
-
 }
 
 .edit-container {

@@ -13,7 +13,6 @@ import EditableProfile from '@/views/EditableProfile.vue'
 
 const routes = [
   { path: '/test', name: 'test', component: test },
-  { path: '/', name: 'home', component: Home },
   { path: '/leaderboard', component: Leaderboard },
   { path: '/challenges', name: 'challenges', component: Challenges},
   { path: '/leaderboard', component: Leaderboard },
