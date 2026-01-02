@@ -332,6 +332,60 @@ async function getRecommendedChallenge(req, res, next) {
     }
 }
 
+async function replaceRelatedTestCase(req, res, next) {
+    try {
+        const {input, expectedOutput, language} = req.body;
+
+        if (!input || ! expectedOutput || !language) {
+            return res.status(400).json({message: 'Bad request: Must provide id, input, expectedOutput, and language when replacing a test case.'});
+        }
+        const replacedTestCase = await TestCase.findByIdAndUpdate(req.params.testCaseId, {
+            input: input,
+            expectedOutput: expectedOutput,
+            language: language
+        }, 
+        {new: true});
+
+        if (!replacedTestCase) {
+            return res.status(404).json({message: `Not found: Test case with id not found: ${req.params.testCaseId}.`});
+        }
+
+        return res.status(200).json({
+            message: 'Successfully replaced test case.',
+            input: replacedTestCase.input,
+            expectedOutput: replacedTestCase.expectedOutput,
+            language: replacedTestCase.language
+        });
+
+    } catch (err) {
+        if (err.name === 'CastError') {
+            return res.status(400).json({message: 'Bad request: Not a valid MongoDB object ID.'});
+        }
+
+        next(err);
+    }
+}
+
+async function createRelatedTestCaseIfDoesNotExist(req, res, next) {
+    try {
+        if (!req.params.testCaseId) {
+            return res.status(400).json({message: 'Bad request: missing test case id parameter'});
+        }
+        if (!mongoose.isValidObjectId(req.params.testCaseId)) {
+            addTestCase(req, res, next);
+        } else {
+            const testCase = await TestCase.findById(req.params.testCaseId);
+            if (!testCase) {
+                console.log(req.params.id, 'DOES NOT HAVE A USER');
+                addTestCase();
+            }
+            next();
+        }
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     executeCode,
     createNewChallenge,
@@ -344,5 +398,7 @@ module.exports = {
     removeRelatedTestCase,
     getRelatedTestCase,
     getRelatedSubmissions,
-    getRecommendedChallenge
+    getRecommendedChallenge,
+    replaceRelatedTestCase,
+    createRelatedTestCaseIfDoesNotExist
 }

@@ -1,6 +1,7 @@
 const express = require('express');
 const { challengeController } = require('../controllers');
-const { verifyJWT, checkAdmin } = require('../middleware.js')
+const { verifyJWT, checkAdmin } = require('../middleware.js');
+const { authenticateToken } = require('../middleware/auth.js');
 
 const router = express.Router();
 
@@ -19,5 +20,7 @@ router.patch('/:id', verifyJWT, checkAdmin, challengeController.updateChallenge)
 router.post('', verifyJWT, checkAdmin, challengeController.createNewChallenge);
 router.post('/:id/test-cases', challengeController.addTestCase);
 
+router.put('/:id/test-cases/:testCaseId',
+    challengeController.createRelatedTestCaseIfDoesNotExist, challengeController.replaceRelatedTestCase);
 
 module.exports = router;
