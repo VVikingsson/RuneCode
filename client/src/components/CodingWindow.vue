@@ -1,6 +1,6 @@
 <template>
-    <BModal v-model="showTestCaseModal" centered scrollable class="test-cases-modal" size="lg">
-        <TestCaseEditor :testCases="testCases"/>
+    <BModal v-model="showTestCaseModal" centered scrollable class="test-cases-modal" size="lg" @ok="deleteFlaggedTestCases">
+        <TestCaseEditor :testCases="testCases" @delete="flagTestCaseForDeletion"/>
     </BModal>
     <BContainer>
         <BRow>
@@ -81,13 +81,16 @@ const pythonCode = ref(props.pythonCodeTemplate);
 const javascriptCode = ref(props.javascriptCodeTemplate); 
 const activeTabIndex = ref(0); 
 const lang = ref(python());
-const alertMessage = ref('');
-const showAlert = ref(false);
 const showTestCaseModal = ref(false);
 const testCases = ref([]);
 const alertVariant = ref('');
+const showAlert = ref('false');
+const alertMessage = ref('');
 const submittable = ref(false);
-const draftSaved = ref(false);
+
+let draftSaved = false;
+let flaggedTestCases = [];
+
 
 // *************************** OBSERVERS
 let pythonTemplate = "";
@@ -127,20 +130,21 @@ async function runCode() {
         const { passed, message, newSubmission } = response.data;
 
         if (passed) {
-            draftSaved.value = true;
+            draftSaved = true;
             submittable.value = true;  
             alertMessage.value = message;
             alertVariant.value = 'success';
             showAlert.value = true;
         } else {
-            draftSaved.value = false;
+            draftSaved = false;
             submittable.value = false;
             alertMessage.value = response.data.message;
             alertVariant.value = 'danger';
             showAlert.value = true;
         }
     } catch (err) {
-        alertMessage.value = 'Error posting to drafts: ' + err;
+        alertMessage.value = 'Unexpected error';
+        console.log('Error running code:', err)
     }
 }
 
@@ -165,7 +169,7 @@ async function submitCode() {
         alert("Submission created successfully! ID: " + response.data._id);
 
         submittable.value = false;
-        draftSaved.value = false;
+        draftSaved = false;
     } catch (err) {
         console.log("Error submitting code:", err);
         alert("Failed to submit code.");
@@ -216,6 +220,29 @@ async function loadTestCases() {
         
     } catch (err) {
         console.log(`Failed to load test cases: ${err}`);
+    }
+}
+
+function flagTestCaseForDeletion(id) {
+    try {
+        testCases.value = testCases.value.filter(tc => tc._id != id);
+        flaggedTestCases.push(id);
+        console.log('Hello!');
+    } catch (err) {
+        console.log('Unexpected error when flagging test case for deletion:', err);
+    }
+}
+
+async function deleteFlaggedTestCases() {
+    try {
+        console.log('Deleting flagged');
+        for (const id of flaggedTestCases) {
+            const response = await Api.delete(`testCases/${id}`);
+            console.log(response.status);
+        }
+        flaggedTestCases = [];
+    } catch (err) {
+        console.log('Failed to delete flagged test cases:', err);
     }
 }
 

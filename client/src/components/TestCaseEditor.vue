@@ -16,7 +16,7 @@
                 variant="outline-light" @click="saveTestCase(tc)">
                     Save
                 </BButton>
-                <BButton class="tc-edit-button tc-icon-button tc-del-button d-flex align-items-center justify-content-center" variant="outline-light">
+                <BButton class="tc-edit-button tc-icon-button tc-del-button d-flex align-items-center justify-content-center" variant="outline-light" @click="emit('delete', tc._id);">
                     <img src="@/assets/icons/minus.png" class="tc-edit-icon"/>
                 </BButton>
             </BCol>
@@ -38,7 +38,7 @@
                 variant="outline-light" @click="saveTestCase(tc)">
                     Save
                 </BButton>
-                <BButton class="tc-edit-button tc-icon-button tc-del-button d-flex align-items-center justify-content-center" variant="outline-light">
+                <BButton class="tc-edit-button tc-icon-button tc-del-button d-flex align-items-center justify-content-center" variant="outline-light" @click="emit('delete', tc._id);">
                     <img src="@/assets/icons/minus.png" class="tc-edit-icon"/>
                 </BButton>
             </BCol>
@@ -51,6 +51,8 @@
 <script setup>
 import { defineProps, computed } from 'vue';
 import { Api } from '@/Api';
+
+let emit = defineEmits(['delete', 'saveAll']);
 
 const props = defineProps(
     {

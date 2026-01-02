@@ -25,10 +25,14 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 async function goToRecommendedChallenge() {
-    console.log("Pressed button");
-    const response = await Api.get(`/challenges/recommendedChallenges`, {withCredentials: true});
-    const challenge = response.data.recommendedChallenge;
-    router.push({name: 'Challenge', params: { id: challenge._id }});
+    try {
+        console.log("Pressed button");
+        const response = await Api.get(`/challenges/recommendedChallenges`, {withCredentials: true});
+        const challenge = response.data.recommendedChallenge;
+        router.push({name: 'Challenge', params: { id: challenge._id }});
+    } catch (err) {
+        console.log('Error getting recommended challenge, do you have a token? Message:', err);
+    }
 }
 </script>
 

@@ -311,6 +311,9 @@ async function getRecommendedChallenge(req, res, next) {
     try {
         console.log("Why is this not printed.... bogos binted?");
         const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({message: 'Missing token, please log in'});
+        }
         const user = jwt.verify(token, process.env.JWT_SECRET);
         console.log(user);
         if (!user) {
