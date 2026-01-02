@@ -1,14 +1,25 @@
 <template>
   <BCard class="tc-card">
-    <h5 class="ms-3 tc-header">Python Test Cases</h5>
+    <BRow>
+        <BCol cols="8">
+            <h5 class="ms-3 tc-header">Python Test Cases</h5>
+        </BCol>
+        <BCol cols="4" class="d-flex align-items-center justify-content-end">
+            <BButton class="tc-edit-button tc-add-button tc-icon-button d-flex 
+            align-items-center justify-content-center me-3" variant="outline-light"
+            @click="emit('create', 'python')">
+                <img src="@/assets/icons/plus.png" class="tc-edit-icon"/>
+            </BButton>
+        </BCol>
+    </BRow>
     <BCard class="tc-card" v-for="tc in pythonTestCases" :key="tc._id">
         <BRow>
             <BCol cols="8">
                 <BFormGroup>
                     <label for="input">Input</label>
-                    <BFormInput class="tc-form tc-input mb-2" v-model="tc.input" :key="input">Input</BFormInput>
+                    <BFormInput class="tc-form tc-input mb-2" v-model="tc.input">Input</BFormInput>
                     <label for="output">Expected Output</label>
-                    <BFormInput class="tc-form tc-output mb-2" v-model="tc.expectedOutput" :key="output">Output</BFormInput>
+                    <BFormInput class="tc-form tc-output mb-2" v-model="tc.expectedOutput">Output</BFormInput>
                 </BFormGroup>
             </BCol>
             <BCol cols="4" class="d-flex align-items-center justify-content-end">
@@ -22,15 +33,26 @@
             </BCol>
         </BRow>
     </Bcard>
-    <h5 class="ms-3 tc-header">Javascript Test Cases</h5>
+    <BRow>
+        <BCol cols="8">
+            <h5 class="ms-3 tc-header">Javascript Test Cases</h5>
+        </BCol>
+        <BCol cols="4" class="d-flex align-items-center justify-content-end">
+            <BButton class="tc-edit-button tc-add-button tc-icon-button d-flex 
+            align-items-center justify-content-center me-3" variant="outline-light"
+            @click="emit('create', 'javascript')">
+                <img src="@/assets/icons/plus.png" class="tc-edit-icon"/>
+            </BButton>
+        </BCol>
+    </BRow>
     <BCard class="tc-card" v-for="tc in javascriptTestCases" :key="tc._id">
         <BRow>
             <BCol cols="8">
                 <BFormGroup>
                     <label for="input">Input</label>
-                    <BFormInput class="tc-form tc-input mb-2" v-model="tc.input" :key="input">Input</BFormInput>
+                    <BFormInput class="tc-form tc-input mb-2" v-model="tc.input">Input</BFormInput>
                     <label for="output">Expected Output</label>
-                    <BFormInput class="tc-form tc-output mb-2" v-model="tc.expectedOutput" :key="output">Output</BFormInput>
+                    <BFormInput class="tc-form tc-output mb-2" v-model="tc.expectedOutput">Output</BFormInput>
                 </BFormGroup>
             </BCol>
             <BCol cols="4" class="d-flex align-items-center justify-content-end">
@@ -50,9 +72,12 @@
 
 <script setup>
 import { defineProps, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import { Api } from '@/Api';
 
-let emit = defineEmits(['delete', 'saveAll']);
+const route = useRoute();
+
+const emit = defineEmits(['delete', 'create', 'saveAll']);
 
 const props = defineProps(
     {
@@ -70,19 +95,20 @@ const javascriptTestCases = computed(() =>
 
 async function saveTestCase(tc) {
     try {
-        const response = await Api.put(`testCases/${tc._id}`,
+        const response = await Api.put(`/challenges/${route.params.id}/test-cases/${tc._id}`,
             {
                 input: tc.input,
                 expectedOutput: tc.expectedOutput,
-                language: tc.language // not worth it timewise to remove this from backend and tests
+                language: tc.language
             }
         );
+        console.log(response.data);
         if (response.status == 200) {
             console.log('Saved test case: 200');
             // Show 'TestCase successfully saved'
         }
     } catch (err) {
-        console.log(`Error when saving test case: ${err}`);
+        console.log(`Error when saving test case:`, err);
     }
 }
 </script>
@@ -138,9 +164,13 @@ async function saveTestCase(tc) {
         filter: brightness(0) saturate(100%) invert(70%) sepia(0%) saturate(1222%) hue-rotate(139deg) brightness(89%) contrast(81%);
     }
 
-    .tc-edit-button:hover img {
+    .tc-del-button:hover img {
         filter: brightness(0) saturate(100%) invert(72%) sepia(13%) saturate(4560%) hue-rotate(338deg) brightness(103%) contrast(91%);
-        }
+    }
+
+    .tc-add-button:hover img {
+        filter: brightness(0) saturate(100%) invert(84%) sepia(94%) saturate(7152%) hue-rotate(100deg) brightness(107%) contrast(106%);
+    }
 
     .tc-save-button:hover {
         color: var(--neon-cyan);

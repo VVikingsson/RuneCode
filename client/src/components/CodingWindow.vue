@@ -1,6 +1,8 @@
 <template>
-    <BModal v-model="showTestCaseModal" centered scrollable class="test-cases-modal" size="lg" @ok="deleteFlaggedTestCases">
-        <TestCaseEditor :testCases="testCases" @delete="flagTestCaseForDeletion"/>
+    <BModal v-model="showTestCaseModal" centered scrollable class="test-cases-modal" size="lg" 
+    @ok="saveAllTestCases" @cancel="clearTestCaseEditorCache" @esc="clearTestCaseEditorCache"
+    @close="clearTestCaseEditorCache" @backdrop="clearTestCaseEditorCache">
+        <TestCaseEditor :testCases="testCases" @create="stageEmptyTestCase" @delete="flagTestCaseForDeletion"/>
     </BModal>
     <BContainer>
         <BRow>
@@ -90,6 +92,7 @@ const submittable = ref(false);
 
 let draftSaved = false;
 let flaggedTestCases = [];
+let newTestCaseCounter = 1;
 
 
 // *************************** OBSERVERS
@@ -189,12 +192,10 @@ async function loadWorkspace() {
 }
 
 async function saveWorkspace() {
-    console.log('Saving workspace');
     try {
         const response = await Api.put(`workspaces?challId=${route.params.id}`, {
             pythonCode: pythonCode.value, javascriptCode: javascriptCode.value
         });
-        console.log('Saved workspace');
     } catch (err) {
         console.log(`Failed saving workspace: ${err}`);
     }
@@ -227,23 +228,51 @@ function flagTestCaseForDeletion(id) {
     try {
         testCases.value = testCases.value.filter(tc => tc._id != id);
         flaggedTestCases.push(id);
-        console.log('Hello!');
     } catch (err) {
         console.log('Unexpected error when flagging test case for deletion:', err);
     }
 }
 
-async function deleteFlaggedTestCases() {
+async function saveAllTestCases() {
     try {
         console.log('Deleting flagged');
+        console.log(flaggedTestCases);
         for (const id of flaggedTestCases) {
-            const response = await Api.delete(`testCases/${id}`);
-            console.log(response.status);
+            console.log('why');
+            const response = await Api.delete(`/testCases/${id}`);
+            testCases.value = testCases.value.filter(tc => (tc._id != id));
         }
-        flaggedTestCases = [];
+        for (const tc of testCases.value) {
+            const response = await Api.put(`/challenges/${route.params.id}/test-cases/${tc._id}`, {
+                language: tc.language,
+                input: tc.input,
+                expectedOutput: tc.expectedOutput
+            });
+            console.log('SAVE:', response.data);
+        }
     } catch (err) {
-        console.log('Failed to delete flagged test cases:', err);
+        console.log('Failed to save/delete multiple test cases:', err);
     }
+}
+
+function stageEmptyTestCase(language) {
+    try {
+        testCases.value.unshift({
+            language: language,
+            input: '',
+            expectedOutput: '',
+            _id: `temp${newTestCaseCounter}`
+        })
+        newTestCaseCounter++;
+    } catch (err) {
+        console.log('Error when staging new test case:', err);
+    }
+}
+
+function clearTestCaseEditorCache() {
+    console.log('CLEARING');
+    flaggedTestCases = [];
+    newTestCaseCounter = 1;
 }
 
 // ***********************************************************
