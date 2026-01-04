@@ -3424,6 +3424,144 @@
 					"response": []
 				},
 				{
+					"name": "POST fodder",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"min_val('56,58,32')\",\r\n    \"expectedOutput\": \"32\",\r\n    \"language\": \"python\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST fodder Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"min_val('56,58,32')\",\r\n    \"expectedOutput\": \"32\",\r\n    \"language\": \"python\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE all related test cases",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204 for deleting all related test cases\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE challenge",
 					"event": [
 						{

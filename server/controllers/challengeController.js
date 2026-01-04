@@ -263,7 +263,14 @@ async function removeRelatedTestCase (req, res, next) {
 async function removeRelatedTestCases (req, res, next) {
     try {
         const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({message: 'Bad request: No challenge id provided in parameters'});
+        }
         const challenge = await Challenge.findById(id);
+
+        if (!challenge) {
+            return res.status(404).json({message: 'Not found: No challenge with given id'});
+        }
 
         await TestCase.deleteMany({
             _id: { $in: challenge.testCases }
