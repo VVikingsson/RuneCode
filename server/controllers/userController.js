@@ -213,36 +213,34 @@ async function getTop100Users(req, res, next) {
     }
 }
 
-async function getUserRank(req, res, next) {
-    try {
+async function getRelatedSubmissions(req, res, next) {
+    try{
         const userId = req.params.id;
-
-        const user = await User.findById(userId).select("+points");
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
+        if (!userId) {
+            return res.status(400).json({message: 'Bad request: must provide user ID'});
         }
-
-        const higherRanks = await User.countDocuments({
-            points: { $gt: user.points }
-        });
-
-        const rank = higherRanks + 1;
-
-        return res.status(200).json({
-            id: user._id,
-            username: user.username,
-            points: user.points,
-            rank: rank
-        });
-
-    } catch (err) {
-        if (err.name === 'CastError') {
-            return res.status(400).json({ message: 'Invalid id format' });
+        if (!mongoose.isValidObjectId(userId)) {
+            return res.status(400).json({message: `Bad request: not a valid MongoDB object ID: ${userId}`})
         }
+        const submissions = await Submission
+            .find({author: userId}, 'title challenge') //selecting fields title and challenge
+            .sort({createdAt: -1}) // date of creation
+            .populate('challenge', 'name')
+            .exec();
+        //form the list of jsons with the submission details
+        const responseBody = submissions.map((submission) => {
+            return {
+                submissionId: submission._id,
+                challengeId: submission.challenge._id,
+                challengeName: submission.challenge.name,
+                submissionTitle: submission.title,
+            };
+        })
+        return res.status(200).json(responseBody);
+    } catch(err){
         next(err);
     }
 }
-
 
 module.exports = {
     createNewUser,
@@ -253,5 +251,6 @@ module.exports = {
     updateUser,
     uploadImage,
     getTop100Users,
-    getUserRank
+    getRelatedSubmissions,
+    searchUser,
 }
