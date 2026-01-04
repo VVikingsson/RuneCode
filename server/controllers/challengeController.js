@@ -249,10 +249,30 @@ async function removeRelatedTestCase (req, res, next) {
             {$pull: {testCases: testCaseId}},
             {new: true}
         );
+        await TestCase.findByIdAndDelete(testCaseId);
+
         if (!updatedChall) {
             return res.status(404).json({message: `Not found: no challenge found with id ${id}`});
         }
         return res.status(200).json(updatedChall);
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function removeRelatedTestCases (req, res, next) {
+    try {
+        const { id } = req.params;
+        const challenge = await Challenge.findById(id);
+
+        await TestCase.deleteMany({
+            _id: { $in: challenge.testCases }
+        });
+
+        await Challenge.findByIdAndUpdate(id, {
+            $set: { testCases: [] }
+        });
+        return res.status(204).json({message: `Successfully deleted all test cases related to challenge '${challenge.title}'`})
     } catch (err) {
         next(err);
     }
@@ -397,6 +417,7 @@ module.exports = {
     addTestCase,
     getRelatedTestCases,
     removeRelatedTestCase,
+    removeRelatedTestCases,
     getRelatedTestCase,
     getRelatedSubmissions,
     getRecommendedChallenge,

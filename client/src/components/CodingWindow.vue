@@ -237,18 +237,32 @@ async function saveAllTestCases() {
     try {
         console.log('Deleting flagged');
         console.log(flaggedTestCases);
-        for (const id of flaggedTestCases) {
-            console.log('why');
-            const response = await Api.delete(`/testCases/${id}`);
-            testCases.value = testCases.value.filter(tc => (tc._id != id));
+        if (testCases.value.length == 0) {
+            // Delete all tests 
+            const response = await Api.delete(`/challenges/${route.params.id}/test-cases`);
+        } else {
+            for (const id of flaggedTestCases) {
+                console.log('why');
+                const response = await Api.delete(`/testCases/${id}`);
+                testCases.value = testCases.value.filter(tc => (tc._id != id));
+            }
         }
         for (const tc of testCases.value) {
-            const response = await Api.put(`/challenges/${route.params.id}/test-cases/${tc._id}`, {
-                language: tc.language,
-                input: tc.input,
-                expectedOutput: tc.expectedOutput
-            });
-            console.log('SAVE:', response.data);
+            if (!tc._id) {
+                const response = await Api.post(`challenges/${route.params.id}/test-cases`, {
+                    language: tc.language,
+                    input: tc.input,
+                    expectedOutput: tc.expectedOutput
+                });
+            console.log('BECAME POST', response.data);
+            } else {
+                const response = await Api.put(`/challenges/${route.params.id}/test-cases/${tc._id}`, {
+                    language: tc.language,
+                    input: tc.input,
+                    expectedOutput: tc.expectedOutput
+                });
+                console.log('BECAME PUT')
+            }
         }
         clearTestCaseEditorCache();
     } catch (err) {
@@ -262,7 +276,6 @@ function stageEmptyTestCase(language) {
             language: language,
             input: '',
             expectedOutput: '',
-            _id: `temp${newTestCaseCounter}`
         })
         newTestCaseCounter++;
     } catch (err) {

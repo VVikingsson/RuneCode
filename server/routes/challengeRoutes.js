@@ -13,6 +13,7 @@ router.get('/:id/test-cases', challengeController.getRelatedTestCases);
 router.get('/:id/test-cases/:testCaseId', challengeController.getRelatedTestCase);
 
 router.delete('/:id/test-cases/:testCaseId', challengeController.removeRelatedTestCase)
+router.delete('/:id/test-cases', challengeController.removeRelatedTestCases)
 router.delete('/:id', verifyJWT, checkAdmin, challengeController.removeChallenge);
 
 router.patch('/:id', verifyJWT, checkAdmin, challengeController.updateChallenge);
