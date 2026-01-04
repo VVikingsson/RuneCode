@@ -1,4 +1,7 @@
 <template>
+    <BAlert v-model:model-value="showTestCaseAlert" class="testCasesAlert" v-bind:variant="testCasesAlertVariant">
+        {{ testCasesAlertMessage }}
+    </BAlert>
   <BCard class="tc-card">
     <BRow>
         <BCol cols="8">
@@ -71,13 +74,18 @@
 
 
 <script setup>
-import { defineProps, computed } from 'vue';
+import { defineProps, computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Api } from '@/Api';
 
 const route = useRoute();
 
 const emit = defineEmits(['delete', 'create', 'saveAll']);
+
+const testCasesAlertMessage = ref('');
+const showTestCaseAlert = ref(false);
+const testCasesAlertVariant = ref('');
+const dismissCountDown = ref(0);
 
 const props = defineProps(
     {
@@ -93,30 +101,60 @@ const javascriptTestCases = computed(() =>
     props.testCases.filter(tc => tc.language.toLowerCase() === 'javascript')
 );
 
+function countDownChanged(value) {
+    dismissCountDown.value = value;
+}
+
+function showAlert(message, variant = 'success') {
+    testCasesAlertMessage.value = message;
+    testCasesAlertVariant.value = variant;
+    showTestCaseAlert.value = true;
+    setTimeout(() => {
+        showTestCaseAlert.value = false;
+    }, 2000);
+}
+
 async function saveTestCase(tc) {
     try {
         console.log('Saving test case:', tc);
-        const response = await Api.put(`/challenges/${route.params.id}/test-cases/${tc._id}`,
+        let response;
+        if (!tc._id) {
+            response = await Api.post(`/challenges/${route.params.id}/test-cases`,
             {
                 input: tc.input,
                 expectedOutput: tc.expectedOutput,
                 language: tc.language
+            });
+        } else {
+            response = await Api.put(`/challenges/${route.params.id}/test-cases/${tc._id}`,
+            {
+                input: tc.input,
+                expectedOutput: tc.expectedOutput,
+                language: tc.language
+            });
             }
-        );
-        console.log(response.data);
-        tc._id = response.data.testCase; // Prevent that the same frontend tc can save multiple resources
-        if (response.status == 200) {
-            console.log('Saved test case: 200');
-            // Show 'TestCase successfully saved'
+        tc._id = response.data.testCase; // Prevent that the same frontend tc can POST multiple resources
+        if (response.status == 200 || response.status == 201) {
+            showAlert('Saved!');
+        } else {
+            showAlert('Error.', 'danger');
         }
     } catch (err) {
         console.log(`Error when saving test case:`, err);
+        showAlert('Error.', 'danger');
     }
 }
 </script>
 
 
 <style scoped>
+    .testCasesAlert {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 6767;
+    }
     .tc-header {
         color: var(--text-light);
     }
