@@ -81,7 +81,7 @@ const emit = defineEmits(['delete', 'create', 'saveAll']);
 
 const props = defineProps(
     {
-        testCases: Array
+        testCases: {type: Array, default: null}
     }
 )
 
@@ -95,6 +95,7 @@ const javascriptTestCases = computed(() =>
 
 async function saveTestCase(tc) {
     try {
+        console.log('Saving test case:', tc);
         const response = await Api.put(`/challenges/${route.params.id}/test-cases/${tc._id}`,
             {
                 input: tc.input,
@@ -103,6 +104,7 @@ async function saveTestCase(tc) {
             }
         );
         console.log(response.data);
+        tc._id = response.data.testCase; // Prevent that the same frontend tc can save multiple resources
         if (response.status == 200) {
             console.log('Saved test case: 200');
             // Show 'TestCase successfully saved'

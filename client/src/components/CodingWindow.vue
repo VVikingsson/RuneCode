@@ -74,8 +74,8 @@ const route = useRoute();
 const user = useUserStore();
 
 const props = defineProps({
-    pythonCodeTemplate: {type: String, required: true},
-    javascriptCodeTemplate: {type: String, required: true}
+    pythonCodeTemplate: {type: String, default: null},
+    javascriptCodeTemplate: {type: String, default: null}
 });
 
 // ************************** REACTIVE VARIABLES
@@ -86,7 +86,7 @@ const lang = ref(python());
 const showTestCaseModal = ref(false);
 const testCases = ref([]);
 const alertVariant = ref('');
-const showAlert = ref('false');
+const showAlert = ref(false);
 const alertMessage = ref('');
 const submittable = ref(false);
 
@@ -250,6 +250,7 @@ async function saveAllTestCases() {
             });
             console.log('SAVE:', response.data);
         }
+        clearTestCaseEditorCache();
     } catch (err) {
         console.log('Failed to save/delete multiple test cases:', err);
     }

@@ -354,7 +354,8 @@ async function replaceRelatedTestCase(req, res, next) {
             message: 'Successfully replaced test case.',
             input: replacedTestCase.input,
             expectedOutput: replacedTestCase.expectedOutput,
-            language: replacedTestCase.language
+            language: replacedTestCase.language,
+            testCase: replacedTestCase._id
         });
 
     } catch (err) {
@@ -372,12 +373,12 @@ async function createRelatedTestCaseIfDoesNotExist(req, res, next) {
             return res.status(400).json({message: 'Bad request: missing test case id parameter'});
         }
         if (!mongoose.isValidObjectId(req.params.testCaseId)) {
-            addTestCase(req, res, next);
+            return addTestCase(req, res, next);
         } else {
             const testCase = await TestCase.findById(req.params.testCaseId);
             if (!testCase) {
                 console.log(req.params.id, 'DOES NOT HAVE A USER');
-                addTestCase();
+                return addTestCase(req, res, next);
             }
             next();
         }
