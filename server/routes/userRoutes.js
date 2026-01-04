@@ -24,7 +24,12 @@ router.delete('/:id', authenticateToken, userController.removeUser);
 // form url for the picture
 
 router.post('', userController.createNewUser);
-router.post('/sessions', userController.loginUser); // Standard is to use post for login actions
+router.post('/login', userController.loginUser); // Standard is to use post for login actions
+router.get('', userController.getAllUsers);
+router.delete('/:id', userController.removeUser);
+router.get('/:id', userController.getUser);
+router.patch('/:id', userController.updateUser);
+router.get('/rank/:id', userController.getUserRank);
 router.get('/rank/:id', userController.getUserRank);
 // upload is a Multer instance that acts as a central middleware processor for handling file uploads
 // upload.single('profileImage') tells upload middleware to upload the picture with the 'profileImage' name field value
