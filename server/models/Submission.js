@@ -7,7 +7,7 @@ const SubmissionSchema = new mongoose.Schema({
     authorNote: {type: String, default: ''},
     author: {type: Schema.Types.ObjectId, ref: 'User', required: true},
     challenge: {type: Schema.Types.ObjectId, ref: 'Challenge', required: true},
-
+    language: {type: String, default: 'python'}
 }, {timestamps: true});
 
 

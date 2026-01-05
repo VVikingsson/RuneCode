@@ -40,7 +40,8 @@ async function executeCode(req, res, next) {
                 {author: authorId, challenge: id},
                 {code : code,
                 author : authorId,
-                challenge : id},
+                challenge : id,
+                language: language},
                 {upsert: true, new: true},
             )
             return res.status(201).json({message: result, passed: passed, newSubmission: draftSubmission});
