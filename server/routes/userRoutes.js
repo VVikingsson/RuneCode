@@ -18,7 +18,7 @@ router.get('/auth/me', authenticateToken, (req, res, next) => {
 router.get('/search', userController.searchUser);
 // get all submissions of a specific user with related challenges
 router.get('/:id/submissions', userController.getRelatedSubmissions);
-router.get(':/id', authenticateToken, userController.getUser);
+router.get('/:id', authenticateToken, userController.getUser);
 //needs modification
 router.delete('/:id', authenticateToken, userController.removeUser);
 // form url for the picture
