@@ -8,8 +8,8 @@
     import { defineProps, ref, onMounted } from 'vue';
 
     const props = defineProps({
-        name: {type: String, required: true},
-        number: {type: String, required: true}
+        name: {type: String, default: null},
+        number: {type: String, default: null}
     });
 
 </script>

@@ -1,6 +1,8 @@
 <script setup>
 import { Api } from '@/Api'
 import { ref, onMounted } from 'vue'
+
+const currentUser = ref(null);
 // this is the attributes that will be displayed
 const fields = [
   { key: 'username', label: 'User' },
@@ -19,7 +21,9 @@ function getTopUsers() {
           username: user.username,
           points: user.points
         }
-      })
+      });
+
+      currentUser.value = response.data.currentUser;
     })
     .catch(error => {
       items.value = error
@@ -54,6 +58,10 @@ onMounted(() => {
         </template>
       </BTable>
     </BCard>
+    <BCard v-if="currentUser && !items.some(u => u.id === currentUser.id)"
+       class="current-user-banner mt-3 p-2 text-center">
+      #{{ currentUser.rank }} {{ currentUser.username }} — {{ currentUser.points }} points
+    </BCard>
   </div>
 </template>
 
@@ -76,6 +84,14 @@ onMounted(() => {
 .my-table :deep(th) {
   background-color: var(--section-bg);
   color: white;
+}
+
+.current-user-banner {
+  background-color: #ffeb3b !important;
+  color: black !important;
+  font-weight: bold !important;
+  font-size: 1.1rem;
+
 }
 
 </style>

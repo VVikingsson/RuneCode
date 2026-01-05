@@ -676,8 +676,8 @@
 									"});\r",
 									"\r",
 									"pm.test(\"Body contains leaderboard data\" , function () {\r",
-									"    pm.response.to.have.jsonBody('length');\r",
-									"    pm.response.to.have.jsonBody('leaderboard');\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"currentUser\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"leaderboard\");\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -946,7 +946,7 @@
 									"});\r",
 									"\r",
 									"pm.test(\"Response contains expected user\", function() {\r",
-									"    pm.expect(pm.response.json().users[0].username).to.include(\"Sparkles\");\r",
+									"    pm.expect(pm.response.json().users[0].username).to.include(\"NewTester\");\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -969,10 +969,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"Sparkles\",\r\n    \"email\": \"sparkles@gmail.com\",\r\n    \"password\": \"testingSparkles\",\r\n    \"isAdmin\": true\r\n}"
+							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseURL}}/users/search?searchQuery=rkl",
+							"raw": "{{baseURL}}/users/search?searchQuery=ewTest",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -983,7 +983,7 @@
 							"query": [
 								{
 									"key": "searchQuery",
-									"value": "rkl"
+									"value": "ewTest"
 								}
 							]
 						}
@@ -1394,66 +1394,6 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"expectedOutput\": \"10\"\r\n}"
-						},
-						"url": {
-							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"testCases",
-								"{{testCaseID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "PUT testCase",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Check that status code is 200",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"// Check correct fields",
-									"pm.test(\"Response contains correct fields\", function () {",
-									"    pm.expect(pm.response.json()).to.have.property(\"message\");",
-									"    pm.expect(pm.response.json()).to.have.property(\"input\");",
-									"    pm.expect(pm.response.json()).to.have.property(\"expectedOutput\");",
-									"    pm.expect(pm.response.json()).to.have.property(\"language\");",
-									"});",
-									"// Check that response contains confirmation message",
-									"pm.test(\"Response contains correct message\", function () {",
-									"    pm.expect(pm.response.json().message).to.include(\"Successfully replaced test case.\");",
-									"});",
-									"",
-									"",
-									"",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"input\": \"chicken_jockey('The Nether')\",\r\n    \"expectedOutput\": \"10\",\r\n    \"language\": \"python\"\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/testCases/{{testCaseID}}",
@@ -2432,6 +2372,171 @@
 					"response": []
 				},
 				{
+					"name": "PUT replace related test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 for replacing a related test case\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"input\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"expectedOutput\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"language\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"testCase\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"testCase field to not be empty\", function () {\r",
+									"    pm.expect(pm.response.json().testCase).to.not.be.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"min_val('56,58,32,60,100,15')\",\r\n    \"expectedOutput\": \"15\",\r\n    \"language\": \"python\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/{{relatedTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases",
+								"{{relatedTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT bad replace related test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 for bad request\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"message contains 'Bad request'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include('Bad request');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"expectedOutput\": \"15\",\r\n    \"language\": \"python\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/{{relatedTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases",
+								"{{relatedTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT new related test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 for creating a related test case\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"challenge\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"testCase\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"testCase field to not be empty\", function () {\r",
+									"    pm.expect(pm.response.json().testCase).to.not.be.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"min_val('1,2,3')\",\r\n    \"expectedOutput\": \"15\",\r\n    \"language\": \"python\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/temp1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases",
+								"temp1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE related test case",
 					"event": [
 						{
@@ -3313,6 +3418,144 @@
 							"path": [
 								"users",
 								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST fodder",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"min_val('56,58,32')\",\r\n    \"expectedOutput\": \"32\",\r\n    \"language\": \"python\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST fodder Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"input\": \"min_val('56,58,32')\",\r\n    \"expectedOutput\": \"32\",\r\n    \"language\": \"python\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE all related test cases",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204 for deleting all related test cases\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases"
 							]
 						}
 					},

@@ -105,23 +105,18 @@ async function getChallenge(req, res, next) {
         }
     return res.status(200).json({
         challenge: challenge,
-        links: [
-            {   // Follows RFC 5988 standard (something I found online)
-                rel: "execute",     // "relation": how is this resource linked to the current context  
-                href: "/api/v1/challenges/execute/:id", // link
+        links: {
+            run: {
+                rel: "run",
+                href: "/drafts", // link
                 title: "Execute code for this challenge"
             },
-            {
-                rel: "submissions",     
-                href: "/api/v1/challenges/:id/submissions",
+            "submit": {
+                rel: "submit",     
+                href: "/submissions",
                 title: "List submissions related to this challenge"
-            },
-            {
-                rel: "home",   
-                href: "/api/v1/",
-                title: "API root"
             }
-        ]
+        }
     });
     } catch (err) {
         if (err.name === 'CastError') {
@@ -249,10 +244,37 @@ async function removeRelatedTestCase (req, res, next) {
             {$pull: {testCases: testCaseId}},
             {new: true}
         );
+        await TestCase.findByIdAndDelete(testCaseId);
+
         if (!updatedChall) {
             return res.status(404).json({message: `Not found: no challenge found with id ${id}`});
         }
         return res.status(200).json(updatedChall);
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function removeRelatedTestCases (req, res, next) {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({message: 'Bad request: No challenge id provided in parameters'});
+        }
+        const challenge = await Challenge.findById(id);
+
+        if (!challenge) {
+            return res.status(404).json({message: 'Not found: No challenge with given id'});
+        }
+
+        await TestCase.deleteMany({
+            _id: { $in: challenge.testCases }
+        });
+
+        await Challenge.findByIdAndUpdate(id, {
+            $set: { testCases: [] }
+        });
+        return res.status(204).json({message: `Successfully deleted all test cases related to challenge '${challenge.title}'`})
     } catch (err) {
         next(err);
     }
@@ -311,6 +333,9 @@ async function getRecommendedChallenge(req, res, next) {
     try {
         console.log("Why is this not printed.... bogos binted?");
         const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({message: 'Missing token, please log in'});
+        }
         const user = jwt.verify(token, process.env.JWT_SECRET);
         console.log(user);
         if (!user) {
@@ -329,6 +354,61 @@ async function getRecommendedChallenge(req, res, next) {
     }
 }
 
+async function replaceRelatedTestCase(req, res, next) {
+    try {
+        const {input, expectedOutput, language} = req.body;
+
+        if (!input || ! expectedOutput || !language) {
+            return res.status(400).json({message: 'Bad request: Must provide id, input, expectedOutput, and language when replacing a test case.'});
+        }
+        const replacedTestCase = await TestCase.findByIdAndUpdate(req.params.testCaseId, {
+            input: input,
+            expectedOutput: expectedOutput,
+            language: language
+        }, 
+        {new: true});
+
+        if (!replacedTestCase) {
+            return res.status(404).json({message: `Not found: Test case with id not found: ${req.params.testCaseId}.`});
+        }
+
+        return res.status(200).json({
+            message: 'Successfully replaced test case.',
+            input: replacedTestCase.input,
+            expectedOutput: replacedTestCase.expectedOutput,
+            language: replacedTestCase.language,
+            testCase: replacedTestCase._id
+        });
+
+    } catch (err) {
+        if (err.name === 'CastError') {
+            return res.status(400).json({message: 'Bad request: Not a valid MongoDB object ID.'});
+        }
+
+        next(err);
+    }
+}
+
+async function createRelatedTestCaseIfDoesNotExist(req, res, next) {
+    try {
+        if (!req.params.testCaseId) {
+            return res.status(400).json({message: 'Bad request: missing test case id parameter'});
+        }
+        if (!mongoose.isValidObjectId(req.params.testCaseId)) {
+            return addTestCase(req, res, next);
+        } else {
+            const testCase = await TestCase.findById(req.params.testCaseId);
+            if (!testCase) {
+                console.log(req.params.id, 'DOES NOT HAVE A USER');
+                return addTestCase(req, res, next);
+            }
+            next();
+        }
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     executeCode,
     createNewChallenge,
@@ -339,7 +419,10 @@ module.exports = {
     addTestCase,
     getRelatedTestCases,
     removeRelatedTestCase,
+    removeRelatedTestCases,
     getRelatedTestCase,
     getRelatedSubmissions,
-    getRecommendedChallenge
+    getRecommendedChallenge,
+    replaceRelatedTestCase,
+    createRelatedTestCaseIfDoesNotExist
 }

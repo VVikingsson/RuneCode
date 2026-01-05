@@ -8,6 +8,7 @@ async function createSubmission(req, res, next) {
         if (!challengeId || !authorId ) {
             return res.status(400).json({message: 'Bad request: challenge ID or author ID not provided.'});
         }
+        console.log(challengeId, authorId);
         for (const objectId of [challengeId, authorId]) {
             if (!mongoose.isValidObjectId(objectId)) {
                 return res.status(400).json({

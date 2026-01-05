@@ -215,12 +215,49 @@ function uploadImage(req, res, next) {
 
 async function getTop100Users(req, res, next) {
     try {
-        const users = await User.find().sort({points: -1}).limit(100);
-        return res.status(200).json({length: users.length, leaderboard: users})
+        // Top 100 users (public)
+        const leaderboard = await User
+            .find({}, 'username points')
+            .sort({ points: -1 })
+            .limit(100);
+
+        let currentUser = null;
+
+        // Optional rank logic (only if logged in)
+        if (req.user && req.user.id) {
+            const foundUser = await User.findById(req.user.id);
+
+            if (foundUser) {
+                const inTop100 = leaderboard.some(
+                    user => user._id.toString() === foundUser._id.toString()
+                );
+
+                // Only show rank if NOT in top 100
+                if (!inTop100) {
+                    const higherScoreCount = await User.countDocuments({
+                        points: { $gt: foundUser.points }
+                    });
+
+                    currentUser = {
+                        id: foundUser._id,
+                        username: foundUser.username,
+                        points: foundUser.points,
+                        rank: higherScoreCount + 1
+                    };
+                }
+            }
+        }
+
+        return res.status(200).json({
+            leaderboard,
+            currentUser
+        });
+
     } catch (err) {
         next(err);
     }
 }
+
 
 async function getRelatedSubmissions(req, res, next) {
     try{

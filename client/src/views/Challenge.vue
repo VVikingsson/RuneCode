@@ -8,7 +8,7 @@
             <ChallengeInfo :description="challDescription" class="challenge-info"/>
         </BCol>
         <BCol cols="12" lg="8">
-            <CodingWindow class="coding-window" :pythonCodeTemplate="challPythonTemplate" :javascriptCodeTemplate="challJavascriptTemplate"/>
+            <CodingWindow class="coding-window" :pythonCodeTemplate="challPythonTemplate" :javascriptCodeTemplate="challJavascriptTemplate" :links="links"/>
         </BCol>
     </BRow>  
     </BContainer>
@@ -30,7 +30,8 @@ const challDifficulty = ref(null);
 const challTags = ref(null);
 const challDescription = ref(null);
 const challPythonTemplate = ref(null);
-const challJavascriptTemplate = ref(null); // For future when we add javascript templates to the challenges
+const challJavascriptTemplate = ref(null);
+const links = ref(null);
 
 async function fetchChallengeData(id) {
     try {
@@ -53,6 +54,7 @@ onMounted(async () => {
         challDescription.value = challenge.value.description;
         challPythonTemplate.value = challenge.value.codeTemplatePython;
         challJavascriptTemplate.value = challenge.value.codeTemplateJavascript;
+        links.value = data.links;
     }
 });
 </script>

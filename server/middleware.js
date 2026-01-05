@@ -18,9 +18,7 @@ function verifyJWT(req, res, next) {
 }
 
 async function checkAdmin(req, res, next) {
-    console.log(req.user);
     const user = await User.findById(req.user.id);
-    console.log(user);
     if (!user || !user.isAdmin) {
         return res.status(403).json({ message: 'Admin access required' });
     }

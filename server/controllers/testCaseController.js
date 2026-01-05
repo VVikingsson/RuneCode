@@ -95,41 +95,10 @@ async function updateTestCase(req, res, next) {
     }
 }
 
-async function replaceTestCase(req, res, next) {
-    try {
-        const {input, expectedOutput, language} = req.body;
-
-        if (!input || ! expectedOutput || !language) {
-            res.status(400).json({message: 'Bad request: Must provide id, input, expectedOutput, and language when replacing a test case.'});
-        }
-        const replacedTestCase = await TestCase.findByIdAndUpdate(req.params.id, {
-            input: input,
-            expectedOutput: expectedOutput,
-            language: language
-        }, 
-        {new: true});
-        if (!replacedTestCase) {
-            res.status(404).json({message: `Not found: Test case with id not found: ${req.params.id} .`});
-        }
-        res.status(200).json({
-            message: 'Successfully replaced test case.',
-            input: replacedTestCase.input,
-            expectedOutput: replacedTestCase.expectedOutput,
-            language: replacedTestCase.language
-        });
-    } catch (err) {
-        if (err.name === 'CastError') {
-            res.status(400).json({message: 'Bad request: Not a valid MongoDB object ID.'});
-        }
-        next(err);
-    }
-}
-
 module.exports = {
     createNewTestCase,
     getTestCase,
     removeTestCase,
     getAllTestCases,
-    updateTestCase,
-    replaceTestCase
+    updateTestCase
 }
