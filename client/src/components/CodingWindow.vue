@@ -75,7 +75,8 @@ const user = useUserStore();
 
 const props = defineProps({
     pythonCodeTemplate: {type: String, default: null},
-    javascriptCodeTemplate: {type: String, default: null}
+    javascriptCodeTemplate: {type: String, default: null},
+    links: {type: Object, default: null}
 });
 
 // ************************** REACTIVE VARIABLES
@@ -127,7 +128,7 @@ async function runCode() {
         const language = activeTabIndex.value === 0 ? "python" : "javascript";
 
 
-        const response = await Api.post('/drafts', {
+        const response = await Api.post(props.links.run.href, {
             code: userCode, language: language, id: route.params.id
         })
         const { passed, message, newSubmission } = response.data;
@@ -163,7 +164,8 @@ async function submitCode() {
     const authorNote = prompt("Optional note:");
 
     try {
-        const response = await Api.post(`/submissions`, {
+
+        const response = await Api.post(props.links.submit.href, {
             title,
             authorNote,
             challengeId: route.params.id,
