@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 function authenticateToken(req, res, next) {
   const token = req.cookies.token;
 
-  if (!token) return res.status(401).json({ error: "Not authenticated" });
+  if (!token) return res.status(401).json({ message: "Not authenticated, please log in" });
 
   try {
     const user = jwt.verify(token, process.env.JWT_SECRET);
@@ -11,7 +11,7 @@ function authenticateToken(req, res, next) {
     console.log(user);           
     next();
   } catch (err) {
-    return res.status(401).json({ error: "Invalid token" });
+    return res.status(401).json({ message: "Invalid token" });
   }
 }
 
