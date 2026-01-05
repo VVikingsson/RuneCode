@@ -46,7 +46,7 @@
       </BLink>
       <div v-else class="dropdown">
         <img
-          src="https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0"
+          :src="avatarSrc"
           alt="picture"
           class="avatar"
         />
@@ -76,6 +76,11 @@ const logOut = async () => {
   user.logout()
   await router.push('/')
 }
+const defaultAvatar = 'https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0'
+
+const avatarSrc = computed(() =>
+  user.avatarUrl || defaultAvatar
+)
 const userId = computed(() => user.user?.id)
 </script>
 <style scoped>

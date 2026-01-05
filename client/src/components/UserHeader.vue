@@ -3,6 +3,13 @@
 import { BCol, BContainer, BImg, BRow } from 'bootstrap-vue-next'
 import { ref, onMounted, computed } from 'vue'
 import { Api } from '@/Api.js'
+import { useUserStore } from '@/stores/user'
+
+const user = useUserStore()
+const defaultAvatar = 'https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0'
+const avatarSrc = computed(() =>
+  user.avatarUrl || defaultAvatar
+)
 // this is the version for common page view
 const props = defineProps({
   id: { type: String, required: true }
@@ -20,12 +27,16 @@ function getUser(userID) {
   error.value = null
   Api.get('/users/' + userID)
     .then(response => {
+      if (response.status !== 200) {
+        // something went wrong
+        error.value = response.data.message
+        return
+      }
       // raw data
       userData.value = response.data
     })
-    .catch(error => {
-      error.value = error
-      userData.value = error
+    .catch(err => {
+      error.value = err.response?.data?.message || 'Failed to load user'
     })
     .finally(() => {
       isLoading.value = false
@@ -44,7 +55,7 @@ onMounted(() => {
   </div>
 
   <BAlert v-else-if="error" show variant="danger">
-    Error loading user data. Please try again.
+    {{ error }}
   </BAlert>
   <!--  load this container if user data is loaded-->
   <div
@@ -55,7 +66,7 @@ onMounted(() => {
       <BRow class="row-image">
         <BCol class="column-img px-4 py-2 text-start">
           <BImg
-            src="https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0"
+            :src="avatarSrc"
             alt="Image"
             height="120"
             width="120"
@@ -78,15 +89,15 @@ onMounted(() => {
         </BCol>
         <BCol class="diff-col p-4 gap-4">
           <div>
-            <div>Easy</div>
+            <div class="easy">Skirmish</div>
             <div>{{userData.user.completed.easy}}</div>
           </div>
           <div>
-            <div>Medium</div>
+            <div class="medium">Pillage</div>
             <div>{{userData.user.completed.medium}}</div>
           </div>
           <div>
-            <div>Hard</div>
+            <div class="hard">Raid</div>
             <div>{{userData.user.completed.hard}}</div>
           </div>
         </BCol>
@@ -121,7 +132,7 @@ onMounted(() => {
   border-radius: 16px;
 }
 .chall-no-col {
-  flex: 2
+  flex: 5
 }
 .diff-col {
   display: flex;
@@ -135,7 +146,24 @@ onMounted(() => {
   border-radius: 12px;
   background-color: var(--light-blue-vague);
 }
-
+.easy {
+  color: var(--neon-cyan);
+  text-shadow:
+    0 0 2px var(--neon-cyan),
+    0 0 0px var(--neon-cyan)
+}
+.medium {
+  color: var(--neon-magenta);
+  text-shadow:
+    0 0 2px var(--neon-magenta),
+    0 0 0px var(--neon-magenta)
+}
+.hard {
+  color: var(--neon-orange);
+  text-shadow:
+    0 0 2px var(--neon-orange),
+    0 0 0px var(--neon-orange)
+}
 p {
   text-align: left;
 }

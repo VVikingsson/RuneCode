@@ -5,7 +5,8 @@ export const useUserStore = defineStore('user', {
   state: () => ({ // state = schema
     user: null, // user obj
     loggedIn: false,
-    loading: true, 
+    loading: true,
+    avatarUrl: null
   }),
 
   actions: { // actions = methods
@@ -16,6 +17,8 @@ export const useUserStore = defineStore('user', {
         const res = await Api.get('users/auth/me');
         console.log(res);
         this.user = res.data.user;
+        // added to put the picture in the global store
+        this.avatarUrl = res.data.user?.url || null
         this.loggedIn = true;
       } catch (err) {
         console.log('Session not available. User logged out.');
@@ -29,6 +32,10 @@ export const useUserStore = defineStore('user', {
     setUser(userData) {
       this.user = userData;
       this.loggedIn = true;
+    },
+
+    setAvatar(url) {
+      this.avatarUrl = `${url}?t=${Date.now()}`
     },
 
     logout() {
