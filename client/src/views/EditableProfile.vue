@@ -1,11 +1,12 @@
 <script setup>
-import {ref, computed, watch, reactive, onMounted} from 'vue'
+import {ref, computed, watch, reactive} from 'vue'
 import _ from 'lodash'
 import { Api } from '@/Api.js'
 import { useUserStore } from '@/stores/user.js'
-import { BButton, BModal, useModal } from 'bootstrap-vue-next'
+import {BModal, useToast} from 'bootstrap-vue-next'
+import { useRouter } from 'vue-router'
 
-const { hide } = useModal()
+const { create } = useToast()
 
 const user = useUserStore()
 watch(
@@ -14,10 +15,9 @@ watch(
     id && getUser(id)
   }
 )
-
 // true when data is being fetched from the server
 const isLoading = ref(true)
-const alertMessage = ref(null)
+const failMessage = ref(null)
 const successMessage = ref(null)
 
 const defaultAvatar = 'https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0'
@@ -34,37 +34,46 @@ function getUser(userID) {
   isLoading.value = true
   Api.get('/users/' + userID)
     .then(response => {
-      if (response.status !== 200) {
-        // something went wrong
-        alertMessage.value = response.data.message
-        return
-      }
       // raw data
       userData.value = response.data
     })
     .catch(error => {
-      alertMessage.value = error
+      console.error('Failed to fetch user:', error)
+      failMessage.value = error.response?.data?.message || 'Failed to fetch user'
     })
     .finally(() => {
       isLoading.value = false
     })
 }
+const alertMessage = ref(null)
+const isVisible = ref(false)
 
 function patchUser() {
+  if (!form.value.username) {
+    alertMessage.value = 'Username is required'
+    isVisible.value = true
+    return
+  }
+  if (!form.value.email) {
+    alertMessage.value = 'Email is required'
+    isVisible.value = true
+    return
+  }
+  if (!form.value.email.includes('@')) {
+    alertMessage.value = 'Email needs an @-sign'
+    isVisible.value = true
+    return
+  }
   Api.patch(`/users/${user.user.id}`, form.value)
     .then(response => {
-      if (response.status !== 200) {
-        // something went wrong
-        alertMessage.value = response.data.message
-        return
-      }
       // update userData ref
-      userData.value = response.data
+      userData.value = userData.value = { ...userData.value, ...response.data }
     })
     .catch(error => {
       console.error('Failed to update user:', error)
       // for user
-      alertMessage.value = error.response.data.message
+      alertMessage.value = error.response?.data?.message || 'Failed to update user'
+      isVisible.value = true
     })
     .finally(() => {
     })
@@ -75,24 +84,64 @@ function uploadAvatar() {
   formData.append('profileImage', selectedFile.value)
   Api.post('/users/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     .then(response => {
-      if (response.status !== 200) {
-        // something went wrong
-        alertMessage.value = response.data.message
-        return
-      }
       userData.value = { ...userData.value, url: response.data.url }
-      successMessage.value = 'File uploaded successfully!'
+      user.setAvatar(response.data.url)
+      successMessage.value = 'Image uploaded successfully!'
       // selectedAvatar.value = null
       // selectedFile.value = null
       // hide modal
-      hide('directive-modal')
+      avatarModalOpen.value = false
     })
     .catch(error => {
       console.error('Failed to upload profile picture:', error)
       // for user
-      alertMessage.value = 'Failed to upload profile. Please try again.'
+      failMessage.value = error.response?.data?.message || 'Failed to upload image. Please try again.'
     })
 }
+const router = useRouter()
+function deleteUser() {
+  Api.delete(`/users/${user.user.id}`)
+    .then(response => {
+      alert(`Profile for ${userData.value.user.username} has been successfully deleted.`)
+      router.push('/')
+    })
+    .catch(error => {
+      console.log(error)
+      alert('Failed to delete profile. Please try again later.')
+    })
+}
+// function triggered to show the toast
+const showMe = (message, color) => {
+  create({
+    body: message,
+    modelValue: 4000,
+    variant: color,
+    pos: 'top-center',
+    progressProps: {
+      variant: color
+    }
+  })
+}
+// watch success message
+watch(successMessage, (newValue) => {
+  // Only trigger if the message isn't empty
+  if (newValue) {
+    showMe(newValue, 'success')
+    // clear the message after showing
+    // so that the same message can trigger the toast again later
+    successMessage.value = ''
+  }
+})
+// watch failure message
+watch(failMessage, (newValue) => {
+  // Only trigger if the message isn't empty
+  if (newValue) {
+    showMe(newValue, 'warning')
+    // clear the message after showing
+    // so that the same message can trigger the toast again later
+    failMessage.value = ''
+  }
+})
 
 const selectedAvatar = ref(null)
 const selectedFile = ref(null)
@@ -115,7 +164,7 @@ const selectedAvatarSrc = computed(() => {
 function onCancel() {
   selectedAvatar.value = null
   // alertMessage.value = null
-  hide('directive-modal')
+  avatarModalOpen.value = false
 }
 
 const originalForm = computed(() => {
@@ -136,26 +185,13 @@ function resetForm() {
   form.value.email = userData.value.user.email
   form.value.bio = userData.value.user.bio
 }
-
-const showAlertToast = ref(false)
-const showSuccessToast = ref(false)
-
-// Watch the messages and show toasts automatically
-watch(alertMessage, (val) => {
-  if (val) {
-    showAlertToast.value = true
-  }
-})
-
-watch(successMessage, (val) => {
-  if (val) {
-    showSuccessToast.value = true
-  }
-})
 // for keeping track of whether original data has being changed
 const isDisabled = computed(() => {
   return _.isEqual(form.value, originalForm.value)
 })
+
+const avatarModalOpen = ref(false)
+const deleteModalOpen = ref(false)
 // get user with id stored in user store (the id of the owner)
 // onMounted(() => {
 //   getUser(user.user.id)
@@ -164,31 +200,6 @@ const isDisabled = computed(() => {
 
 <template>
   <div class="main-container">
-    <BToast
-      v-model="showSuccessToast"
-      title="Success"
-      variant="success"
-      solid
-      :delay="3000"
-      auto-hide
-      toaster="b-toaster-top-right"
-      @hidden="successMessage = null"
-    >
-      {{ successMessage }}
-    </BToast>
-
-    <!-- Alert Toast -->
-    <BToast
-      v-model="showAlertToast"
-      title="Error"
-      variant="danger"
-      solid
-      auto-hide-delay="5000"
-      toaster="b-toaster-top-right"
-      @hidden="() => { showAlertToast = false; alertMessage = null }"
-    >
-      {{ alertMessage }}
-    </BToast>
     <div v-if="isLoading" class="text-center text-white">
       <BSpinner label="Loading..." variant="primary"/>
       <p class="mt-2">Loading user's profile </p>
@@ -204,10 +215,11 @@ const isDisabled = computed(() => {
               class="image"
             />
           </div>
-          <BButton v-b-modal.directive-modal>
-            Edit picture
-          </BButton>
+          <button @click="avatarModalOpen = true" class="btn-edit-img">
+            Edit image
+          </button>
           <BModal
+            v-model="avatarModalOpen"
             title="Edit picture"
             id="directive-modal"
             centered
@@ -217,7 +229,7 @@ const isDisabled = computed(() => {
             no-close-on-backdrop
           >
             <template #header>
-              Modal Header
+              Choose your profile image
             </template>
             <template #default>
               <div class="avatar-submit">
@@ -243,7 +255,7 @@ const isDisabled = computed(() => {
             </template>
             <template #footer>
               <div class="footer-buttons">
-                <button :disabled="!selectedAvatar" type="submit" form="avatar-form" class="btn-primary">Save</button>
+                <button :disabled="!selectedAvatar" type="submit" form="avatar-form" class="btn-pic-save">Save</button>
                 <button @click="onCancel" class="btn-info">Cancel</button>
               </div>
             </template>
@@ -252,7 +264,7 @@ const isDisabled = computed(() => {
         </div>
 
         <div class="profile-info">
-          <form @submit.prevent="patchUser">
+          <form @submit.prevent="patchUser" @input="isVisible &&= false">
             <div class="input-wrapper">
               <label>Username</label>
               <input v-model="form.username" type="text" class="input" placeholder="Choose username"/>
@@ -265,12 +277,39 @@ const isDisabled = computed(() => {
               <label>Bio</label>
               <textarea v-model="form.bio" type="text" class="input" placeholder="Your bio"/>
             </div>
+            <BAlert v-model="isVisible" class="sign-up-alert" variant="warning">{{  alertMessage }}</BAlert>
             <div class="buttons">
-              <button type="submit" :disabled="isDisabled">Save</button>
-              <button :disabled="isDisabled" @click.prevent="resetForm">Cancel</button>
+              <button class="save-input" type="submit" :disabled="isDisabled">Save</button>
+              <button class="reset-input" :disabled="isDisabled" @click.prevent="resetForm">Reset</button>
             </div>
           </form>
         </div>
+      </div>
+      <div class="delete-btn-wrapper">
+        <button class="btn-delete" @click="deleteModalOpen = true">Delete profile</button>
+        <BModal
+          v-model="deleteModalOpen"
+          id="modal-delete"
+          centered
+          class="modal-delete"
+          header-class="header-cl"
+
+        >
+
+          <template #default>
+            <div class="w-100 text-center">
+              <h4>Delete your account</h4>
+              Are you sure you want to delete your account? This action is irreversible and you will lose your progress.
+            </div>
+          </template>
+          <template #footer>
+            <div class="w-100 text-center d-flex justify-content-center gap-2">
+              <button @click="deleteUser" class="delete-acc">Delete</button>
+              <button @click="deleteModalOpen = false" class="cancel-delete">Cancel</button>
+            </div>
+          </template>
+
+        </BModal>
       </div>
     </div>
     <BAlert v-else show variant="warning">
@@ -279,8 +318,45 @@ const isDisabled = computed(() => {
   </div>
 
 </template>
-
+<style>
+.modal-delete .modal-header,
+.modal-delete .modal-footer,
+.modal-delete .modal-body
+{
+  border: none !important;
+  background-color: var(--card-bg) !important;
+}
+.header-cl {
+}
+.modal-delete .modal-body {
+  padding: 0 !important;
+}
+.modal-delete .modal-header {
+  border-radius: 16px 16px 0 0 !important;
+}
+.modal-delete .modal-footer {
+  border-radius: 0 0 16px 16px !important;
+}
+.modal-delete .modal-content {
+  border-radius: 16px;
+  border: 1px solid white;
+}
+.btn-close {
+  filter: invert(1);
+}
+</style>
 <style scoped>
+.delete-acc {
+  background-color: rgb(244, 63, 94);
+  color: white;
+}
+.cancel-delete {
+  background: none;
+  color: white;
+}
+.header-cl {
+  justify-content: center;
+}
 .main-container {
   display: flex;
   justify-content: center;
@@ -291,11 +367,11 @@ const isDisabled = computed(() => {
 
 h2 {
   text-align: left;
-
 }
 
 .edit-container {
-  border: 1px solid white;
+  background: rgba(18, 22, 55, 0.75);
+  border: 1px solid var(--text-light);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -354,11 +430,16 @@ form {
 }
 
 .input {
-  border: 2px solid var(--primary-blue);
+  border: 1px solid var(--text-light);
   border-radius: 8px;
-  background-color: var(--card-bg);
+  background-color: var(--dark-bg2);
   padding: 10px 10px;
   color: white;
+  outline: none;
+}
+
+.input:focus {
+  border: 2px solid var(--primary-blue);
 }
 
 .buttons {
@@ -367,15 +448,28 @@ form {
   gap: 8px;
   padding-top: 16px;
 }
-
-.buttons > * {
+.save-input, .avatar-label, .reset-input, .btn-edit-img, .footer-buttons >*, .btn-delete, .delete-acc, .cancel-delete {
+  padding: 10px 20px;
+  border-radius: 12px;
+}
+.save-input, .avatar-label {
   background-color: var(--amber-accent);
-  padding: 10px;
-  border-radius: 8px;
-  border: 2px solid beige;
   color: white;
+  border: none;
+  transition: box-shadow 0.3s ease;
+}
+.save-input:hover:not(:disabled) {
+  box-shadow: 0 0 0 3px #00aaff, 0 0 10px #00aaff, 0 0 20px rgba(0, 170, 255, 0.8);
 }
 
+.reset-input, .btn-edit-img {
+  background: none;
+  border: 1px solid white;
+  color: white;
+}
+.btn-edit-img:hover {
+  background-color: rgba(74, 120, 255, 0.5);
+}
 .buttons > *:disabled {
   cursor: not-allowed;
   opacity: 0.6;
@@ -387,17 +481,31 @@ form {
   align-items: center;
 }
 
-.avatar-label {
-  background-color: var(--primary-blue);
-  padding: 6px;
-  border-radius: 8px;
-
-}
-
 .footer-buttons {
   display: flex;
   gap: 8px;
   align-items: end;
+}
+.footer-buttons >* {
+  background: none;
+  border: 1px solid black;
+  color: black
+}
+.btn-pic-save:hover {
+  background-color: var(--amber-vague);
+}
+.delete-btn-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+.btn-delete {
+  background: none;
+  border: 1px solid darkred;
+  color: darkred;
+  margin-top: 30px;
+}
+.btn-delete:hover {
+  background-color: black;
 }
 </style>
 <style>

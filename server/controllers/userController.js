@@ -35,6 +35,7 @@ async function createNewUser(req, res, next) {
 
         const payload = {
             id: newUser._id,
+            url: null
         };
 
         if (!process.env.JWT_SECRET) {
@@ -82,9 +83,17 @@ async function loginUser(req, res, next) {
         if(!passwordValid) {
             return res.status(401).json({ message: "Password is incorrect" });
         }
+        // for putting image url in global store
+        let url = ''
+        const imgPath = path.join(process.env.UPLOADS, `${user._id}`)
+        try {
+            await fs.access(imgPath);
+            url = `http://localhost:3000/api/v1/users/avatar/${user.id}`
+        } catch(err) {}
 
         const payload = {
             id: user._id,
+            url: url
         };
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "12h" });
@@ -139,7 +148,7 @@ async function removeUser(req, res, next) {
         if (!deletedUser) {
             res.status(404).json({message: "No user found with given id"});
         }
-        res.status(200).json({message: `Successfully deleted user ${deletedUser.username}`});
+        res.status(204).json({message: `Successfully deleted user ${deletedUser.username}`});
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Invalid id format'});
@@ -181,7 +190,7 @@ async function updateUser(req, res, next) {
             const field = Object.keys(err.keyPattern)[0];
 
             return res.status(409).json({
-                message: `${field} is already taken`
+                message: `${field} '${field == 'username' ? req.body.username : req.body.email}' is taken`
             });
         }
 

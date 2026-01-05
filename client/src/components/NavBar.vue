@@ -29,7 +29,10 @@
     </BNavbarNav>
     <!-- Right aligned nav items -->
     <BNavbarNav class="right-nav ms-auto mb-lg-0">
-      <BLink v-if="!user.loggedIn" :to="{ name: 'SignIn' }" class="text-decoration-none">
+      <div v-if="user.loading">
+        <span class="text-muted px-3">Checking session…</span>
+      </div>
+      <BLink v-else-if="!user.loggedIn" :to="{ name: 'SignIn' }" class="text-decoration-none">
         <div
           aria-label="User Login Button"
           tabindex="0"
@@ -43,12 +46,16 @@
       </BLink>
       <div v-else class="dropdown">
         <img
-          src="https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0"
+          :src="avatarSrc"
           alt="picture"
           class="avatar"
         />
         <div class="dropdown-content">
-          <a :href="`/users/${user.user.id}`">View profile</a>
+          <RouterLink
+            :to="{ name: 'UserPage', params: { id: userId } }"
+          >
+            View profile
+          </RouterLink>
           <a href="/edit">Edit profile</a>
           <BDropdownItem class="sign-out-drpdwn" @click.prevent="logOut">Log out</BDropdownItem>
         </div>
@@ -61,6 +68,7 @@
 <script setup>
 import { useUserStore } from '@/stores/user.js'
 import { useRouter } from 'vue-router'
+import { computed } from 'vue'
 const user = useUserStore()
 console.log(user)
 const router = useRouter()
@@ -68,6 +76,12 @@ const logOut = async () => {
   user.logout()
   await router.push('/')
 }
+const defaultAvatar = 'https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0'
+
+const avatarSrc = computed(() =>
+  user.avatarUrl || defaultAvatar
+)
+const userId = computed(() => user.user?.id)
 </script>
 <style scoped>
 .items-bar {
@@ -208,8 +222,6 @@ const logOut = async () => {
 
 .brand-icon {
   height: 3rem;
-  /*margin-right: 0.2rem;
-  margin-top: -0.5rem;*/
   filter: brightness(0) saturate(100%) invert(60%) sepia(87%) saturate(2212%) hue-rotate(1deg) brightness(104%) contrast(102%) drop-shadow(0px 0px 14px var(--neon-orange));
 }
 #brand-R {

@@ -11,10 +11,8 @@ import UserPage from './views/UserPage.vue';
 import UserSearch from './views/UserSearch.vue';
 import EditableProfile from '@/views/EditableProfile.vue'
 
-
 const routes = [
   { path: '/test', name: 'test', component: test },
-  { path: '/', name: 'home', component: Home },
   { path: '/leaderboard', component: Leaderboard },
   { path: '/challenges', name: 'challenges', component: Challenges},
   { path: '/leaderboard', component: Leaderboard },
@@ -25,7 +23,6 @@ const routes = [
   { path: '/users/:id', name: 'UserPage', component: UserPage, props: true },
   { path: '/users', name: 'UserSearch', component: UserSearch },
   { path: '/edit', name: 'EditableProfile', component: EditableProfile }
-
 ]
 
 const router = createRouter({
