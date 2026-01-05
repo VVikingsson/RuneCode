@@ -13,6 +13,7 @@
         v-for="submission in submissions"
         :key="submission._id"
         class="flex-column align-items-start submission-item-bg"
+        @click="navigateToSubmissionWithId(submission._id)"
       >
         <div class="submission-header">
           <h5 class="mb-1">
@@ -33,13 +34,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps } from 'vue'
-import { Api } from '@/Api'
+import { ref, onMounted, defineProps } from 'vue';
+import { useRouter } from 'vue-router';
+import { Api } from '@/Api';
 
 const props = defineProps({
   challengeId: { type: String, required: true }
 })
 
+const router = useRouter();
 const submissions = ref([])
 const loading = ref(true)
 
@@ -54,6 +57,14 @@ async function fetchSubmissions() {
     submissions.value = []
   } finally {
     loading.value = false
+  }
+}
+
+function navigateToSubmissionWithId(id) {
+  try {
+    router.push(`/submissions/${id}`);
+  } catch (err) {
+    console.log('Failed to navigate to individual submission page:', err);
   }
 }
 
@@ -72,6 +83,11 @@ onMounted(() => {
   background-color: var(--dark-bg);
   color: var(--text-light);
   border: 1px solid #333;
+  cursor: pointer;
+}
+
+.submission-item-bg:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .submission-header {

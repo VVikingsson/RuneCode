@@ -1,6 +1,6 @@
 <template>
     <div class="main-container">
-        <ChallengeBanner :number="challNumber" :name="challName" :tags="challTags" :difficulty="challDifficulty"/>
+        <ChallengeBanner :number="challNumber" :name="challName"/>
     </div>
     <BContainer>
     <BRow>
