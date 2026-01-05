@@ -1,11 +1,11 @@
 <script setup>
-import {ref, computed, watch, reactive, onMounted} from 'vue'
+import {ref, computed, watch, reactive} from 'vue'
 import _ from 'lodash'
 import { Api } from '@/Api.js'
 import { useUserStore } from '@/stores/user.js'
-import { BButton, BModal, useModal, useToast } from 'bootstrap-vue-next'
+import {BModal, useToast} from 'bootstrap-vue-next'
+import { useRouter } from 'vue-router'
 
-const { hide } = useModal()
 const { create } = useToast()
 
 const user = useUserStore()
@@ -34,17 +34,12 @@ function getUser(userID) {
   isLoading.value = true
   Api.get('/users/' + userID)
     .then(response => {
-      if (response.status !== 200) {
-        // something went wrong
-        failMessage.value = response.data.message
-        return
-      }
       // raw data
       userData.value = response.data
     })
     .catch(error => {
-      console.error('Failed to update user:', error)
-      // failMessage.value = error
+      console.error('Failed to fetch user:', error)
+      failMessage.value = error.response?.data?.message || 'Failed to fetch user'
     })
     .finally(() => {
       isLoading.value = false
@@ -71,19 +66,13 @@ function patchUser() {
   }
   Api.patch(`/users/${user.user.id}`, form.value)
     .then(response => {
-      if (response.status !== 200) {
-        // something went wrong
-        alertMessage.value = response.data.message
-        isVisible.value = true
-        return
-      }
       // update userData ref
       userData.value = userData.value = { ...userData.value, ...response.data }
     })
     .catch(error => {
       console.error('Failed to update user:', error)
       // for user
-      alertMessage.value = error.response.data.message
+      alertMessage.value = error.response?.data?.message || 'Failed to update user'
       isVisible.value = true
     })
     .finally(() => {
@@ -95,22 +84,30 @@ function uploadAvatar() {
   formData.append('profileImage', selectedFile.value)
   Api.post('/users/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     .then(response => {
-      if (response.status !== 200) {
-        // something went wrong
-        failMessage.value = response.data.message
-        return
-      }
       userData.value = { ...userData.value, url: response.data.url }
+      user.setAvatar(response.data.url)
       successMessage.value = 'Image uploaded successfully!'
       // selectedAvatar.value = null
       // selectedFile.value = null
       // hide modal
-      hide('directive-modal')
+      avatarModalOpen.value = false
     })
     .catch(error => {
       console.error('Failed to upload profile picture:', error)
       // for user
-      failMessage.value = 'Failed to upload image. Please try again.'
+      failMessage.value = error.response?.data?.message || 'Failed to upload image. Please try again.'
+    })
+}
+const router = useRouter()
+function deleteUser() {
+  Api.delete(`/users/${user.user.id}`)
+    .then(response => {
+      alert(`Profile for ${userData.value.user.username} has been successfully deleted.`)
+      router.push('/')
+    })
+    .catch(error => {
+      console.log(error)
+      alert('Failed to delete profile. Please try again later.')
     })
 }
 // function triggered to show the toast
@@ -167,7 +164,7 @@ const selectedAvatarSrc = computed(() => {
 function onCancel() {
   selectedAvatar.value = null
   // alertMessage.value = null
-  hide('directive-modal')
+  avatarModalOpen.value = false
 }
 
 const originalForm = computed(() => {
@@ -192,6 +189,9 @@ function resetForm() {
 const isDisabled = computed(() => {
   return _.isEqual(form.value, originalForm.value)
 })
+
+const avatarModalOpen = ref(false)
+const deleteModalOpen = ref(false)
 // get user with id stored in user store (the id of the owner)
 // onMounted(() => {
 //   getUser(user.user.id)
@@ -215,10 +215,11 @@ const isDisabled = computed(() => {
               class="image"
             />
           </div>
-          <button v-b-modal.directive-modal class="btn-edit-img">
+          <button @click="avatarModalOpen = true" class="btn-edit-img">
             Edit image
           </button>
           <BModal
+            v-model="avatarModalOpen"
             title="Edit picture"
             id="directive-modal"
             centered
@@ -284,6 +285,32 @@ const isDisabled = computed(() => {
           </form>
         </div>
       </div>
+      <div class="delete-btn-wrapper">
+        <button class="btn-delete" @click="deleteModalOpen = true">Delete profile</button>
+        <BModal
+          v-model="deleteModalOpen"
+          id="modal-delete"
+          centered
+          class="modal-delete"
+          header-class="header-cl"
+
+        >
+
+          <template #default>
+            <div class="w-100 text-center">
+              <h4>Delete your account</h4>
+              Are you sure you want to delete your account? This action is irreversible and you will lose your progress.
+            </div>
+          </template>
+          <template #footer>
+            <div class="w-100 text-center d-flex justify-content-center gap-2">
+              <button @click="deleteUser" class="delete-acc">Delete</button>
+              <button @click="deleteModalOpen = false" class="cancel-delete">Cancel</button>
+            </div>
+          </template>
+
+        </BModal>
+      </div>
     </div>
     <BAlert v-else show variant="warning">
       User profile not found.
@@ -291,8 +318,45 @@ const isDisabled = computed(() => {
   </div>
 
 </template>
-
+<style>
+.modal-delete .modal-header,
+.modal-delete .modal-footer,
+.modal-delete .modal-body
+{
+  border: none !important;
+  background-color: var(--card-bg) !important;
+}
+.header-cl {
+}
+.modal-delete .modal-body {
+  padding: 0 !important;
+}
+.modal-delete .modal-header {
+  border-radius: 16px 16px 0 0 !important;
+}
+.modal-delete .modal-footer {
+  border-radius: 0 0 16px 16px !important;
+}
+.modal-delete .modal-content {
+  border-radius: 16px;
+  border: 1px solid white;
+}
+.btn-close {
+  filter: invert(1);
+}
+</style>
 <style scoped>
+.delete-acc {
+  background-color: rgb(244, 63, 94);
+  color: white;
+}
+.cancel-delete {
+  background: none;
+  color: white;
+}
+.header-cl {
+  justify-content: center;
+}
 .main-container {
   display: flex;
   justify-content: center;
@@ -384,7 +448,7 @@ form {
   gap: 8px;
   padding-top: 16px;
 }
-.save-input, .avatar-label, .reset-input, .btn-edit-img, .footer-buttons >* {
+.save-input, .avatar-label, .reset-input, .btn-edit-img, .footer-buttons >*, .btn-delete, .delete-acc, .cancel-delete {
   padding: 10px 20px;
   border-radius: 12px;
 }
@@ -429,6 +493,19 @@ form {
 }
 .btn-pic-save:hover {
   background-color: var(--amber-vague);
+}
+.delete-btn-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+.btn-delete {
+  background: none;
+  border: 1px solid darkred;
+  color: darkred;
+  margin-top: 30px;
+}
+.btn-delete:hover {
+  background-color: black;
 }
 </style>
 <style>
