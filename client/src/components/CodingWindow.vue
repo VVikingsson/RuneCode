@@ -1,4 +1,9 @@
 <template>
+    <BModal v-model="showTestCaseModal" centered scrollable class="test-cases-modal" size="lg" 
+    @ok="saveAllTestCases" @cancel="clearTestCaseEditorCache" @esc="clearTestCaseEditorCache"
+    @close="clearTestCaseEditorCache" @backdrop="clearTestCaseEditorCache">
+        <TestCaseEditor :testCases="testCases" @create="stageEmptyTestCase" @delete="flagTestCaseForDeletion"/>
+    </BModal>
     <BContainer>
         <BRow>
             <BCol cols="12" md="10">
@@ -37,13 +42,16 @@
                     </BAlert>
                     </div>
                 </BTab>
+                <template #tabs-end>
+                    <BButton id="edit-tests-btn" @click="loadTestCases(); showTestCaseModal = !showTestCaseModal">Edit Tests</BButton>
+                </template>
             </BTabs>
             </BCol>
             <BCol cols="12" md="2"">
-                <div class="d-flex flex-row flex-md-column gap-2" id="all-buttons">
+                <div class="all-buttons d-flex flex-row flex-md-column gap-2">
                     <BButton @click="runCode" class="run-button">Run</BButton>
                     <BButton class="submit-button" :disabled="!submittable" @click="submitCode">Submit</BButton>
-                    <BButton class="reset-workspace-button" @click="resetWorkspaceToDefault">Reset Workspace</BButton>
+                    <BButton @click="resetWorkspaceToDefault">Reset Workspace</BButton>
                 </div>
             </BCol>
         </BRow>
@@ -59,12 +67,15 @@ import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import { tags } from "@lezer/highlight";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
+import { useUserStore } from '../stores/user.js';
+import TestCaseEditor from './TestCaseEditor.vue';
 
 const route = useRoute();
+const user = useUserStore();
 
 const props = defineProps({
-    pythonCodeTemplate: {type: String, required: true},
-    javascriptCodeTemplate: {type: String, required: true}
+    pythonCodeTemplate: {type: String, default: null},
+    javascriptCodeTemplate: {type: String, default: null}
 });
 
 // ************************** REACTIVE VARIABLES
@@ -72,11 +83,17 @@ const pythonCode = ref(props.pythonCodeTemplate);
 const javascriptCode = ref(props.javascriptCodeTemplate); 
 const activeTabIndex = ref(0); 
 const lang = ref(python());
-const alertMessage = ref('');
-const showAlert = ref(false);
+const showTestCaseModal = ref(false);
+const testCases = ref([]);
 const alertVariant = ref('');
+const showAlert = ref(false);
+const alertMessage = ref('');
 const submittable = ref(false);
-const draftSaved = ref(false);
+
+let draftSaved = false;
+let flaggedTestCases = [];
+let newTestCaseCounter = 1;
+
 
 // *************************** OBSERVERS
 let pythonTemplate = "";
@@ -116,20 +133,21 @@ async function runCode() {
         const { passed, message, newSubmission } = response.data;
 
         if (passed) {
-            draftSaved.value = true;
+            draftSaved = true;
             submittable.value = true;  
             alertMessage.value = message;
             alertVariant.value = 'success';
             showAlert.value = true;
         } else {
-            draftSaved.value = false;
+            draftSaved = false;
             submittable.value = false;
             alertMessage.value = response.data.message;
             alertVariant.value = 'danger';
             showAlert.value = true;
         }
     } catch (err) {
-        alertMessage.value = 'Error posting to drafts: ' + err;
+        alertMessage.value = 'Unexpected error';
+        console.log('Error running code:', err)
     }
 }
 
@@ -154,7 +172,7 @@ async function submitCode() {
         alert("Submission created successfully! ID: " + response.data._id);
 
         submittable.value = false;
-        draftSaved.value = false;
+        draftSaved = false;
     } catch (err) {
         console.log("Error submitting code:", err);
         alert("Failed to submit code.");
@@ -174,12 +192,10 @@ async function loadWorkspace() {
 }
 
 async function saveWorkspace() {
-    console.log('Saving workspace');
     try {
         const response = await Api.put(`workspaces?challId=${route.params.id}`, {
             pythonCode: pythonCode.value, javascriptCode: javascriptCode.value
         });
-        console.log('Saved workspace');
     } catch (err) {
         console.log(`Failed saving workspace: ${err}`);
     }
@@ -195,6 +211,82 @@ async function resetWorkspaceToDefault() {
     } catch (err) {
         console.log(`Failed to reset workspace to default: ${err}`);
     }
+}
+
+async function loadTestCases() {
+    try {
+        const response = await Api.get(`challenges/${route.params.id}/test-cases`);
+        console.log(response.data.testCases);
+        testCases.value = response.data.testCases;
+        
+    } catch (err) {
+        console.log(`Failed to load test cases: ${err}`);
+    }
+}
+
+function flagTestCaseForDeletion(id) {
+    try {
+        testCases.value = testCases.value.filter(tc => tc._id != id);
+        flaggedTestCases.push(id);
+    } catch (err) {
+        console.log('Unexpected error when flagging test case for deletion:', err);
+    }
+}
+
+async function saveAllTestCases() {
+    try {
+        console.log('Deleting flagged');
+        console.log(flaggedTestCases);
+        if (testCases.value.length == 0) {
+            // Delete all tests 
+            const response = await Api.delete(`/challenges/${route.params.id}/test-cases`);
+        } else {
+            for (const id of flaggedTestCases) {
+                console.log('why');
+                const response = await Api.delete(`/testCases/${id}`);
+                testCases.value = testCases.value.filter(tc => (tc._id != id));
+            }
+        }
+        for (const tc of testCases.value) {
+            if (!tc._id) {
+                const response = await Api.post(`challenges/${route.params.id}/test-cases`, {
+                    language: tc.language,
+                    input: tc.input,
+                    expectedOutput: tc.expectedOutput
+                });
+            console.log('BECAME POST', response.data);
+            } else {
+                const response = await Api.put(`/challenges/${route.params.id}/test-cases/${tc._id}`, {
+                    language: tc.language,
+                    input: tc.input,
+                    expectedOutput: tc.expectedOutput
+                });
+                console.log('BECAME PUT')
+            }
+        }
+        clearTestCaseEditorCache();
+    } catch (err) {
+        console.log('Failed to save/delete multiple test cases:', err);
+    }
+}
+
+function stageEmptyTestCase(language) {
+    try {
+        testCases.value.unshift({
+            language: language,
+            input: '',
+            expectedOutput: '',
+        })
+        newTestCaseCounter++;
+    } catch (err) {
+        console.log('Error when staging new test case:', err);
+    }
+}
+
+function clearTestCaseEditorCache() {
+    console.log('CLEARING');
+    flaggedTestCases = [];
+    newTestCaseCounter = 1;
 }
 
 // ***********************************************************
@@ -271,7 +363,74 @@ onMounted(async () => {
 
 
 <style>
-    #all-buttons .btn {
+    .test-cases-modal * {
+        border: unset !important;
+    }
+
+    .test-cases-modal .btn-close {
+        filter: brightness(0) saturate(100%) invert(70%) sepia(0%) saturate(0%) hue-rotate(206deg) brightness(88%) contrast(85%);
+    }
+
+    .test-cases-modal .btn-close:hover {
+        filter: brightness(0) saturate(100%) invert(100%) sepia(10%) saturate(3129%) hue-rotate(188deg) brightness(124%) contrast(100%);
+    }
+
+    .test-cases-modal .btn-secondary,
+    .test-cases-modal .btn-primary {
+        background-color: unset;
+        border: 2px var(--text-light) solid !important;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .test-cases-modal .btn-secondary:hover {
+        color: var(--amber-primary);
+        background-color: unset;
+    }
+
+    .test-cases-modal .btn-primary:hover {
+        color: var(--neon-cyan);
+        background-color: unset;
+    }
+    
+    .test-cases-modal .modal-content {
+        background-color: var(--dark-bg) !important;
+        border: 2px var(--text-light) solid !important;
+        padding-right: 4px;
+    }
+
+    .test-cases-modal .modal-body::-webkit-scrollbar {
+    width: 8px;
+    }
+
+    .test-cases-modal .modal-body::-webkit-scrollbar-track {
+    background: unset;
+    }
+
+    .test-cases-modal .modal-body::-webkit-scrollbar-thumb {
+    background-color: var(--card-bg);
+    border-radius: 5px;
+    border: 1px var(--text-muted) solid;
+    }
+
+    .test-cases-modal .modal-body::-webkit-scrollbar-thumb:hover {
+    background-color: var(--section-bg);
+    }
+
+    #edit-tests-btn {
+        margin-left: auto;
+        font-family: 'JetBrains Mono', monospace !important;
+        background-color: unset !important;
+        border: 2px solid var(--text-muted) !important;
+        width: 130px;
+        color: var(--text-muted) !important;
+    }
+
+    #edit-tests-btn:hover {
+        color: var(--neon-cyan) !important;
+        border-color: white !important;
+    }
+
+    .all-buttons .btn {
         font-family: 'JetBrains Mono', monospace !important;
         background-color: unset !important;
         border: 2px solid var(--text-muted) !important;
@@ -285,7 +444,7 @@ onMounted(async () => {
         }
     }
 
-    #all-buttons .btn:hover {
+    .all-buttons .btn:hover {
         color: white !important;
         border-color: white !important;
     }

@@ -22,7 +22,7 @@
     const route = useRoute();
 
     const props = defineProps({
-        description: {type: String, required: true},
+        description: {type: String, default: null},
     })
 </script>
 
