@@ -676,8 +676,8 @@
 									"});\r",
 									"\r",
 									"pm.test(\"Body contains leaderboard data\" , function () {\r",
-									"    pm.response.to.have.jsonBody('length');\r",
-									"    pm.response.to.have.jsonBody('leaderboard');\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"currentUser\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"leaderboard\");\r",
 									"});"
 								],
 								"type": "text/javascript",
