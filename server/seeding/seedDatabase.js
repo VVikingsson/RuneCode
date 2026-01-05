@@ -834,7 +834,7 @@ const challengesData = [
 ];
 
 // --- 3. User Templates ---
-const TOTAL_USERS = 50; // Total users to seed
+const TOTAL_USERS = 100; // Total users to seed
 const adminUser = {
     username: 'admin',
     email: 'admin@codehub.com',
