@@ -29,7 +29,6 @@ function createExpressApp() {
     app.use(morgan('dev'));
     // Enable cross-origin resource sharing for frontend must be registered before api
     app.use(cors({
-    origin: "http://localhost:5173",   // Vue server origin
     credentials: true,                 // allow cookies
     }));
     app.use(cookieParser());
