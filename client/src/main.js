@@ -9,6 +9,7 @@ import App from './App.vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
 import './assets/base.css';
+import './assets/coding-window.css';
 
 const app = createApp(App);
 const pinia = createPinia();
