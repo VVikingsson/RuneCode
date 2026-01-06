@@ -10,6 +10,7 @@ import SignIn from './views/SignIn.vue';
 import UserPage from './views/UserPage.vue';
 import UserSearch from './views/UserSearch.vue';
 import EditableProfile from '@/views/EditableProfile.vue'
+import Submission from './views/Submission.vue';
 
 const routes = [
   { path: '/test', name: 'test', component: test },
@@ -22,7 +23,9 @@ const routes = [
   { path: '/sign-in', name: 'SignIn', component: SignIn},
   { path: '/users/:id', name: 'UserPage', component: UserPage, props: true },
   { path: '/users', name: 'UserSearch', component: UserSearch },
-  { path: '/edit', name: 'EditableProfile', component: EditableProfile }
+  { path: '/edit', name: 'EditableProfile', component: EditableProfile },
+  { path: '/submissions/:id', name: 'Submission', component: Submission}
+
 ]
 
 const router = createRouter({

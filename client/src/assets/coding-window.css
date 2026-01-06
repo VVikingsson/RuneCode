@@ -1,0 +1,32 @@
+.cm-editor {
+  height: 100vh;
+  border: 2px solid white;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 100px;
+  max-height: 70vh;
+  background-color: var(--dark-bg);
+}
+
+.cm-gutters,
+.cm-activeLineGutter {
+  background-color: var(--dark-bg) !important;
+  border-right-color: var(--section-background) !important;
+}
+
+.cm-cursor {
+  border-left-color: var(--light-blue) !important;
+}
+
+.cm-activeLine {
+  background-color: unset !important;
+}
+
+.cm-selectionBackground {
+  background-color: var(--light-blue-vague) !important;
+}
+
+.coding-window {
+    text-align: left !important;
+    position: relative !important;
+}

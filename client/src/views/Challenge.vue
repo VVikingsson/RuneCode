@@ -1,6 +1,6 @@
 <template>
     <div class="main-container">
-        <ChallengeBanner :number="challNumber" :name="challName" :tags="challTags" :difficulty="challDifficulty"/>
+        <ChallengeBanner :number="challNumber" :name="challName" :id="challId"/>
     </div>
     <BContainer>
     <BRow>
@@ -31,6 +31,7 @@ const challTags = ref(null);
 const challDescription = ref(null);
 const challPythonTemplate = ref(null);
 const challJavascriptTemplate = ref(null);
+const challId = ref(null);
 const links = ref(null);
 
 async function fetchChallengeData(id) {
@@ -54,6 +55,7 @@ onMounted(async () => {
         challDescription.value = challenge.value.description;
         challPythonTemplate.value = challenge.value.codeTemplatePython;
         challJavascriptTemplate.value = challenge.value.codeTemplateJavascript;
+        challId.value = challenge.value._id;
         links.value = data.links;
     }
 });
