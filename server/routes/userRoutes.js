@@ -14,6 +14,17 @@ router.get('/auth/me', authenticateToken, (req, res, next) => {
         next(err);
     }
 });
+router.post('/auth/logout', (req, res, next) => {
+    try {
+        res.clearCookie('token', {
+            httpOnly: true,
+            sameSite: 'None',
+            secure: true
+        });
+        res.sendStatus(204)
+    } catch(err) {
+        next(err);
+    }})
 
 router.get('/search', userController.searchUser);
 // get all submissions of a specific user with related challenges

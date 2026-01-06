@@ -148,7 +148,12 @@ async function removeUser(req, res, next) {
         if (!deletedUser) {
             res.status(404).json({message: "No user found with given id"});
         }
-        res.status(204).json({message: `Successfully deleted user ${deletedUser.username}`});
+        res.clearCookie('token', {
+            httpOnly: true,
+            sameSite: 'None',
+            secure: true
+        });
+        res.sendStatus(204);
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Invalid id format'});

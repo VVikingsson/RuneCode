@@ -102,8 +102,9 @@ const router = useRouter()
 function deleteUser() {
   Api.delete(`/users/${user.user.id}`)
     .then(response => {
+      user.logout()
+      router.push({ name: 'home' })
       alert(`Profile for ${userData.value.user.username} has been successfully deleted.`)
-      router.push('/')
     })
     .catch(error => {
       console.log(error)
