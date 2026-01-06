@@ -31,11 +31,7 @@ async function createSubmission(req, res, next) {
         if (!challenge) {
             return res.status(404).json({ message: "Challenge not found" });
         }
-
-        const prevSubmission = await Submission.findOne({ author: authorId, challenge: challengeId });
-        if (prevSubmission) {
-            return res.status(400).json({ message: "Challenge already submitted" });
-        }
+        
         //delete draft submission
         const newSubmission = await Submission.create({
             code: draftSubmission.code,
