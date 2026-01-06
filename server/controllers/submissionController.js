@@ -1,5 +1,11 @@
-const {DraftSubmission, Submission} = require('../models');
+const {DraftSubmission, Submission, User, Challenge} = require('../models');
 const mongoose = require('mongoose');
+
+const difficultyPoints = {
+    easy: 50,
+    medium: 100,
+    hard: 200
+};
 
 async function createSubmission(req, res, next) {
     try {
@@ -20,7 +26,17 @@ async function createSubmission(req, res, next) {
         if (!draftSubmission) {
             return res.status(404).json({message: `No draft found for challenge ${challengeId} and author: ${authorId}`});
         }
-        //delete draft submission
+
+        const challenge = await Challenge.findById(challengeId);
+        if (!challenge) {
+            return res.status(404).json({ message: "Challenge not found" });
+        }
+
+        const prevSubmission = await Submission.findOne({ author: authorId, challenge: challengeId });
+        if (prevSubmission) {
+            return res.status(400).json({ message: "Challenge already submitted" });
+        }
+       
         const newSubmission = await Submission.create({
             code: draftSubmission.code,
             title: title,
@@ -30,7 +46,15 @@ async function createSubmission(req, res, next) {
             language: draftSubmission.language
         });
 
-        res.status(201).json(newSubmission);
+        await DraftSubmission.findByIdAndDelete(draftSubmission._id);
+
+        const addPoints = difficultyPoints[challenge.difficulty] ?? 0;
+        await User.findByIdAndUpdate(authorId, { $inc: { points: addPoints} });
+
+        const submissionObject = newSubmission.toObject();
+        submissionObject.pointsAwarded = addPoints;
+
+        res.status(201).json(submissionObject);
     } catch(err) {
         next(err);
     }
