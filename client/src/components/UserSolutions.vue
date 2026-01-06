@@ -2,7 +2,10 @@
 
 import { BContainer, BTab, BTabs } from 'bootstrap-vue-next'
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
 import { Api } from '@/Api.js'
+
+const router = useRouter();
 
 const props = defineProps({
   id: { type: String, required: true }
@@ -31,6 +34,15 @@ function getSubmissions() {
       isSubmissionsLoading.value = false
     })
 }
+
+function goToSubmission(item) {
+  try {
+    router.push(`/submissions/${item.submissionId}`);
+  } catch (err) {
+    console.log('Error when navigating to submission');
+  }
+}
+
 onMounted(() => { getSubmissions() })
 </script>
 
@@ -55,6 +67,7 @@ onMounted(() => { getSubmissions() })
           :items="userSubmissions"
           :fields="submissionsFields"
           class="submissions-table text-start"
+          @row-clicked="goToSubmission"
         >
         </BTable>
         <p v-else class="text-black-50">You have no submissions yet</p>
@@ -90,6 +103,10 @@ onMounted(() => { getSubmissions() })
   border-top-left-radius: 16px;
   border-bottom-left-radius: 16px;
   border-right: none;
+}
+
+.submissions-table :deep(tbody tr td:first-child):hover {
+  cursor: pointer;
 }
 
 .submissions-table :deep(tbody tr td:last-child) {
