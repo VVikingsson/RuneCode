@@ -35,7 +35,8 @@ async function createNewUser(req, res, next) {
 
         const payload = {
             id: newUser._id,
-            url: null
+            url: `http://localhost:3000/api/v1/users/avatar/`
+                + newUser._id
         };
 
         if (!process.env.JWT_SECRET) {
@@ -144,11 +145,28 @@ async function getUser(req, res, next) {
 
 async function removeUser(req, res, next) {
     try {
-        const deletedUser = await User.findByIdAndDelete(req.params.id);
-        if (!deletedUser) {
-            res.status(404).json({message: "No user found with given id"});
+        if (req.user.id === req.params.id) {
+            const deletedUser = await User.findByIdAndDelete(req.params.id);
+            if (!deletedUser) {
+                res.status(404).json({message: "No user found with given id"});
+            }
+            // delete user picture along with the user profile
+            const imgPath = path.join(process.env.UPLOADS, `${req.user.id}`)
+            fs.unlink(imgPath).catch(err => {
+                if (err.code !== 'ENOENT') {
+                    console.error('Failed to delete avatar:', err)
+                }
+            })
+            // clear cookies
+            res.clearCookie('token', {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true
+            });
+            return res.sendStatus(204); }
+        else {
+            return res.status(401).json({ message: 'You are not the owner of the account you are trying to delete' });
         }
-        res.status(204).json({message: `Successfully deleted user ${deletedUser.username}`});
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Invalid id format'});
@@ -204,7 +222,13 @@ function uploadImage(req, res, next) {
         if (!req.file) {
             return res.status(400).send('No file uploaded.');
         }
-        res.status(200).json({
+        if ( req.avatarExists ) {
+            return res.status(200).json({
+                url: `http://localhost:3000/api/v1/users/avatar/`
+                    + req.user.id  //url passed to frontend for calling get request to get a picture
+            });
+        }
+        return res.status(201).json({
             url: `http://localhost:3000/api/v1/users/avatar/`
                 + req.user.id  //url passed to frontend for calling get request to get a picture
         });

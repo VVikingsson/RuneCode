@@ -82,7 +82,7 @@ function patchUser() {
 function uploadAvatar() {
   const formData = new FormData()
   formData.append('profileImage', selectedFile.value)
-  Api.post('/users/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+  Api.put('/users/avatars', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     .then(response => {
       userData.value = { ...userData.value, url: response.data.url }
       user.setAvatar(response.data.url)
@@ -102,8 +102,9 @@ const router = useRouter()
 function deleteUser() {
   Api.delete(`/users/${user.user.id}`)
     .then(response => {
+      user.logout()
+      router.push({ name: 'home' })
       alert(`Profile for ${userData.value.user.username} has been successfully deleted.`)
-      router.push('/')
     })
     .catch(error => {
       console.log(error)

@@ -47,6 +47,7 @@
       <div v-else class="dropdown">
         <img
           :src="avatarSrc"
+          @error="onImageError"
           alt="picture"
           class="avatar"
         />
@@ -69,15 +70,20 @@
 import { useUserStore } from '@/stores/user.js'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
+import { Api } from '@/Api.js'
 const user = useUserStore()
 console.log(user)
 const router = useRouter()
 const logOut = async () => {
+  await Api.post('/users/auth/logout', { withCredentials: true })
   user.logout()
-  await router.push('/')
+  await router.push({ name: 'home' })
 }
 const defaultAvatar = 'https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0'
 
+function onImageError(e) {
+  e.target.src = defaultAvatar
+}
 const avatarSrc = computed(() =>
   user.avatarUrl || defaultAvatar
 )
