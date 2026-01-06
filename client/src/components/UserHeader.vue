@@ -42,7 +42,9 @@ function getUser(userID) {
       isLoading.value = false
     })
 }
-
+function onImageError(e) {
+  e.target.src = defaultAvatar
+}
 onMounted(() => {
   getUser(props.id)
 })
@@ -67,6 +69,7 @@ onMounted(() => {
         <BCol class="column-img px-4 py-2 text-start">
           <BImg
             :src="avatarSrc"
+            @error="onImageError"
             alt="Image"
             height="120"
             width="120"

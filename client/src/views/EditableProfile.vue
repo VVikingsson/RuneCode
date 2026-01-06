@@ -82,7 +82,7 @@ function patchUser() {
 function uploadAvatar() {
   const formData = new FormData()
   formData.append('profileImage', selectedFile.value)
-  Api.post('/users/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+  Api.put('/users/avatars', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     .then(response => {
       userData.value = { ...userData.value, url: response.data.url }
       user.setAvatar(response.data.url)

@@ -4,6 +4,7 @@ const { userController } = require('../controllers');
 const router = express.Router();
 const upload = require('../multerConfig'); //for handling pictures uploaded by users
 const { authenticateToken } = require('../middleware/auth.js');
+const { checkAvatarExists } = require('../middleware/checkAvatarExists.js');
 
 
 router.get('', userController.getAllUsers);
@@ -39,7 +40,7 @@ router.post('/sessions', userController.loginUser); // Standard is to use post f
 // upload is a Multer instance that acts as a central middleware processor for handling file uploads
 // upload.single('profileImage') tells upload middleware to upload the picture with the 'profileImage' name field value
 // from html <input> tag
-router.post('/avatar', authenticateToken, upload.single('profileImage'), userController.uploadImage);
+router.put('/avatars', authenticateToken, checkAvatarExists, upload.single('profileImage'), userController.uploadImage);
 
 router.patch('/:id', authenticateToken, userController.updateUser);
 
