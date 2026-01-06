@@ -49,7 +49,12 @@ async function createSubmission(req, res, next) {
         await DraftSubmission.findByIdAndDelete(draftSubmission._id);
 
         const addPoints = difficultyPoints[challenge.difficulty] ?? 0;
-        await User.findByIdAndUpdate(authorId, { $inc: { points: addPoints} });
+        await User.findByIdAndUpdate(authorId, { $inc:
+                {
+                points: addPoints,
+                [`completed.${challenge.difficulty}`]: 1
+            }
+        });
 
         const submissionObject = newSubmission.toObject();
         submissionObject.pointsAwarded = addPoints;
