@@ -3,7 +3,7 @@
         class="coding-window"
         v-model="submissionCode"
         basic
-        :read-only="true"
+        :disabled="true"
         :lang="lang"
         :tab="true"
         :tab-size=4
