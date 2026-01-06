@@ -31,8 +31,12 @@ async function createSubmission(req, res, next) {
         if (!challenge) {
             return res.status(404).json({ message: "Challenge not found" });
         }
-        
-        //delete draft submission
+
+        const prevSubmission = await Submission.findOne({ author: authorId, challenge: challengeId });
+        if (prevSubmission) {
+            return res.status(400).json({ message: "Challenge already submitted" });
+        }
+       
         const newSubmission = await Submission.create({
             code: draftSubmission.code,
             title: title,
@@ -40,6 +44,8 @@ async function createSubmission(req, res, next) {
             author: authorId,
             challenge: challengeId
         });
+
+        await DraftSubmission.findByIdAndDelete(draftSubmission._id);
 
         const addPoints = difficultyPoints[challenge.difficulty] ?? 0;
         await User.findByIdAndUpdate(authorId, { $inc: { points: addPoints} });
