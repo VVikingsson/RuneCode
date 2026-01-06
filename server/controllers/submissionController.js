@@ -11,8 +11,8 @@ async function createSubmission(req, res, next) {
     try {
         const authorId = req.user.id;
         const {title, authorNote, challengeId} = req.body;
-        if (!challengeId || !authorId ) {
-            return res.status(400).json({message: 'Bad request: challenge ID or author ID not provided.'});
+        if (!challengeId || !authorId || !title ) {
+            return res.status(400).json({message: 'Bad request: challenge ID or author ID or title not provided.'});
         }
         console.log(challengeId, authorId);
         for (const objectId of [challengeId, authorId]) {
@@ -42,7 +42,8 @@ async function createSubmission(req, res, next) {
             title: title,
             authorNote: authorNote,
             author: authorId,
-            challenge: challengeId
+            challenge: challengeId,
+            language: draftSubmission.language
         });
 
         await DraftSubmission.findByIdAndDelete(draftSubmission._id);
@@ -83,7 +84,7 @@ async function updateSubmission(req, res, next) {
 
 async function getSubmission(req, res, next) {
     try {
-        const submission = await Submission.findById(req.params.id);
+        const submission = await Submission.findById(req.params.id).populate('challenge', 'name').populate('author', 'username');
         if (!submission) {
             return res.status(404).json({message: "No submission found with given id"});
         }
