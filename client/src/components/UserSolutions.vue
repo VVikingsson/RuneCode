@@ -12,7 +12,13 @@ const props = defineProps({
 })
 
 const submissionsFields = [
-  { key: 'submissionTitle', label: 'Your Solution' },
+  {
+    key: 'submissionTitle',
+    label: 'Solution',
+    formatter: (value, key, item) => {
+      return value?.trim() || item.challengeName
+    }
+  },
   { key: 'challengeName', label: 'Challenge' }
 ]
 const userSubmissions = ref(null) // :items in table element
@@ -54,7 +60,7 @@ onMounted(() => { getSubmissions() })
   <BAlert v-else-if="submissionsError" show variant="danger" class="mt-3">
     Failed to load submissions.
   </BAlert>
-  <BContainer v-else-if="userSubmissions" class="table-con p-4 rounded-4">
+  <div v-else-if="userSubmissions" class="table-con">
     <BTabs content-class="" class="my-tabs">
       <BTab
         title="Solutions"
@@ -69,17 +75,27 @@ onMounted(() => { getSubmissions() })
           class="submissions-table text-start"
           @row-clicked="goToSubmission"
         >
+          <template #cell(challengeName)="scope">
+            <RouterLink
+              :to="{ name: 'Challenge', params: { id: scope.item.challengeId } }"
+              class="text-decoration-none challenge-link"
+            >
+              {{ scope.item.challengeName }}
+            </RouterLink>
+          </template>
         </BTable>
-        <p v-else class="text-black-50">You have no submissions yet</p>
+        <p v-else class="text-white-50">No submissions yet</p>
       </BTab>
     </BTabs>
-  </BContainer>
+  </div>
 </template>
 
 <style scoped>
 .table-con {
   background-color: var(--card-bg);
   border: 1px solid var(--primary-blue);
+  padding: 20px;
+  border-radius: 16px;
 }
 .first-tab {
   background-color: var(--card-bg);
@@ -94,6 +110,12 @@ onMounted(() => { getSubmissions() })
   color: white;
   border: none;
   padding: 15px;
+}
+.challenge-link {
+  color: white;
+}
+.challenge-link:hover {
+  color: var(--amber-primary);
 }
 .submissions-table {
   border-collapse: separate;

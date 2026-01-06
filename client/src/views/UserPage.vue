@@ -11,7 +11,7 @@ const props = defineProps({
 
 <template>
   <div class="div1">
-    <BContainer fluid class="main-con p-2 mt-3 d-flex flex-column gap-5">
+    <BContainer fluid class="main-con d-flex flex-column gap-5">
 <!-- user header, two upper containers-->
       <UserHeader :id="props.id" />
 <!-- submissions container -->
@@ -24,7 +24,7 @@ const props = defineProps({
 <style scoped>
 
 .main-con {
-  width: 90%;
+  padding: 30px 100px;
 }
 
 </style>

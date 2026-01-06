@@ -9,12 +9,12 @@
         <BAlert v-model:model-value="showAlert" variant="warning" class="sign-up-alert">{{ alertMessage }}</BAlert>
         <BButton class="sign-in-button" type=submit>Log in</BButton>
     </BForm>
-    
+
 </template>
 
 <script setup>
     import { Api } from '@/Api'
-    import { useRouter } from 'vue-router'; 
+    import { useRouter } from 'vue-router';
     import {useUserStore} from '@/stores/user';
     import { ref } from 'vue';
 
@@ -37,11 +37,11 @@
             const response = await Api.post('/users/sessions', {identifier: identifier.value, password: password.value}, {withCredentials: true});
             console.log(response.status);
             if (response.status === 200) {
-                user.setUser(response.data.user); // Set user in global store
-                router.push({name: 'home'});
-                return;
+              await user.restoreSession();
+              await router.push({ name: 'home' });
+              return;
             }
-            
+
             alertMessage.value = 'Something went wrong';
             showAlert.value = true;
 

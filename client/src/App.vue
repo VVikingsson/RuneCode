@@ -1,12 +1,13 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <NavBar v-if="router.currentRoute.value.name != 'SignIn'"></NavBar>
+  <BApp>
+    <div id="app">
+      <div id="nav">
+        <NavBar v-if="router.currentRoute.value.name != 'SignIn'"></NavBar>
+      </div>
+      <!-- Render the content of the current page view -->
+      <router-view/>
     </div>
-
-    <!-- Render the content of the current page view -->
-    <router-view/>
-  </div>
+  </BApp>
 </template>
 
 <script setup>
