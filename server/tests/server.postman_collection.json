@@ -925,79 +925,6 @@
 					"response": []
 				},
 				{
-					"name": "upload profile image",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Response picture url\", function () {\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"url\");\r",
-									"})"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "profileImage",
-									"type": "file",
-									"src": "tests/resources/profileImage.png"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{baseURL}}/users/avatars",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"users",
-								"avatars"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET profile picture",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/users/123/image/123.jpg",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"users",
-								"123",
-								"image",
-								"123.jpg"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "GET user's submissions",
 					"event": [
 						{
@@ -1254,59 +1181,6 @@
 							"path": [
 								"users",
 								"{{adminID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "bad upload profile image",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {\r",
-									"    pm.response.to.have.status(400);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"No file was uploaded\", function () {\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "profileImage",
-									"type": "file",
-									"src": []
-								}
-							]
-						},
-						"url": {
-							"raw": "{{baseURL}}/users/avatars",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"users",
-								"avatars"
 							]
 						}
 					},
