@@ -145,7 +145,8 @@ async function getUser(req, res, next) {
 
 async function removeUser(req, res, next) {
     try {
-        if (req.user.id === req.params.id) {
+        const cookieUser = await User.findById(req.user.id);
+        if (req.user.id === req.params.id || cookieUser.isAdmin) {
             const deletedUser = await User.findByIdAndDelete(req.params.id);
             if (!deletedUser) {
                 res.status(404).json({message: "No user found with given id"});
@@ -157,12 +158,14 @@ async function removeUser(req, res, next) {
                     console.error('Failed to delete avatar:', err)
                 }
             })
-            // clear cookies
-            res.clearCookie('token', {
-                httpOnly: true,
-                sameSite: 'None',
-                secure: true
-            });
+            // clear cookies, but only if you are the owner of the account
+            if (req.user.id === req.params.id) {
+                res.clearCookie('token', {
+                    httpOnly: true,
+                    sameSite: 'None',
+                    secure: true
+                });
+            }
             return res.sendStatus(204); }
         else {
             return res.status(401).json({ message: 'You are not the owner of the account you are trying to delete' });
@@ -220,7 +223,7 @@ async function updateUser(req, res, next) {
 function uploadImage(req, res, next) {
     try {
         if (!req.file) {
-            return res.status(400).send('No file uploaded.');
+            return res.status(400).json( { message: 'No file uploaded.' });
         }
         if ( req.avatarExists ) {
             return res.status(200).json({

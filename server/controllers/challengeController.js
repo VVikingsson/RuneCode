@@ -133,7 +133,7 @@ async function removeChallenge(req, res, next) {
         if (!deletedChallenge) {
             return res.status(404).json({message: "No challenge found with this id"});
         }
-        return res.status(200).json({message: `Successfully deleted challenge ${deletedChallenge.name}`});
+        return res.status(204).json();
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Invalid ID format'});
@@ -245,12 +245,15 @@ async function removeRelatedTestCase (req, res, next) {
             {$pull: {testCases: testCaseId}},
             {new: true}
         );
-        await TestCase.findByIdAndDelete(testCaseId);
+        const deletedTestCase = await TestCase.findByIdAndDelete(testCaseId);
 
         if (!updatedChall) {
             return res.status(404).json({message: `Not found: no challenge found with id ${id}`});
         }
-        return res.status(200).json(updatedChall);
+        if (!deletedTestCase) {
+            return res.status(404).json({message: `Not found: no test case found with id ${testCaseId}`});
+        }
+        return res.status(204).json();
     } catch (err) {
         next(err);
     }
