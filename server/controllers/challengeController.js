@@ -245,10 +245,13 @@ async function removeRelatedTestCase (req, res, next) {
             {$pull: {testCases: testCaseId}},
             {new: true}
         );
-        await TestCase.findByIdAndDelete(testCaseId);
+        const deletedTestCase = await TestCase.findByIdAndDelete(testCaseId);
 
         if (!updatedChall) {
             return res.status(404).json({message: `Not found: no challenge found with id ${id}`});
+        }
+        if (!deletedTestCase) {
+            return res.status(404).json({message: `Not found: no test case found with id ${testCaseId}`});
         }
         return res.status(200).json(updatedChall);
     } catch (err) {

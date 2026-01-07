@@ -5,11 +5,11 @@ const { checkAdmin } = require('../middleware.js');
 
 const router = express.Router();
 
-router.post('', testCaseController.createNewTestCase);
-router.get('/:id', testCaseController.getTestCase);
-router.get('', testCaseController.getAllTestCases);
-router.delete('/:id', testCaseController.removeTestCase);
-router.patch('/:id', testCaseController.updateTestCase);
+router.post('', testCaseController.createNewTestCase); // Done
+router.get('/:id', testCaseController.getTestCase); // Done
+router.get('', testCaseController.getAllTestCases); // Done
+router.delete('/:id', testCaseController.removeTestCase); // Done
+router.patch('/:id', testCaseController.updateTestCase); // Done
 // put moved to challengeRoutes
 
 module.exports = router;

@@ -11,6 +11,98 @@
 			"name": "setup",
 			"item": [
 				{
+					"name": "GET unauthorized auth/me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response contains message\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('message');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identifier\": \"Janitor\",\r\n    \"password\": \"clean\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/auth/me",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET non logged in user recommended challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Message contains 'Not authorized'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"Missing token\");\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/challenges/recommendedChallenges",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"recommendedChallenges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST new user",
 					"event": [
 						{
@@ -440,7 +532,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"challengeId\": \"{{challengeID}}\",\r\n    \"authorId\": \"{{userID}}\"\r\n}"
+							"raw": "{\r\n    \"challengeId\": \"{{challengeID}}\",\r\n    \"authorId\": \"{{userID}}\",\r\n    \"title\": \"Mynameisjeff\"\r\n}"
 						},
 						"url": {
 							"raw": "{{baseURL}}/submissions",
@@ -708,6 +800,52 @@
 					"response": []
 				},
 				{
+					"name": "PATCH user bad id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"NewTester\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/lol",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"lol"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "PATCH user",
 					"event": [
 						{
@@ -716,7 +854,11 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
-									"});"
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"user\");\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -783,10 +925,35 @@
 					"response": []
 				},
 				{
-					"name": "PATCH profile image",
+					"name": "upload profile image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response picture url\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"url\");\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
 					"request": {
-						"method": "PATCH",
-						"header": [],
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "formdata",
 							"formdata": [
@@ -798,14 +965,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseURL}}/users/123/image",
+							"raw": "{{baseURL}}/users/avatars",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"users",
-								"123",
-								"image"
+								"avatars"
 							]
 						}
 					},
@@ -1088,6 +1254,158 @@
 							"path": [
 								"users",
 								"{{adminID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bad upload profile image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"No file was uploaded\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"No file uploaded\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "profileImage",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/avatars",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"avatars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET auth/me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response contains user\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('user');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identifier\": \"Janitor\",\r\n    \"password\": \"clean\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/auth/me",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST log in non-existent user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('message');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identifier\": \"ButThenISawHerFace\",\r\n    \"password\": \"ImABeliever\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/sessions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"sessions"
 							]
 						}
 					},
@@ -2321,6 +2639,55 @@
 					"response": []
 				},
 				{
+					"name": "GET bad related test cases",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"message contains 'Bad request'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include('Bad request');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/123/test-cases",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"123",
+								"test-cases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "GET related test case",
 					"event": [
 						{
@@ -2366,6 +2733,55 @@
 								"{{challengeID}}",
 								"test-cases",
 								"{{relatedTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET bad related test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Message contains 'Bad request'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.include(\"Bad request\")\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/123",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases",
+								"123"
 							]
 						}
 					},
@@ -2559,6 +2975,51 @@
 									"pm.test(\"testCaseId is not present in testCases array\", function () {\r",
 									"    const testCaseId = pm.environment.get(\"relatedTestCaseID\");\r",
 									"    pm.expect(pm.response.json().testCases).to.not.include(testCaseId);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{challengeID}}/test-cases/{{relatedTestCaseID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{challengeID}}",
+								"test-cases",
+								"{{relatedTestCaseID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE related test case Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -2983,6 +3444,57 @@
 					"response": []
 				},
 				{
+					"name": "PUT workspace bad chall id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Reponse code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('message');\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pythonCode\": \"Hello There !\",\r\n    \"javascriptCode\": \"It's over Anakin, I have the high ground!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/workspaces?challId=idontexist",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "challId",
+									"value": "idontexist"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "GET workspace",
 					"event": [
 						{
@@ -3013,6 +3525,128 @@
 					],
 					"request": {
 						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/workspaces?challId={{challengeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "challId",
+									"value": "{{challengeID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET workspace bad chall id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Reponse code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('message');\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/workspaces?challId=meneither",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "challId",
+									"value": "meneither"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE workspace bad chall id Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Reponse code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('message');\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/workspaces?challId=meneither",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "challId",
+									"value": "meneither"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Reponse code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
 						"header": [],
 						"url": {
 							"raw": "{{baseURL}}/workspaces?challId={{challengeID}}",
@@ -3397,8 +4031,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -3674,7 +4308,7 @@
 					"response": []
 				},
 				{
-					"name": "DELETE bad delete",
+					"name": "DELETE bad delete challenge",
 					"event": [
 						{
 							"listen": "test",
@@ -3721,6 +4355,58 @@
 							"path": [
 								"challenges",
 								"{{challengeID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE bad delete user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 for DELETE non-existent user\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const data67 = pm.response.json();\r",
+									"\r",
+									"// Check error message\r",
+									"pm.test(\"Response contains message\", function () {\r",
+									"    pm.expect(data67).to.have.property(\"message\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/challenges/{{userID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"challenges",
+								"{{userID}}"
 							]
 						}
 					},
@@ -3784,6 +4470,156 @@
 					"response": []
 				},
 				{
+					"name": "logout admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Logout returns 204\", function () {\r",
+									"  pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Token cookie cleared\", function () {\r",
+									"  const cookies = pm.cookies.toObject();\r",
+									"  pm.expect(cookies.token).to.be.undefined;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Sparkles\",\r\n    \"email\": \"sparkles@gmail.com\",\r\n    \"password\": \"testingSparkles\",\r\n    \"isAdmin\": true\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/auth/logout",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST new janitor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains required fields\", function () {\r",
+									"    pm.expect(pm.response.json().user).to.have.property('_id');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('username');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('email');\r",
+									"    pm.expect(pm.response.json().user).to.have.property('isAdmin');\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"adminID2\", pm.response.json().user._id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Janitor\",\r\n    \"email\": \"janitor@gmail.com\",\r\n    \"password\": \"clean\",\r\n    \"isAdmin\": true\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST log in janitor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains JWT token\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property('token');\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identifier\": \"Janitor\",\r\n    \"password\": \"clean\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/sessions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"sessions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE related test case bad ID",
 					"event": [
 						{
@@ -3839,8 +4675,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -3860,6 +4696,39 @@
 							"path": [
 								"users",
 								"{{adminID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE janitor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{adminID2}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{adminID2}}"
 							]
 						}
 					},

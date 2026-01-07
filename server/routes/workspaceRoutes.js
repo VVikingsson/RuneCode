@@ -4,8 +4,8 @@ const { authenticateToken } = require('../middleware/auth.js');
 
 const router = express.Router();
 
-router.put('', authenticateToken, workspaceController.saveWorkspace);
-router.get('', authenticateToken, workspaceController.getPersonalWorkspace);
-router.delete('', workspaceController.deleteWorkspace);
+router.put('', authenticateToken, workspaceController.saveWorkspace); // Done
+router.get('', authenticateToken, workspaceController.getPersonalWorkspace); // Done
+router.delete('', authenticateToken, workspaceController.deleteWorkspace); // Done
 
 module.exports = router;
