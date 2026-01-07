@@ -20,6 +20,11 @@ function connectToDB(mongoURI) {
     });
 }
 
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:4173'
+]
+
 function createExpressApp() {
     var app = express();
     // Parse requests of content-type 'application/json'
@@ -29,7 +34,13 @@ function createExpressApp() {
     app.use(morgan('dev'));
     // Enable cross-origin resource sharing for frontend must be registered before api
     app.use(cors({
-        origin: "http://localhost:5173",
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true)
+            } else {
+                callback(new Error(`Not allowed by CORS`))
+            }
+        },
         credentials: true,                 // allow cookies
     }));
     app.use(cookieParser());
