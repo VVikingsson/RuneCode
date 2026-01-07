@@ -960,7 +960,7 @@
 								{
 									"key": "profileImage",
 									"type": "file",
-									"src": "postman-cloud:///1f0c521e-db6f-4af0-83da-ee12f48d7621"
+									"src": "server/tests/resources/key_art.png"
 								}
 							]
 						},
