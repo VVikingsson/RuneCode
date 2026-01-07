@@ -24,7 +24,7 @@ const props = defineProps({
 <style scoped>
 
 .main-con {
-  padding: 30px 100px;
+  padding: 30px 50px;
 }
 
 </style>
