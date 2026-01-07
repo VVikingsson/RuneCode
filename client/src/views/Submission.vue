@@ -61,13 +61,12 @@ async function fetchSubmission() {
         const response = await Api.get(`/submissions/${route.params.id}`);
         return response.data
     } catch (err) {
-        console.log('Something went wrong fetching submission data:', err);
+        alert('Something went wrong fetching submission data');
     }
 }
 
 onMounted(async () => {
     const data = await fetchSubmission();
-    console.log(data);
     submission.value = {
         code: data.code,
         title: data.title,

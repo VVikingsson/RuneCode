@@ -4,7 +4,7 @@ const UserSchema = mongoose.Schema({
     username: {type: String, required: true, unique: true, trim: true},
     email: {type: String, required: true, unique: true, trim: true},
     hashedPassword: {type: String, required: true, select: false},
-    isAdmin: {type: Boolean},
+    isAdmin: {type: Boolean, default: false},
     points: {type: Number, default: 0},
     bio: {type: String, trim: true, default: ""},                                         // Password will by default not be selected in queries.
     completed: {

@@ -40,7 +40,7 @@ async function searchUsers() {
         const response = await Api.get(`users/search?searchQuery=${searchQuery.value}`);
         searchResultUsers.value = response.data.users;
     } catch (err) {
-        console.log(err)
+        alert('Failed to search users');
     }
 }
 

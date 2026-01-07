@@ -24,7 +24,6 @@ const router = useRouter();
 
 async function goToRecommendedChallenge() {
     try {
-        console.log("Pressed button");
         const response = await Api.get(`/challenges/recommendedChallenges`, {withCredentials: true});
         const challenge = response.data.recommendedChallenge;
         router.push({name: 'Challenge', params: { id: challenge._id }});

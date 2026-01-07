@@ -35,7 +35,6 @@
             }
 
             const response = await Api.post('/users/sessions', {identifier: identifier.value, password: password.value}, {withCredentials: true});
-            console.log(response.status);
             if (response.status === 200) {
               await user.restoreSession();
               await router.push({ name: 'home' });

@@ -72,7 +72,6 @@ import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { Api } from '@/Api.js'
 const user = useUserStore()
-console.log(user)
 const router = useRouter()
 const logOut = async () => {
   await Api.post('/users/auth/logout', { withCredentials: true })

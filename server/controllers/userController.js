@@ -36,7 +36,8 @@ async function createNewUser(req, res, next) {
         const payload = {
             id: newUser._id,
             url: `http://localhost:3000/api/v1/users/avatar/`
-                + newUser._id
+                + newUser._id,
+            isAdmin: true
         };
 
         if (!process.env.JWT_SECRET) {
@@ -94,7 +95,8 @@ async function loginUser(req, res, next) {
 
         const payload = {
             id: user._id,
-            url: url
+            url: url,
+            isAdmin: true
         };
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "12h" });
