@@ -15,8 +15,6 @@
 
 <script setup>
 import Runes from '../components/Runes.vue';
-import MiniLeaderboard from '../components/MiniLeaderboard.vue';
-import FeaturedChallenge from '../components/FeaturedChallenge.vue';
 import RuneCode from '../components/RuneCode.vue'
 import { ref } from 'vue';
 import { Api } from '@/Api'
@@ -31,7 +29,7 @@ async function goToRecommendedChallenge() {
         const challenge = response.data.recommendedChallenge;
         router.push({name: 'Challenge', params: { id: challenge._id }});
     } catch (err) {
-        console.log('Error getting recommended challenge, do you have a token? Message:', err);
+        alert('Error getting recommended challenge, are you logged in?');
     }
 }
 </script>

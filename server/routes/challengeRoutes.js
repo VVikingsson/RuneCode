@@ -13,15 +13,15 @@ router.get('/:id/test-cases', challengeController.getRelatedTestCases); // Done
 router.get('/:id/test-cases/:testCaseId', challengeController.getRelatedTestCase); // Done
 
 router.delete('/:id/test-cases/:testCaseId', challengeController.removeRelatedTestCase)
-router.delete('/:id/test-cases', challengeController.removeRelatedTestCases) // Done
+router.delete('/:id/test-cases', authenticateToken, challengeController.removeRelatedTestCases) // Done
 router.delete('/:id', verifyJWT, checkAdmin, challengeController.removeChallenge); // Done
 
 router.patch('/:id', verifyJWT, checkAdmin, challengeController.updateChallenge); // Done
 
 router.post('', verifyJWT, checkAdmin, challengeController.createNewChallenge); // Done
-router.post('/:id/test-cases', challengeController.addTestCase); // Done
+router.post('/:id/test-cases', authenticateToken, challengeController.addTestCase); // Done
 
-router.put('/:id/test-cases/:testCaseId',
+router.put('/:id/test-cases/:testCaseId', authenticateToken,
     challengeController.createRelatedTestCaseIfDoesNotExist, challengeController.replaceRelatedTestCase); // Done
 
 module.exports = router;
