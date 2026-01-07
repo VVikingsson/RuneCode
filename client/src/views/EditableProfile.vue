@@ -23,12 +23,7 @@ const successMessage = ref(null)
 const defaultAvatar = 'https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0'
 
 const userData = ref(null)
-watch(
-  () => userData.value,
-  (val) => {
-    console.log(val)
-  }
-)
+
 
 function getUser(userID) {
   isLoading.value = true
@@ -107,7 +102,6 @@ function deleteUser() {
       alert(`Profile for ${userData.value.user.username} has been successfully deleted.`)
     })
     .catch(error => {
-      console.log(error)
       alert('Failed to delete profile. Please try again later.')
     })
 }

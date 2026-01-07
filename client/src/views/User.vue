@@ -106,7 +106,6 @@ function deleteUser() {
       router.push('/')
     })
     .catch(error => {
-      console.log(error)
       alert('Failed to delete profile. Please try again later.')
     })
 }

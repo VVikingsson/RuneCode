@@ -46,9 +46,8 @@ async function fetchChallenges() {
     try {
         const response = await Api.get('/challenges');
         challenges.value = response.data.data || response.data || [];
-        console.log('Challenges loaded:', challenges.value); // debug
     } catch (err) {
-        console.error('Failed to get challenges', err);
+        alert('Failed to get challenges');
         challenges.value = [];
     }
 }

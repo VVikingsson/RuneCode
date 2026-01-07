@@ -116,7 +116,6 @@ function showAlert(message, variant = 'success') {
 
 async function saveTestCase(tc) {
     try {
-        console.log('Saving test case:', tc);
         let response;
         if (!tc._id) {
             response = await Api.post(`/challenges/${route.params.id}/test-cases`,

@@ -224,7 +224,6 @@ async function resetWorkspaceToDefault() {
 async function loadTestCases() {
     try {
         const response = await Api.get(`challenges/${route.params.id}/test-cases`);
-        console.log(response.data.testCases);
         testCases.value = response.data.testCases;
         
     } catch (err) {
@@ -243,14 +242,11 @@ function flagTestCaseForDeletion(id) {
 
 async function saveAllTestCases() {
     try {
-        console.log('Deleting flagged');
-        console.log(flaggedTestCases);
         if (testCases.value.length == 0) {
             // Delete all tests 
             const response = await Api.delete(`/challenges/${route.params.id}/test-cases`);
         } else {
             for (const id of flaggedTestCases) {
-                console.log('why');
                 const response = await Api.delete(`/testCases/${id}`);
                 testCases.value = testCases.value.filter(tc => (tc._id != id));
             }
@@ -262,14 +258,12 @@ async function saveAllTestCases() {
                     input: tc.input,
                     expectedOutput: tc.expectedOutput
                 });
-            console.log('BECAME POST', response.data);
             } else {
                 const response = await Api.put(`/challenges/${route.params.id}/test-cases/${tc._id}`, {
                     language: tc.language,
                     input: tc.input,
                     expectedOutput: tc.expectedOutput
                 });
-                console.log('BECAME PUT')
             }
         }
         clearTestCaseEditorCache();
@@ -292,7 +286,6 @@ function stageEmptyTestCase(language) {
 }
 
 function clearTestCaseEditorCache() {
-    console.log('CLEARING');
     flaggedTestCases = [];
     newTestCaseCounter = 1;
 }

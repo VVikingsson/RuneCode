@@ -39,7 +39,7 @@ async function fetchChallengeData(id) {
         const response = await Api.get('/challenges/'+id);
         return response.data
     } catch (err) {
-        console.log('Failed to fetch challenge:', err);
+        alert('Failed to fetch challenge');
     }
 }
 
