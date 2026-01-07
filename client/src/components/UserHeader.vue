@@ -3,13 +3,7 @@
 import { BCol, BContainer, BImg, BRow } from 'bootstrap-vue-next'
 import { ref, onMounted, computed } from 'vue'
 import { Api } from '@/Api.js'
-import { useUserStore } from '@/stores/user'
 
-const user = useUserStore()
-const defaultAvatar = 'https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0'
-const avatarSrc = computed(() =>
-  user.avatarUrl || defaultAvatar
-)
 // this is the version for common page view
 const props = defineProps({
   id: { type: String, required: true }
@@ -20,6 +14,11 @@ const error = ref(null)
 
 const totalSolved = computed(() => {
   return userData.value.user.completed.easy + userData.value.user.completed.medium + userData.value.user.completed.hard
+})
+
+const defaultAvatar = 'https://characterai.io/i/200/static/avatars/uploaded/2024/4/4/Yac948S4fJgkL7I4CzcI8ieKaFAAdMcINqheICtLMZc.webp?webp=true&anim=0'
+const avatarSrc = computed(() => {
+  return userData.value?.url || defaultAvatar
 })
 // getting info for a specific user
 function getUser(userID) {
