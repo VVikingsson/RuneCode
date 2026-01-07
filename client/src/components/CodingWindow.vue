@@ -43,7 +43,7 @@
                     </div>
                 </BTab>
                 <template #tabs-end>
-                    <BButton v-if="user.isAdmin" id="edit-tests-btn" @click="loadTestCases(); showTestCaseModal = !showTestCaseModal">Edit Tests</BButton>
+                    <BButton v-if="user.user?.isAdmin" id="edit-tests-btn" @click="loadTestCases(); showTestCaseModal = !showTestCaseModal">Edit Tests</BButton>
                 </template>
             </BTabs>
             </BCol>
@@ -128,7 +128,6 @@ async function runCode() {
     try {
         const userCode = activeTabIndex.value === 0 ? pythonCode.value : javascriptCode.value;
         const language = activeTabIndex.value === 0 ? "python" : "javascript";
-
 
         const response = await Api.post(props.links.run.href, {
             code: userCode, language: language, id: route.params.id
