@@ -137,7 +137,7 @@ async function getUser(req, res, next) {
         res.status(200).json({user, isMe, url});
     } catch (err) {
         if (err.name === 'CastError') {
-            return res.status(400).json({message: 'req.'});
+            return res.status(400).json({message: 'Faulty ID'});
         }
         next(err);
     }

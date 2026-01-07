@@ -29,7 +29,7 @@ function getTopUsers() {
       currentUser.value = response.data.currentUser;
     })
     .catch(error => {
-      items.value = error
+      alert('Failed to display leaderboard');
     })
 }
 

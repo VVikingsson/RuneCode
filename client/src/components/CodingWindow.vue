@@ -43,7 +43,7 @@
                     </div>
                 </BTab>
                 <template #tabs-end>
-                    <BButton id="edit-tests-btn" @click="loadTestCases(); showTestCaseModal = !showTestCaseModal">Edit Tests</BButton>
+                    <BButton v-if="user.isAdmin" id="edit-tests-btn" @click="loadTestCases(); showTestCaseModal = !showTestCaseModal">Edit Tests</BButton>
                 </template>
             </BTabs>
             </BCol>
@@ -150,7 +150,7 @@ async function runCode() {
         }
     } catch (err) {
         alertMessage.value = 'Unexpected error';
-        console.log('Error running code:', err)
+        alert('Error running code')
     }
 }
 
@@ -178,7 +178,6 @@ async function submitCode() {
         submittable.value = false;
         draftSaved = false;
     } catch (err) {
-        console.log("Error submitting code:", err);
         alert("Failed to submit code.");
     }
 }
@@ -191,7 +190,9 @@ async function loadWorkspace() {
             javascriptCode.value = response.data.javascriptCode;
         }
     } catch (err) {
-        console.log('Error:', err);
+        if (err.status != 404 && err.status != 401) {
+            alert('Failed to load workspace');
+        }
     }
 }
 
@@ -201,7 +202,9 @@ async function saveWorkspace() {
             pythonCode: pythonCode.value, javascriptCode: javascriptCode.value
         });
     } catch (err) {
-        console.log(`Failed saving workspace: ${err}`);
+        if (err.status != 404 && err.status != 401) {
+            alert('Failed to load workspace');
+        }
     }
 }
 
@@ -213,7 +216,9 @@ async function resetWorkspaceToDefault() {
         pythonCode.value = pythonTemplate;
         javascriptCode.value = javascriptTemplate;
     } catch (err) {
-        console.log(`Failed to reset workspace to default: ${err}`);
+        if (err.status != 401 && err.status != 404) {
+            alert(`Failed to reset workspace to default`);
+        }
     }
 }
 
@@ -224,7 +229,7 @@ async function loadTestCases() {
         testCases.value = response.data.testCases;
         
     } catch (err) {
-        console.log(`Failed to load test cases: ${err}`);
+        alert(`Failed to load test cases`);
     }
 }
 
@@ -233,7 +238,7 @@ function flagTestCaseForDeletion(id) {
         testCases.value = testCases.value.filter(tc => tc._id != id);
         flaggedTestCases.push(id);
     } catch (err) {
-        console.log('Unexpected error when flagging test case for deletion:', err);
+        alert('Unexpected error when flagging test case for deletion');
     }
 }
 
@@ -270,7 +275,7 @@ async function saveAllTestCases() {
         }
         clearTestCaseEditorCache();
     } catch (err) {
-        console.log('Failed to save/delete multiple test cases:', err);
+        alert('Failed to save/delete multiple test cases');
     }
 }
 
@@ -283,7 +288,7 @@ function stageEmptyTestCase(language) {
         })
         newTestCaseCounter++;
     } catch (err) {
-        console.log('Error when staging new test case:', err);
+        alert('Error when staging new test case');
     }
 }
 

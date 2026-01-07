@@ -140,7 +140,7 @@ async function saveTestCase(tc) {
             showAlert('Error.', 'danger');
         }
     } catch (err) {
-        console.log(`Error when saving test case:`, err);
+        alert(`Error when saving test case`);
         showAlert('Error.', 'danger');
     }
 }

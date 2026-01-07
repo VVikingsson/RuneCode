@@ -78,7 +78,6 @@
                 signUpEmail.value = '';
             }
             showAlert.value = true;
-            console.log(err);
         }
     }
 </script>

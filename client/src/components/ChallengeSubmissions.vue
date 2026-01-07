@@ -53,7 +53,7 @@ async function fetchSubmissions() {
     )
     submissions.value = response.data
   } catch (err) {
-    console.error('Failed to load submissions:', err)
+    alert('Failed to load submissions')
     submissions.value = []
   } finally {
     loading.value = false
@@ -64,7 +64,7 @@ function navigateToSubmissionWithId(id) {
   try {
     router.push(`/submissions/${id}`);
   } catch (err) {
-    console.log('Failed to navigate to individual submission page:', err);
+    alert('Failed to navigate to individual submission page');
   }
 }
 
