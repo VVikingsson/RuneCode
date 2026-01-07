@@ -100,7 +100,7 @@ async function deleteSubmission(req, res, next) {
         if (!deletedSubmission) {
             return res.status(404).json({message: "No submission found with given id"});
         }
-        res.status(200).json({message: `Submission deleted with id ${deletedSubmission._id}`});
+        res.status(204).json();
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Invalid id format'});

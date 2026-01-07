@@ -84,7 +84,7 @@ async function deleteWorkspace(req, res, next) {
                 message: `Not found: No workspace exists for given user (${userId}) and challenge (${challId})`
             });
         }
-        return res.status(204).json({deleted: workspace});
+        return res.status(204).json();
     } catch (err) {
         next(err);
     }

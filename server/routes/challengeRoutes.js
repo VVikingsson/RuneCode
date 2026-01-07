@@ -5,23 +5,23 @@ const { authenticateToken } = require('../middleware/auth.js');
 
 const router = express.Router();
 
-router.get('/recommendedChallenges', challengeController.getRecommendedChallenge);
-router.get('/:id', challengeController.getChallenge);
-router.get('/:id/submissions', challengeController.getRelatedSubmissions);
-router.get('', challengeController.getAllChallenges);
-router.get('/:id/test-cases', challengeController.getRelatedTestCases);
-router.get('/:id/test-cases/:testCaseId', challengeController.getRelatedTestCase);
+router.get('/recommendedChallenges', challengeController.getRecommendedChallenge); // Done
+router.get('/:id', challengeController.getChallenge); // Done
+router.get('/:id/submissions', challengeController.getRelatedSubmissions); // Done
+router.get('', challengeController.getAllChallenges); // Done
+router.get('/:id/test-cases', challengeController.getRelatedTestCases); // Done
+router.get('/:id/test-cases/:testCaseId', challengeController.getRelatedTestCase); // Done
 
 router.delete('/:id/test-cases/:testCaseId', challengeController.removeRelatedTestCase)
-router.delete('/:id/test-cases', challengeController.removeRelatedTestCases)
-router.delete('/:id', verifyJWT, checkAdmin, challengeController.removeChallenge);
+router.delete('/:id/test-cases', challengeController.removeRelatedTestCases) // Done
+router.delete('/:id', verifyJWT, checkAdmin, challengeController.removeChallenge); // Done
 
-router.patch('/:id', verifyJWT, checkAdmin, challengeController.updateChallenge);
+router.patch('/:id', verifyJWT, checkAdmin, challengeController.updateChallenge); // Done
 
-router.post('', verifyJWT, checkAdmin, challengeController.createNewChallenge);
-router.post('/:id/test-cases', challengeController.addTestCase);
+router.post('', verifyJWT, checkAdmin, challengeController.createNewChallenge); // Done
+router.post('/:id/test-cases', challengeController.addTestCase); // Done
 
 router.put('/:id/test-cases/:testCaseId',
-    challengeController.createRelatedTestCaseIfDoesNotExist, challengeController.replaceRelatedTestCase);
+    challengeController.createRelatedTestCaseIfDoesNotExist, challengeController.replaceRelatedTestCase); // Done
 
 module.exports = router;
