@@ -36,7 +36,7 @@ function navigateToUserPage() {
     try {
         router.push({path: `users/${props.user._id}`})
     } catch(err) {
-        console.log('Failed to navigate to user page', err);
+        alert('Failed to navigate to user page');
     }
 }
 

@@ -34,7 +34,7 @@ function getSubmissions() {
     })
     .catch(error => {
       submissionsError.value = error
-      console.error('Failed to fetch submissions:', error)
+      alert('Failed to fetch submissions')
     })
     .finally(() => {
       isSubmissionsLoading.value = false
@@ -45,7 +45,7 @@ function goToSubmission(item) {
   try {
     router.push(`/submissions/${item.submissionId}`);
   } catch (err) {
-    console.log('Error when navigating to submission');
+    alert('Error when navigating to submission');
   }
 }
 
