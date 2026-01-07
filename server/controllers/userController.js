@@ -223,7 +223,7 @@ async function updateUser(req, res, next) {
 function uploadImage(req, res, next) {
     try {
         if (!req.file) {
-            return res.status(400).send('No file uploaded.');
+            return res.status(400).json( { message: 'No file uploaded.' });
         }
         if ( req.avatarExists ) {
             return res.status(200).json({

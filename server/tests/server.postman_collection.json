@@ -960,7 +960,7 @@
 								{
 									"key": "profileImage",
 									"type": "file",
-									"src": "server/tests/resources/key_art.png"
+									"src": "tests/resources/profileImage.png"
 								}
 							]
 						},
@@ -1271,7 +1271,7 @@
 									"});\r",
 									"\r",
 									"pm.test(\"No file was uploaded\", function () {\r",
-									"    pm.expect(pm.response.text()).to.include(\"No file uploaded\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
 									"});"
 								],
 								"type": "text/javascript",
