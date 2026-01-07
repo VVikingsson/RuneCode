@@ -43,7 +43,7 @@ async function removeTestCase(req, res, next) {
         if (!deletedTestCase) {
             res.status(404).json({message: "No testCase found with this id"});
         }
-        res.status(200).json({message: `Successfully deleted testCase ${deletedTestCase.input}`});
+        res.status(204).json();
     } catch (err) {
         if (err.name === 'CastError') {
             return res.status(400).json({message: 'Invalid ID format'});

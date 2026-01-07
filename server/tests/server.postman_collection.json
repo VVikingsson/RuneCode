@@ -1733,16 +1733,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"// Check that status code is 200\r",
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
 									"});\r",
 									"\r",
-									"const data7 = pm.response.json();\r",
-									"\r",
-									"// Check that response contains a success message\r",
-									"pm.test(\"Response contains success message\", function () {\r",
-									"    pm.expect(data7).to.have.property(\"message\");\r",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {\r",
+									"    pm.expect(pm.response.text()).to.be.empty;\r",
 									"});\r",
 									""
 								],
@@ -2959,22 +2955,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
 									"});\r",
 									"\r",
-									"pm.test(\"Response contains expected fields\", function () {\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"_id\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"name\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"codeTemplatePython\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"codeTemplateJavascript\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"description\");\r",
-									"    pm.expect(pm.response.json()).to.have.property(\"testCases\");\r",
-									"});\r",
-									"\r",
-									"pm.test(\"testCaseId is not present in testCases array\", function () {\r",
-									"    const testCaseId = pm.environment.get(\"relatedTestCaseID\");\r",
-									"    pm.expect(pm.response.json().testCases).to.not.include(testCaseId);\r",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {\r",
+									"    pm.expect(pm.response.text()).to.be.empty;\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -3008,7 +2994,7 @@
 					"response": []
 				},
 				{
-					"name": "DELETE related test case Copy",
+					"name": "DELETE related test case missing",
 					"event": [
 						{
 							"listen": "test",
@@ -3637,6 +3623,10 @@
 								"exec": [
 									"pm.test(\"Reponse code is 204\", function () {\r",
 									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {\r",
+									"    pm.expect(pm.response.text()).to.be.empty;\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -3834,14 +3824,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
 									"});\r",
 									"\r",
-									"const deletionResponse = pm.response.json();\r",
-									"\r",
-									"pm.test(\"Response contains success message\", function () {\r",
-									"    pm.expect(deletionResponse).to.have.property(\"message\");\r",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {\r",
+									"    pm.expect(pm.response.text()).to.be.empty;\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -4033,6 +4021,10 @@
 								"exec": [
 									"pm.test(\"Status code is 204\", function () {\r",
 									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {\r",
+									"    pm.expect(pm.response.text()).to.be.empty;\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -4202,16 +4194,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"// Check that status code is 200\r",
-									"pm.test(\"Status code is 200 for successful challenge deletion\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"pm.test(\"Status code is 204 for successful challenge deletion\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
 									"});\r",
 									"\r",
-									"const data21 = pm.response.json();\r",
-									"\r",
-									"// Check that response contains a success message\r",
-									"pm.test(\"Response contains success message\", function () {\r",
-									"    pm.expect(data21).to.have.property(\"message\");\r",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {\r",
+									"    pm.expect(pm.response.text()).to.be.empty;\r",
 									"});\r",
 									""
 								],
@@ -4677,6 +4665,10 @@
 								"exec": [
 									"pm.test(\"Status code is 204\", function () {\r",
 									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {\r",
+									"    pm.expect(pm.response.text()).to.be.empty;\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -4710,6 +4702,10 @@
 								"exec": [
 									"pm.test(\"Status code is 204\", function () {\r",
 									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is empty for 204 No Content\", function () {\r",
+									"    pm.expect(pm.response.text()).to.be.empty;\r",
 									"});"
 								],
 								"type": "text/javascript",
