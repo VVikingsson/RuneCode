@@ -67,7 +67,8 @@ onMounted(() => {
 <style scoped>
 .table-wrapper {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding-top: 50px;
 }
 .leaderboard-card {
