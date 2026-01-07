@@ -17,7 +17,7 @@
     </BRow>
     <BCard class="tc-card" v-for="tc in pythonTestCases" :key="tc._id">
         <BRow>
-            <BCol cols="8">
+            <BCol cols="12" sm="8">
                 <BFormGroup>
                     <label for="input">Input</label>
                     <BFormInput class="tc-form tc-input mb-2" v-model="tc.input">Input</BFormInput>
@@ -25,7 +25,7 @@
                     <BFormInput class="tc-form tc-output mb-2" v-model="tc.expectedOutput">Output</BFormInput>
                 </BFormGroup>
             </BCol>
-            <BCol cols="4" class="d-flex align-items-center justify-content-end">
+            <BCol cols="12" sm="4" class="d-flex align-items-center justify-content-end">
                 <BButton class="tc-edit-button tc-save-button d-flex align-items-center justify-content-center me-3"
                 variant="outline-light" @click="saveTestCase(tc)">
                     Save
@@ -50,7 +50,7 @@
     </BRow>
     <BCard class="tc-card" v-for="tc in javascriptTestCases" :key="tc._id">
         <BRow>
-            <BCol cols="8">
+            <BCol cols="12" sm="8">
                 <BFormGroup>
                     <label for="input">Input</label>
                     <BFormInput class="tc-form tc-input mb-2" v-model="tc.input">Input</BFormInput>
@@ -58,7 +58,7 @@
                     <BFormInput class="tc-form tc-output mb-2" v-model="tc.expectedOutput">Output</BFormInput>
                 </BFormGroup>
             </BCol>
-            <BCol cols="4" class="d-flex align-items-center justify-content-end">
+            <BCol cols="12" sm="4" class="d-flex align-items-center justify-content-end">
                 <BButton class="tc-edit-button tc-save-button d-flex align-items-center justify-content-center me-3"
                 variant="outline-light" @click="saveTestCase(tc)">
                     Save
