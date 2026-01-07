@@ -128,10 +128,10 @@ async function getUser(req, res, next) {
         //check if image exists, and only then return the url for the image
         //const url = `http://localhost:3000/api/v1/users/avatar/${req.user.id}`;
         let url = ''
-        const imgPath = path.join(process.env.UPLOADS, `${req.user.id}`)
+        const imgPath = path.join(process.env.UPLOADS, `${req.params.id}`)
         try {
             await fs.access(imgPath);
-            url = `http://localhost:3000/api/v1/users/avatar/${req.user.id}`
+            url = `http://localhost:3000/api/v1/users/avatar/${req.params.id}`
         } catch(err) {}
 
         res.status(200).json({user, isMe, url});
