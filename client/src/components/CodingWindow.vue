@@ -36,8 +36,7 @@
                         :tab-size=4
                         :allow-multiple-selections="true"
                         :extensions="extensions"
-                    />
-                    <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
+                    />         <BAlert v-model:model-value="showAlert" v-bind:variant="alertVariant" dismissible class="code-feedback-alert">
                         {{ alertMessage }}
                     </BAlert>
                     </div>
@@ -126,6 +125,7 @@ watch(() => [pythonCode.value, javascriptCode.value], () => {
 // ************************** FUNCTIONS
 async function runCode() {
     try {
+        console.log(user.user.isAdmin);
         const userCode = activeTabIndex.value === 0 ? pythonCode.value : javascriptCode.value;
         const language = activeTabIndex.value === 0 ? "python" : "javascript";
 
@@ -172,7 +172,7 @@ async function submitCode() {
             challengeId: route.params.id,
         });
 
-        alert("Submission created successfully! ID: " + response.data._id);
+        alert("Submission created successfully!");
 
         submittable.value = false;
         draftSaved = false;

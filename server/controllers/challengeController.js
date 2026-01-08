@@ -19,7 +19,7 @@ async function executeCode(req, res, next) {
         if (!code || !language || !authorId ) {
             return res.status(400).json({message: 'Bad request: code and/or language and/or author ID not provided.'});
         }
-        const challenge = await Challenge.findOne({_id: id}).populate('testCases'); // populate replaces ids with actual testCase objects
+        const challenge = await Challenge.findOne({_id: id}).populate('testCases');
         if (!challenge) {
             return res.status(404).json({message: 'Not found: challenge with id not in database'});
         }

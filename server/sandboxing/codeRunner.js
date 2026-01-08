@@ -16,7 +16,7 @@ async function devTest() {
 }
 
 async function containerizeAndTestCode(userCode, testCases, language) {
-    // Compose code and define 
+    // Combine users code with our wrappers and define runtime
     let suffix;
     let code;
     let runtime;
@@ -30,18 +30,24 @@ async function containerizeAndTestCode(userCode, testCases, language) {
         runtime = 'node';
     }
 
+    // Parsse test cases from database
     testCases = parseTestCases(testCases);
 
+    // Create file containing the composed code
     const {tempDir, filePath, fileName} = await createFilePath(suffix);
     await fs.promises.writeFile(filePath, code);
 
     const {input, expectedOutput} = testCases;
     const numberOfCases = input.length;
 
+    // Run it in container and watch the standard output stream (console)
     const {containerOutput, containerError, num} = await runInContainer(tempDir, fileName, input, runtime);
-    let outPutList = containerOutput.trim().split('\n'); // Remove last \n from output and listify output
+    // Parse outputs of container
+    let outPutList = containerOutput.trim().split('\n');
     const testResults = outPutList.slice(outPutList.length - input.length) // Remove any potential user prints
 
+
+    // Compose response message (pass/fail)
     let result = 'All ' + numberOfCases + ' tests pass.';
     let passed = true;
     
@@ -52,9 +58,7 @@ async function containerizeAndTestCode(userCode, testCases, language) {
             break;
         }
     }
-    // TODO: Container not actually running OR container not producing any output
-    console.log(containerOutput);
-    console.log(containerError);
+    
     deleteDirIfExists(tempDir);
     return {result, passed};
 }
