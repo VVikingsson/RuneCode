@@ -15,13 +15,11 @@ export const useUserStore = defineStore('user', {
 
       try {
         const res = await Api.get('users/auth/me');
-        console.log(res);
         this.user = res.data.user;
         // added to put the picture in the global store
         this.avatarUrl = res.data.user?.url || null
         this.loggedIn = true;
       } catch (err) {
-        console.log('Session not available. User logged out.');
         this.user = null;
         this.loggedIn = false;
       }
